@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { getTokenData, type TokenDataResponse } from "../lib/token-data";
@@ -16,6 +17,8 @@ interface PieChartData {
   value: number;
   amount: string;
   color: string;
+  // ✅ Fix for Recharts typing: makes this object compatible with "ChartDataInput"
+  [key: string]: string | number;
 }
 
 const Tokenomics = () => {
@@ -166,7 +169,10 @@ const Tokenomics = () => {
             />
             <div className="absolute inset-0 rounded-full bg-purple-500 opacity-10 blur-xl -z-10"></div>
           </div>
-          <h1 className="text-5xl font-bold">RROTA Token</h1>
+
+          {/* ✅ Use h2 here to avoid multiple H1 on the page */}
+          <h2 className="text-5xl font-bold">RROTA Token</h2>
+
           <p className="text-[#aaa] max-w-2xl mx-auto text-lg leading-relaxed">
             A sustainable, secure, and community driven token built on Solana
             blockchain, empowering eco conscious innovation and growth.
@@ -217,7 +223,7 @@ const Tokenomics = () => {
           </div>
         </motion.div>
 
-        <motion.h2
+        <motion.h3
           className="text-center text-3xl font-bold mb-8"
           variants={titleVariants}
         >
@@ -230,7 +236,7 @@ const Tokenomics = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
             />
           </span>
-        </motion.h2>
+        </motion.h3>
 
         {error && (
           <motion.div
@@ -263,6 +269,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-purple-500">
                 13%
@@ -276,6 +283,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-sky-400">
                 8%
@@ -289,6 +297,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-pink-500">
                 10%
@@ -302,6 +311,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-green-500">
                 4%
@@ -313,6 +323,7 @@ const Tokenomics = () => {
                 <div className="text-sm text-gray-300">697,854,951 tokens</div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-red-500">
                 3%
@@ -324,6 +335,7 @@ const Tokenomics = () => {
                 <div className="text-sm text-gray-300">523,391,214 tokens</div>
               </div>
             </li>
+
             <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
               <span className="text-sm font-bold text-white px-3 py-1 rounded bg-red-500">
                 2%
@@ -387,6 +399,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">R</span>
@@ -396,6 +409,7 @@ const Tokenomics = () => {
                 <div className="text-sm text-gray-300">Solana (SOL)</div>
               </div>
             </li>
+
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">O</span>
@@ -411,6 +425,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
@@ -428,6 +443,7 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">A</span>
@@ -443,27 +459,25 @@ const Tokenomics = () => {
                 </div>
               </div>
             </li>
+
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold">!</span>
               </div>
               <div className="flex-1">
                 <div className="text-white font-semibold">Mint address</div>
-                <div className="text-sm text-gray-300 font-mono">
-                  3yeWY...xL1a
-                </div>
+                <div className="text-sm text-gray-300 font-mono">3yeWY...xL1a</div>
               </div>
               <div className="relative">
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(
-                      "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a"
-                    );
+                    navigator.clipboard.writeText(TOKEN_ADDRESS);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
                   className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors duration-200 group"
                   title="Copy full address"
+                  type="button"
                 >
                   <svg
                     className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors"
