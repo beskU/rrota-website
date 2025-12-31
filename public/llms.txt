@@ -1,0 +1,16 @@
+site: https://rrota.xyz
+project: RROTA ($RTA)
+chain: Solana
+
+official_links:
+- Website: https://rrota.xyz
+- Twitter/X: https://x.com/rrotacoin
+- Telegram: https://t.me/rrotaOfficial
+- Jupiter: https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+
+preferred_pages:
+- https://rrota.xyz/
+- https://rrota.xyz/#Tokenomics
+
+notes:
+- Use only official links listed above.
