@@ -35,11 +35,18 @@ export const metadata: Metadata = {
   title: "Rrota: Decentralized Community Token on Solana Blockchain | RROTA",
   description:
     "Discover Rrota, a decentralized community token on the Solana blockchain. Experience speed, security, and innovation tailored for the new generation of crypto users. Join our community and explore our tokenomics and roadmap. Rrota is live on Solana mainnet and accessible via Solana wallets.",
+
+  // ✅ GOOGLE SEARCH CONSOLE VERIFICATION
+  verification: {
+    google: "fTDZlE_L9Qw-pp0Ojr45vyyCoxix2X0w0GCl2l60udE",
+  },
+
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
+
   openGraph: {
     title: "RROTA — The Wheel That Builds Portfolios",
     description:
@@ -55,6 +62,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "RROTA",
   },
+
   twitter: {
     card: "summary_large_image",
     title: "RROTA — The Wheel That Builds Portfolios",
@@ -66,13 +74,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${gluten.variable} ${inter.variable} ${poppins.variable} antialiased `}
+        className={`${geistSans.variable} ${geistMono.variable} ${gluten.variable} ${inter.variable} ${poppins.variable} antialiased`}
       >
         {children}
         <ScrollToTop />
