@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import logo from "../../../public/rrota-logo2.png";
@@ -22,6 +23,18 @@ const Hero = () => {
 
   const tokenAddress = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
+  // Links (keep centralized so you can change later once)
+  const LINKS = {
+    jupiter: `https://jup.ag/tokens/${tokenAddress}`,
+    solscan: `https://solscan.io/token/${tokenAddress}`,
+    dexscreener: `https://dexscreener.com/solana/${tokenAddress}`,
+    birdeye: `https://birdeye.so/token/${tokenAddress}?chain=solana`,
+    geckoterminal: `https://www.geckoterminal.com/solana/tokens/${tokenAddress}`,
+    telegram: "https://t.me/rrotaOfficial",
+    twitter: "https://x.com/rrotacoin",
+    audit: "https://freshcoins.io/audit/rrota",
+  };
+
   useEffect(() => {
     const fetchTokenData = async () => {
       try {
@@ -38,24 +51,18 @@ const Hero = () => {
     };
 
     fetchTokenData();
-    // Refresh data every 5 minutes (cache will handle the 1-hour duration)
     const interval = setInterval(fetchTokenData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [tokenAddress]);
 
   const formatPrice = (price: number) => {
-    if (price < 0.000001) {
-      return `$${price.toExponential(2)}`;
-    }
+    if (price < 0.000001) return `$${price.toExponential(2)}`;
     return `$${price.toFixed(9)}`;
   };
 
   const formatMarketCap = (marketCap: number) => {
-    if (marketCap >= 1000000) {
-      return `$${(marketCap / 1000000).toFixed(2)}M`;
-    } else if (marketCap >= 1000) {
-      return `$${(marketCap / 1000).toFixed(2)}K`;
-    }
+    if (marketCap >= 1000000) return `$${(marketCap / 1000000).toFixed(2)}M`;
+    if (marketCap >= 1000) return `$${(marketCap / 1000).toFixed(2)}K`;
     return `$${marketCap.toFixed(2)}`;
   };
 
@@ -78,19 +85,37 @@ const Hero = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.25, delayChildren: 0.15 },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
+    hidden: { y: 24, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  const StatusRow = ({
+    dot,
+    label,
+    tone = "neutral",
+  }: {
+    dot: "green" | "yellow" | "blue";
+    label: string;
+    tone?: "neutral";
+  }) => {
+    const dotClass =
+      dot === "green"
+        ? "bg-green-400"
+        : dot === "yellow"
+        ? "bg-yellow-400"
+        : "bg-sky-400";
+
+    return (
+      <div className="flex items-center gap-3">
+        <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
+        <span className="text-white/80 text-sm">{label}</span>
+      </div>
+    );
   };
 
   return (
@@ -105,26 +130,13 @@ const Hero = () => {
         {/* Glowing spinning background logo */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         >
           <motion.div
             className="relative"
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.1, 0.2, 0.1],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.08, 0.18, 0.08] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
               src={logo}
@@ -137,19 +149,12 @@ const Hero = () => {
                   "drop-shadow(0 0 20px rgba(28, 194, 252, 0.3)) drop-shadow(0 0 40px rgba(28, 194, 252, 0.2)) drop-shadow(0 0 80px rgba(28, 194, 252, 0.1))",
               }}
             />
-            {/* Additional glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 rounded-full blur-3xl scale-150"></div>
+           _toggle
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 rounded-full blur-3xl scale-150" />
           </motion.div>
         </motion.div>
-        <div
-          className="
-            container mx-auto px-4
-            flex items-start
-            overflow-hidden box-border
-            max-[1100px]
-            relative z-10
-          "
-        >
+
+        <div className="container mx-auto px-4 flex items-start overflow-hidden box-border max-[1100px] relative z-10">
           <div
             className="
               grid grid-cols-1
@@ -162,24 +167,36 @@ const Hero = () => {
               rounded-lg
             "
           >
+            {/* LEFT */}
             <div className="flex flex-col gap-3 min-w-0 h-full">
               <div className="flex flex-col gap-3 my-auto">
-                <motion.div
-                  className="font-display text-[48px] md:text-[54px] font-bold text-[#1bbffb] leading-tight"
+                {/* Headline */}
+                <motion.h1
+                  className="font-display text-[44px] md:text-[54px] font-bold text-[#1bbffb] leading-tight"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                  💎 RROTA: The Wheel of REAL MONEY on Solana 💎
-                </motion.div>
+                  RROTA ($RTA) — Utility-First Token on Solana
+                </motion.h1>
+
+                {/* Subheading */}
+                <motion.p
+                  className="font-inter text-[14px] md:text-[15px] text-white/75 leading-[26px] max-w-[54ch]"
+                  variants={itemVariants}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
+                >
+                  Transparent build phase with staged releases. Track real status,
+                  verify on-chain data, and follow development progress.
+                </motion.p>
 
                 {/* Primary CTAs */}
                 <motion.div
-                  className="flex flex-col sm:flex-row gap-4 mb-6"
+                  className="flex flex-col sm:flex-row gap-4 mb-4"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
                 >
                   <motion.a
-                    href="https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a"
+                    href={LINKS.jupiter}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 px-8 py-4 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc] text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -201,11 +218,11 @@ const Hero = () => {
                       <path d="M2 17l10 5 10-5" />
                       <path d="M2 12l10 5 10-5" />
                     </svg>
-                    Buy Now on Jupiter
+                    Buy on Jupiter
                   </motion.a>
 
                   <motion.a
-                    href="https://t.me/rrotaOfficial"
+                    href={LINKS.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 px-8 py-4 !bg-gradient-to-r !from-[#0088cc] !to-[#006699] hover:!from-[#006699] hover:!to-[#0088cc] text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -230,34 +247,57 @@ const Hero = () => {
                   </motion.a>
                 </motion.div>
 
-                <motion.h1
-                  className="font-display text-[22px] md:text-[28px] font-bold text-white/90 leading-tight"
+                {/* Project Status Bar */}
+                <motion.div
+                  className="mb-6 p-4 rounded-xl border border-gray-700/50 bg-[#202329]/40 backdrop-blur-sm"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                 >
-                  RROTA is a fast, secure, and community-driven token built on
-                  the Solana blockchain. Designed for speed, scalability, and
-                  transparency, RROTA empowers its community to shape the future
-                  of decentralized finance.
-                </motion.h1>
+                  <div className="flex items-center justify-between gap-4 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/90 font-poppins font-semibold">
+                        Project Status
+                      </span>
+                      <span className="text-white/50 text-xs">
+                        (Live / In Progress)
+                      </span>
+                    </div>
+                    <a
+                      href={LINKS.solscan}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1cc2fc] text-sm hover:underline"
+                    >
+                      Verify on Solscan →
+                    </a>
+                  </div>
 
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <StatusRow dot="green" label="Token live on Solana" />
+                    <StatusRow dot="green" label="Mint revoked / Freeze revoked" />
+                    <StatusRow dot="green" label="Audit verification available" />
+                    <StatusRow dot="yellow" label="Spin-to-Win: reward logic & anti-farm in development" />
+                    <StatusRow dot="yellow" label="Telegram WebApp: integration in progress" />
+                    <StatusRow dot="blue" label="Shooter game: prototype planning" />
+                    <StatusRow dot="blue" label="Transit utility: research phase" />
+                  </div>
+                </motion.div>
+
+                {/* Short “what it is” line (no hype) */}
                 <motion.p
-                  className="hidden lg:block font-inter text-[13px] text-white/70 leading-[26px]"
+                  className="font-inter text-[14px] text-white/70 leading-[26px]"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
                 >
-                  As a community-first token, RROTA focuses on innovation,
-                  security, and collaboration to create real value for its
-                  holders. By leveraging Solana’s cutting-edge technology, we
-                  deliver lightning-fast transactions, low fees, and a
-                  sustainable ecosystem.
+                  RROTA is being built step-by-step with transparent execution.
+                  Utilities ship when tested — not as promises.
                 </motion.p>
 
                 {/* Token Address Section */}
                 <motion.div
-                  className="mt-8 mb-6"
+                  className="mt-6 mb-6"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
                 >
                   <div className="flex flex-col lg:flex-row items-center gap-3 p-4 !bg-[#202329]/50 border border-gray-700/50 rounded-lg backdrop-blur-sm">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -285,9 +325,7 @@ const Hero = () => {
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white/70 text-sm mb-1">
-                          Token Address
-                        </p>
+                        <p className="text-white/70 text-sm mb-1">Token Address</p>
                         <p className="text-white font-mono text-sm break-all">
                           {tokenAddress}
                         </p>
@@ -299,7 +337,7 @@ const Hero = () => {
                         className="flex items-center gap-2 px-4 py-2 !bg-[#1cc2fc]/20 !hover:bg-[#1cc2fc]/30 border border-[#1cc2fc]/30 rounded-lg transition-all duration-300 text-[#1cc2fc] hover:text-white"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 1.1, duration: 0.6 }}
+                        transition={{ delay: 1.0, duration: 0.6 }}
                       >
                         {copied ? (
                           <>
@@ -334,31 +372,20 @@ const Hero = () => {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             >
-                              <rect
-                                width="14"
-                                height="14"
-                                x="8"
-                                y="8"
-                                rx="2"
-                                ry="2"
-                              />
+                              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
                               <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                             </svg>
                             <span className="text-sm font-medium">Copy</span>
                           </>
                         )}
                       </motion.button>
+
                       <motion.button
-                        onClick={() =>
-                          window.open(
-                            "https://solscan.io/token/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a",
-                            "_blank"
-                          )
-                        }
+                        onClick={() => window.open(LINKS.solscan, "_blank")}
                         className="flex items-center gap-2 px-4 py-2 !bg-[#9945FF]/20 !hover:bg-[#9945FF]/30 border border-[#9945FF]/30 rounded-lg transition-all duration-300 text-[#9945FF] hover:text-white"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2, duration: 0.6 }}
+                        transition={{ delay: 1.1, duration: 0.6 }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -381,63 +408,42 @@ const Hero = () => {
                   </div>
                 </motion.div>
 
+                {/* Quick Links */}
                 <motion.div
                   className="flex flex-wrap gap-4 justify-start"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.35 }}
                 >
-                  <motion.button
-                    className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2, duration: 0.6 }}
-                  >
-                    <span className="font-poppins font-medium">Jupiter</span>
-                  </motion.button>
-
-                  <motion.button
-                    className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.3, duration: 0.6 }}
-                  >
-                    <span className="font-poppins font-medium">
-                      DexScreener
-                    </span>
-                  </motion.button>
-
-                  <motion.button
-                    className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.4, duration: 0.6 }}
-                  >
-                    <span className="font-poppins font-medium">BirdEye</span>
-                  </motion.button>
-
-                  <motion.button
-                    className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.5, duration: 0.6 }}
-                  >
-                    <span className="font-poppins font-medium">
-                      GeckoTerminal
-                    </span>
-                  </motion.button>
+                  {[
+                    { name: "Jupiter", href: LINKS.jupiter },
+                    { name: "DexScreener", href: LINKS.dexscreener },
+                    { name: "BirdEye", href: LINKS.birdeye },
+                    { name: "GeckoTerminal", href: LINKS.geckoterminal },
+                  ].map((item, idx) => (
+                    <motion.a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1.15 + idx * 0.1, duration: 0.6 }}
+                    >
+                      <span className="font-poppins font-medium">{item.name}</span>
+                    </motion.a>
+                  ))}
                 </motion.div>
 
+                {/* Social Icons */}
                 <motion.div
                   className="mt-6 flex items-center gap-3 flex-wrap"
                   variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
                 >
                   <motion.a
-                    href="https://x.com/rrotacoin"
+                    href={LINKS.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition text-white"
@@ -445,7 +451,7 @@ const Hero = () => {
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.6, duration: 0.6 }}
+                    transition={{ delay: 1.55, duration: 0.6 }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -453,12 +459,12 @@ const Hero = () => {
                       className="w-5 h-5"
                       fill="currentColor"
                     >
-                      <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z"></path>
+                      <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z" />
                     </svg>
                   </motion.a>
 
                   <motion.a
-                    href="https://t.me/rrotaOfficial"
+                    href={LINKS.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
@@ -466,7 +472,7 @@ const Hero = () => {
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.7, duration: 0.6 }}
+                    transition={{ delay: 1.65, duration: 0.6 }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -478,59 +484,45 @@ const Hero = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="lucide lucide-send w-5 h-5 text-white"
+                      className="w-5 h-5 text-white"
                     >
-                      <path d="m22 2-7 20-4-9-9-4Z"></path>
-                      <path d="M22 2 11 13"></path>
+                      <path d="m22 2-7 20-4-9-9-4Z" />
+                      <path d="M22 2 11 13" />
                     </svg>
                   </motion.a>
 
+                  {/* Audit link chip */}
                   <motion.a
-                    href="https://discord.com/channels/1368206433933459466/1368206433933459469"
+                    href={LINKS.audit}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hidden lg:block p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
-                    aria-label="Discord"
-                    whileTap={{ scale: 0.95 }}
+                    className="ml-0 sm:ml-2 px-4 py-2 rounded-full bg-[#202329] border border-gray-700/50 hover:border-gray-600 text-white/80 hover:text-white transition text-sm"
+                    whileTap={{ scale: 0.98 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.8, duration: 0.6 }}
+                    transition={{ delay: 1.75, duration: 0.6 }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-5 h-5 text-white"
-                    >
-                      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-                    </svg>
+                    Audit verification →
                   </motion.a>
                 </motion.div>
               </div>
             </div>
 
-            {/* Right side - Interactive element */}
+            {/* RIGHT */}
             <motion.div
               className="flex items-center md:justify-end justify-center min-h-[400px]"
               variants={itemVariants}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
             >
               <div className="relative">
-                {/* Main floating card */}
                 <motion.div
                   className="!bg-gradient-to-br !from-[#353558] !via-[#16213e] !to-[#035ece] backdrop-blur-sm border border-[#1cc2fc]/30 rounded-2xl p-10 shadow-2xl min-w-[320px] w-full max-w-[380px]"
                   animate={{
-                    y: [-15, 15, -15],
+                    y: [-12, 12, -12],
                     rotate: [0, 2, -2, 0],
                     scale: [1, 1.02, 1],
                   }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   whileHover={{
                     scale: 1.05,
                     rotate: 0,
@@ -538,35 +530,24 @@ const Hero = () => {
                     transition: { duration: 0.3 },
                   }}
                 >
-                  {/* Token symbol */}
                   <div className="text-center mb-6">
                     <motion.div
                       className="w-20 h-20 bg-gradient-to-br from-[#1cc2fc] to-[#0ea5e9] rounded-full mx-auto mb-4 flex items-center justify-center"
                       animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 20,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                     >
-                      <Image
-                        src={logo}
-                        alt="logo"
-                        width={64}
-                        height={64}
-                        className="relative z-10"
-                      />
+                      <Image src={logo} alt="logo" width={64} height={64} />
                     </motion.div>
+
                     <h3 className="text-white font-poppins font-bold text-xl mb-2">
-                      RROTA Token
+                      RROTA ($RTA)
                     </h3>
-                    <p className="text-white/70 text-sm">Built on Solana</p>
+                    <p className="text-white/70 text-sm">Token live on Solana</p>
                   </div>
 
-                  {/* Price display */}
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">Price $RTA</span>
+                      <span className="text-white/70 text-sm">Price</span>
                       <motion.span
                         className="text-[#1cc2fc] font-bold"
                         animate={{ opacity: [0.7, 1, 0.7] }}
@@ -581,6 +562,7 @@ const Hero = () => {
                         )}
                       </motion.span>
                     </div>
+
                     <div className="flex justify-between items-center">
                       <span className="text-white/70 text-sm">24h Change</span>
                       <motion.span
@@ -590,11 +572,7 @@ const Hero = () => {
                             : "text-red-400"
                         }`}
                         animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 0.5,
-                        }}
+                        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                       >
                         {loading ? (
                           <span className="text-white/50">Loading...</span>
@@ -605,16 +583,13 @@ const Hero = () => {
                         )}
                       </motion.span>
                     </div>
+
                     <div className="flex justify-between items-center">
                       <span className="text-white/70 text-sm">Market Cap</span>
                       <motion.span
                         className="text-white font-bold"
                         animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 1,
-                        }}
+                        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                       >
                         {loading ? (
                           <span className="text-white/50">Loading...</span>
@@ -625,116 +600,36 @@ const Hero = () => {
                         )}
                       </motion.span>
                     </div>
+
                     <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">
-                        Mint Revoked
-                      </span>
-                      <motion.span
-                        className="text-green-400 font-bold flex items-center gap-1"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 1.5,
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                        Yes
-                      </motion.span>
+                      <span className="text-white/70 text-sm">Mint</span>
+                      <span className="text-green-400 font-bold">Revoked</span>
                     </div>
+
                     <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">
-                        Freeze Revoked
-                      </span>
-                      <motion.span
-                        className="text-green-400 font-bold flex items-center gap-1"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 2,
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                        Yes
-                      </motion.span>
+                      <span className="text-white/70 text-sm">Freeze</span>
+                      <span className="text-green-400 font-bold">Revoked</span>
                     </div>
+
                     <div className="flex justify-between items-center gap-4">
-                      <span className="text-white/70 text-sm">
-                        Audited by FreshCoins
-                      </span>
-                      <motion.span
-                        className="text-green-400 font-bold flex items-center gap-1"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: 1.5,
-                        }}
+                      <span className="text-white/70 text-sm">Audit verification</span>
+                      <Link
+                        href={LINKS.audit}
+                        target="_blank"
+                        className="text-[#1cc2fc] font-semibold hover:underline"
                       >
-                        <Link
-                          href="https://freshcoins.io/audit/rrota"
-                          target="_blank"
-                        >
-                          View Report
-                        </Link>
-                      </motion.span>
+                        View →
+                      </Link>
                     </div>
                   </div>
 
-                  {/* 5 Star Rating */}
-                  <div className="mt-6 flex justify-center items-center space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <motion.div
-                        key={star}
-                        className="text-yellow-400 text-2xl"
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 5, -5, 0],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: star * 0.2,
-                          ease: "easeInOut",
-                        }}
-                        whileHover={{
-                          scale: 1.3,
-                          rotate: 15,
-                          transition: { duration: 0.2 },
-                        }}
-                      >
-                        ⭐
-                      </motion.div>
-                    ))}
+                  {/* (Removed 5-star rating – keeps it more credible pre-utility) */}
+                  <div className="mt-6 text-center text-white/50 text-xs">
+                    Build phase: active • Updates ship when ready
                   </div>
                 </motion.div>
 
-                {/* Floating particles */}
+                {/* Floating particles (kept) */}
                 <motion.div
                   className="absolute -top-4 -right-4 w-3 h-3 bg-[#1cc2fc] rounded-full shadow-lg"
                   animate={{
@@ -743,11 +638,7 @@ const Hero = () => {
                     opacity: [0.4, 1, 0.4],
                     scale: [0.8, 1.2, 0.8],
                   }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.div
                   className="absolute -bottom-4 -left-4 w-2 h-2 bg-[#0ea5e9] rounded-full shadow-lg"
