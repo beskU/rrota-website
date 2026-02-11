@@ -4,45 +4,22 @@
 // IMPORTANT: Do NOT put SolanaTracker API key in client code.
 // This file calls our server route: /api/token-data?token=...
 
-// Cache interface
+// ============================
+// Config
+// ============================
+export const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+const CACHE_KEY_PREFIX = "rrota_token_cache_";
+
+// If you want to force one pool as "primary"
+export const TARGET_POOL_ID = "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
+
+// ============================
+// Types
+// ============================
 interface CacheEntry {
   data: TokenDataResponse;
   timestamp: number;
 }
-
-// Persistent cache using localStorage
-const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
-const CACHE_KEY_PREFIX = "rrota_token_cache_";
-
-const getCacheKey = (tokenAddress: string): string =>
-  `${CACHE_KEY_PREFIX}${tokenAddress}`;
-
-const getCachedData = (tokenAddress: string): CacheEntry | null => {
-  if (typeof window === "undefined") return null;
-
-  try {
-    const cached = localStorage.getItem(getCacheKey(tokenAddress));
-    return cached ? (JSON.parse(cached) as CacheEntry) : null;
-  } catch (error) {
-    console.warn("Failed to read from cache:", error);
-    return null;
-  }
-};
-
-const setCachedData = (
-  tokenAddress: string,
-  data: TokenDataResponse,
-  timestamp: number
-): void => {
-  if (typeof window === "undefined") return;
-
-  try {
-    const entry: CacheEntry = { data, timestamp };
-    localStorage.setItem(getCacheKey(tokenAddress), JSON.stringify(entry));
-  } catch (error) {
-    console.warn("Failed to write to cache:", error);
-  }
-};
 
 interface Pool {
   poolId: string;
@@ -75,7 +52,42 @@ export interface TokenDataResponse {
   priceChange24h: number;
 }
 
-// Default fallback data for when API fails and no cache exists
+// ============================
+// Cache helpers (localStorage)
+// ============================
+const getCacheKey = (tokenAddress: string): string =>
+  `${CACHE_KEY_PREFIX}${tokenAddress}`;
+
+const getCachedData = (tokenAddress: string): CacheEntry | null => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const cached = localStorage.getItem(getCacheKey(tokenAddress));
+    return cached ? (JSON.parse(cached) as CacheEntry) : null;
+  } catch (error) {
+    console.warn("Failed to read from cache:", error);
+    return null;
+  }
+};
+
+const setCachedData = (
+  tokenAddress: string,
+  data: TokenDataResponse,
+  timestamp: number
+): void => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const entry: CacheEntry = { data, timestamp };
+    localStorage.setItem(getCacheKey(tokenAddress), JSON.stringify(entry));
+  } catch (error) {
+    console.warn("Failed to write to cache:", error);
+  }
+};
+
+// ============================
+// Fallback data
+// ============================
 const getDefaultTokenData = (): TokenDataResponse => ({
   price: 0,
   liquidity: 0,
@@ -86,61 +98,73 @@ const getDefaultTokenData = (): TokenDataResponse => ({
   priceChange24h: 0,
 });
 
-// Retry function with exponential backoff
+// ============================
+// Retry helper (backoff)
+// ============================
 const retryWithBackoff = async <T,>(
   fn: () => Promise<T>,
-  maxRetries: number = 3,
-  baseDelay: number = 1000
+  maxRetries = 3,
+  baseDelay = 800
 ): Promise<T> => {
+  let lastError: unknown;
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error) {
-      if (attempt === maxRetries - 1) throw error;
+    } catch (err) {
+      lastError = err;
+      if (attempt === maxRetries - 1) break;
+
       const delay = baseDelay * Math.pow(2, attempt);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
-  throw new Error("Max retries exceeded");
+
+  throw lastError ?? new Error("Max retries exceeded");
 };
 
+// ============================
+// Main function
+// ============================
 export async function getTokenData(
   tokenAddress: string
 ): Promise<TokenDataResponse> {
-  const cachedEntry = getCachedData(tokenAddress);
   const now = Date.now();
 
-  // Use fresh cache
+  // 1) Use cache first (fresh)
+  const cachedEntry = getCachedData(tokenAddress);
   if (cachedEntry && now - cachedEntry.timestamp < CACHE_DURATION) {
     return cachedEntry.data;
   }
 
+  // 2) Fetch from our server route (API key stays server-side)
   try {
     const tokenData = await retryWithBackoff(async () => {
       const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      // Call YOUR server route (API key lives on server)
-      const res = await fetch(`/api/token-data?token=${tokenAddress}`, {
+      const url = `/api/token-data?token=${encodeURIComponent(tokenAddress)}`;
+
+      const res = await fetch(url, {
         signal: controller.signal,
+        cache: "no-store", // IMPORTANT: avoid sticky caching in Next
       });
 
-      window.clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
-        throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+        throw new Error(`API failed: ${res.status} ${res.statusText}`);
       }
 
       const data = (await res.json()) as TokenData;
 
       const pools = Array.isArray(data.pools) ? data.pools : [];
-      const targetPoolId = "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
-      const targetPool = pools.find((p) => p.poolId === targetPoolId);
-      const primaryPool = targetPool || pools[0];
-
-      if (!primaryPool) {
-        throw new Error("No pool data found for this token");
+      if (!pools.length) {
+        throw new Error("No pools returned from API");
       }
+
+      const targetPool = pools.find((p) => p.poolId === TARGET_POOL_ID);
+      const primaryPool = targetPool ?? pools[0];
 
       const price = Number(primaryPool.price?.usd ?? 0);
       const liquidity = Number(primaryPool.liquidity?.usd ?? 0);
@@ -149,7 +173,6 @@ export async function getTokenData(
       const holders = Number(data.holders ?? 0);
       const lastUpdated = Number(primaryPool.lastUpdated ?? Date.now());
 
-      // Guard if events or 24h is missing
       const priceChange24h = Number(
         data.events?.["24h"]?.priceChangePercentage ?? 0
       );
@@ -165,15 +188,16 @@ export async function getTokenData(
       };
     });
 
+    // 3) Save fresh result in cache
     setCachedData(tokenAddress, tokenData, now);
     return tokenData;
   } catch (error) {
     console.error("Error fetching token data:", error);
 
-    // Return expired cache if we have it
+    // 4) If we have ANY cached data (even expired), use it
     if (cachedEntry) return cachedEntry.data;
 
-    // Otherwise return default, and cache it to avoid hammering API
+    // 5) Otherwise fallback
     const defaultData = getDefaultTokenData();
     setCachedData(tokenAddress, defaultData, now);
     return defaultData;
