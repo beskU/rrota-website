@@ -17,31 +17,30 @@ export async function GET(req: Request) {
     );
   }
 
-  const apiUrl = `https://data.solanatracker.io/tokens/${token}`;
-
   try {
-    const response = await fetch(apiUrl, {
-      headers: {
-        "x-api-key": apiKey,
-        "Content-Type": "application/json",
-      },
-      next: { revalidate: 60 },
-    });
+    const res = await fetch(
+      `https://data.solanatracker.io/tokens/${token}`,
+      {
+        headers: {
+          "x-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    if (!response.ok) {
+    if (!res.ok) {
       return NextResponse.json(
-        { error: `Upstream failed: ${response.status}` },
-        { status: 502 }
+        { error: "Upstream API failed" },
+        { status: 500 }
       );
     }
 
-    const data = await response.json();
+    const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch token data" },
+      { error: "Server error fetching token data" },
       { status: 500 }
     );
   }
 }
-
