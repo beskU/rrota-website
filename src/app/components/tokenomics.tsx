@@ -17,7 +17,6 @@ interface PieChartData {
   value: number;
   amount: string;
   color: string;
-  // ✅ Fix for Recharts typing: makes this object compatible with "ChartDataInput"
   [key: string]: string | number;
 }
 
@@ -31,57 +30,12 @@ const Tokenomics = () => {
 
   const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-  // Pie chart data for token distribution
-  const pieChartData: PieChartData[] = [
-    {
-      name: "Liquidity (Locked)",
-      value: 60,
-      amount: "10,467,824,272",
-      color: "#F0B90B",
-    },
-    { name: "Marketing", value: 13, amount: "2,268,028,592", color: "#8B5CF6" },
-    {
-      name: "Development",
-      value: 8,
-      amount: "1,395,709,903",
-      color: "#06B6D4",
-    },
-    {
-      name: "Community Rewards",
-      value: 10,
-      amount: "1,744,637,379",
-      color: "#EC4899",
-    },
-    { name: "Team", value: 4, amount: "697,854,951", color: "#10B981" },
-    { name: "Reserve", value: 3, amount: "523,391,214", color: "#EF4444" },
-    { name: "Advisors", value: 2, amount: "348,927,476", color: "#F59E0B" },
-  ];
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: {
-      payload: {
-        name: string;
-        value: number;
-        amount: string;
-      };
-    }[];
-  }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-[#1a1a1a] border border-gray-600 rounded-lg p-3 shadow-lg">
-          <p className="text-white font-semibold">{data.name}</p>
-          <p className="text-gray-300 text-sm">{data.value}%</p>
-          <p className="text-gray-300 text-sm">{data.amount} tokens</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  /**
+   * IMPORTANT:
+   * If you have an exact burn amount, set it here.
+   * If you don't, set it to 0 and remove the Burned slice below.
+   */
+  const BURNED_TOKENS = 0; // <-- replace with real number if you have it (example: 1000000000)
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -90,19 +44,17 @@ const Tokenomics = () => {
         const data = await getTokenData(TOKEN_ADDRESS);
         setTokenData(data);
 
-        // Check if we got default/fallback data (price = 0 and holders = 0)
         if (data.price === 0 && data.holders === 0 && data.liquidity === 0) {
-          setError("Using default data - API temporarily unavailable");
+          setError("Token data API temporarily unavailable");
         }
-      } catch (error) {
-        console.error("Failed to fetch token data:", error);
+      } catch (err) {
+        console.error("Failed to fetch token data:", err);
         setError("Failed to load token data");
-        // Set fallback data to prevent crashes
         setTokenData({
           price: 0,
           liquidity: 0,
           marketCap: 0,
-          tokenSupply: 17446373786, // 17.4B tokens as mentioned in description
+          tokenSupply: 17446373786, // fallback supply
           holders: 0,
           lastUpdated: Date.now(),
           priceChange24h: 0,
@@ -115,14 +67,75 @@ const Tokenomics = () => {
     fetchTokenData();
   }, []);
 
+  const supply = tokenData?.tokenSupply ?? 17446373786;
+  const liquidityUsd = tokenData?.liquidity ?? 0;
+
+  // A conservative, credibility-first distribution.
+  // (If you want wallet-specific allocations, you MUST link the wallet list / vesting proofs.)
+  const derivedLiquidityTokensEstimate = 0; // we do NOT guess LP token amounts here
+
+  const safeSlices = [
+    {
+      name: "Circulating (Estimated)",
+      value: Math.max(supply - BURNED_TOKENS, 0),
+      amount: `${Math.max(supply - BURNED_TOKENS, 0).toLocaleString()} tokens`,
+      color: "#1cc2fc",
+    },
+    ...(BURNED_TOKENS > 0
+      ? [
+          {
+            name: "Burned (On-chain)",
+            value: BURNED_TOKENS,
+            amount: `${BURNED_TOKENS.toLocaleString()} tokens`,
+            color: "#F59E0B",
+          },
+        ]
+      : []),
+    ...(derivedLiquidityTokensEstimate > 0
+      ? [
+          {
+            name: "Liquidity (Tokens)",
+            value: derivedLiquidityTokensEstimate,
+            amount: `${derivedLiquidityTokensEstimate.toLocaleString()} tokens`,
+            color: "#10B981",
+          },
+        ]
+      : []),
+  ];
+
+  const totalForChart = safeSlices.reduce((a, b) => a + (b.value as number), 0);
+
+  const pieChartData: PieChartData[] = safeSlices.map((s) => ({
+    ...s,
+    // Convert to percentage display for pie
+    value: totalForChart > 0 ? Number(((s.value / totalForChart) * 100).toFixed(2)) : 0,
+  }));
+
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: { payload: { name: string; value: number; amount: string } }[];
+  }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-[#1a1a1a] border border-gray-600 rounded-lg p-3 shadow-lg">
+          <p className="text-white font-semibold">{data.name}</p>
+          <p className="text-gray-300 text-sm">{data.value}%</p>
+          <p className="text-gray-300 text-sm">{data.amount}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.3, delayChildren: 0.2 },
     },
   };
 
@@ -131,9 +144,7 @@ const Tokenomics = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.6,
-      },
+      transition: { duration: 0.6 },
     },
   };
 
@@ -142,9 +153,7 @@ const Tokenomics = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.8,
-      },
+      transition: { duration: 0.8 },
     },
   };
 
@@ -170,73 +179,62 @@ const Tokenomics = () => {
             <div className="absolute inset-0 rounded-full bg-purple-500 opacity-10 blur-xl -z-10"></div>
           </div>
 
-          {/* ✅ Use h2 here to avoid multiple H1 on the page */}
-          <h2 className="text-5xl font-bold">RROTA Token</h2>
+          <h2 className="text-5xl font-bold">Tokenomics</h2>
 
-          <p className="text-[#aaa] max-w-2xl mx-auto text-lg leading-relaxed">
-            A sustainable, secure, and community driven token built on Solana
-            blockchain, empowering eco conscious innovation and growth.
+          <p className="text-[#aaa] max-w-3xl mx-auto text-lg leading-relaxed">
+            This page focuses on verifiable facts (on-chain + live market data).
+            Claims like “locked”, “anti-whale”, or wallet allocations should only
+            be shown when proof links are provided.
           </p>
+
           <div className="flex flex-wrap justify-center gap-3 mt-4">
-            <span className="px-3 py-1 rounded-full bg-[#F0B90B]/30 text-[#F0B90B] border border-[#F0B90B]/50 text-sm">
-              SPL Token Standard
+            <span className="px-3 py-1 rounded-full bg-[#1cc2fc]/20 text-[#1cc2fc] border border-[#1cc2fc]/30 text-sm">
+              Solana SPL Token
+            </span>
+            <span className="px-3 py-1 rounded-full bg-white/10 text-white/70 border border-white/10 text-sm">
+              Build Phase
             </span>
             <span className="px-3 py-1 rounded-full bg-emerald-900/30 text-emerald-300 border border-emerald-800/50 text-sm">
-              Anti-Whale
-            </span>
-            <span className="px-3 py-1 rounded-full bg-blue-900/30 text-blue-300 border border-blue-800/50 text-sm">
-              Liquidity Locked
+              Proof Links Included
             </span>
           </div>
-        </motion.div>
 
-        <motion.div
-          className="max-w-4xl mx-auto mb-12"
-          variants={titleVariants}
-        >
-          <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-2xl p-8 border border-purple-500/20">
-            <p className="text-[#aaa] text-lg leading-relaxed mb-6">
-              RROTA tokenomics are engineered to promote long-term value and
-              community involvement. With a maximum supply of 17.4 billion $RTA,
-              the token operates with 9 decimals on the Solana blockchain. A
-              major portion of the supply has been burned to introduce scarcity,
-              while the remaining tokens are strategically allocated across
-              ecosystem growth, game rewards, transit use, and community
-              incentives.
-            </p>
-            <p className="text-[#aaa] text-lg leading-relaxed mb-6">
-              RROTA&apos;s utility is driven by its real-world applications —
-              from gamified platforms like Spin-to-Win and the Crypto Shooter to
-              Solana-powered transportation payments. The tokenomics are fully
-              transparent, audited, and updated as the ecosystem expands. Our
-              mission is to create a self-sustaining, deflationary token economy
-              built on transparency, decentralization, and utility-first design.
-            </p>
-            <p className="text-[#aaa] text-lg leading-relaxed">
-              By combining transparent tokenomics with real-world use cases and
-              gamified earning, RROTA stands apart from ordinary meme coins. The
-              $RTA token is deflationary, rewards-driven, and community-powered
-              — with utility in transit payments, spin games, and future staking
-              pools. As part of the growing Solana ecosystem, RROTA continues to
-              evolve toward mass adoption.
-            </p>
+          {/* Proof links */}
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <a
+              href={`https://solscan.io/token/${TOKEN_ADDRESS}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+            >
+              Solscan
+            </a>
+            <a
+              href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+            >
+              Jupiter
+            </a>
+            <a
+              href="https://www.dextools.io/app/token/rrota"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+            >
+              DEXTools
+            </a>
+            <a
+              href="https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+            >
+              GeckoTerminal
+            </a>
           </div>
         </motion.div>
-
-        <motion.h3
-          className="text-center text-3xl font-bold mb-8"
-          variants={titleVariants}
-        >
-          <span className="relative inline-block mt-10">
-            <span className="relative z-10">Token Distribution</span>
-            <motion.span
-              className="absolute bottom-0 left-0 w-full h-2 bg-[#1cc2fc] -z-0"
-              initial={{ width: 0 }}
-              animate={isInView ? { width: "100%" } : { width: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            />
-          </span>
-        </motion.h3>
 
         {error && (
           <motion.div
@@ -246,109 +244,76 @@ const Tokenomics = () => {
             transition={{ duration: 0.3 }}
           >
             <p className="text-yellow-400 text-center">
-              ⚠️ {error}. Showing fallback data.
+              ⚠️ {error}. Showing fallback values where needed.
             </p>
           </motion.div>
         )}
+
+        <motion.h3
+          className="text-center text-3xl font-bold mb-8"
+          variants={titleVariants}
+        >
+          <span className="relative inline-block mt-10">
+            <span className="relative z-10">Supply Overview</span>
+            <motion.span
+              className="absolute bottom-0 left-0 w-full h-2 bg-[#1cc2fc] -z-0"
+              initial={{ width: 0 }}
+              animate={isInView ? { width: "100%" } : { width: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            />
+          </span>
+        </motion.h3>
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start"
           variants={cardVariants}
         >
+          {/* Left list (explain chart meaning) */}
           <ul className="space-y-4">
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-yellow-400">
-                60%
+            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
+              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-[#1cc2fc]">
+                Info
               </span>
               <div>
                 <div className="font-semibold text-white leading-tight">
-                  💧 Liquidity (Locked)
+                  Credibility-first chart
                 </div>
                 <div className="text-sm text-gray-300">
-                  10,467,824,272 tokens
+                  We only show categories we can support without guessing.
                 </div>
               </div>
             </li>
 
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-purple-500">
-                13%
+            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
+              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-[#F59E0B]">
+                Note
               </span>
               <div>
                 <div className="font-semibold text-white leading-tight">
-                  📢 Marketing
+                  “Locked / Anti-whale” claims
                 </div>
                 <div className="text-sm text-gray-300">
-                  2,268,028,592 tokens
+                  Add those only when proof links + rules are published.
                 </div>
               </div>
             </li>
 
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-sky-400">
-                8%
+            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
+              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-emerald-500">
+                Proof
               </span>
               <div>
                 <div className="font-semibold text-white leading-tight">
-                  🛠️ Development
+                  Official links section
                 </div>
                 <div className="text-sm text-gray-300">
-                  1,395,709,903 tokens
+                  Solscan / Jupiter / DEX charts are linked above.
                 </div>
-              </div>
-            </li>
-
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-pink-500">
-                10%
-              </span>
-              <div>
-                <div className="font-semibold text-white leading-tight">
-                  🎁 Community Rewards
-                </div>
-                <div className="text-sm text-gray-300">
-                  1,744,637,379 tokens
-                </div>
-              </div>
-            </li>
-
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-green-500">
-                4%
-              </span>
-              <div>
-                <div className="font-semibold text-white leading-tight">
-                  👥 Team
-                </div>
-                <div className="text-sm text-gray-300">697,854,951 tokens</div>
-              </div>
-            </li>
-
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-red-500">
-                3%
-              </span>
-              <div>
-                <div className="font-semibold text-white leading-tight">
-                  🧊 Reserve
-                </div>
-                <div className="text-sm text-gray-300">523,391,214 tokens</div>
-              </div>
-            </li>
-
-            <li className="w-full flex items-center gap-2 px-3 py-2 text-sm font-normal capitalize transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-red-500">
-                2%
-              </span>
-              <div>
-                <div className="font-semibold text-white leading-tight">
-                  🧠 Advisors
-                </div>
-                <div className="text-sm text-gray-300">348,927,476 tokens</div>
               </div>
             </li>
           </ul>
 
+          {/* Chart */}
           <div className="flex justify-center items-center h-full">
             <div className="w-[400px] h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -369,7 +334,7 @@ const Tokenomics = () => {
                   <Tooltip content={<CustomTooltip />} />
                   <Legend
                     verticalAlign="bottom"
-                    height={36}
+                    height={44}
                     formatter={(value, entry: { color?: string }) => (
                       <span style={{ color: entry.color, fontSize: "12px" }}>
                         {value}
@@ -381,93 +346,89 @@ const Tokenomics = () => {
             </div>
           </div>
 
+          {/* Stats cards */}
           <ul className="space-y-4">
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">R</span>
+                <span className="text-white font-bold">S</span>
               </div>
               <div>
-                <div className="text-white font-semibold">
-                  Total Token Supply
-                </div>
+                <div className="text-white font-semibold">Total Supply</div>
                 <div className="text-sm text-gray-300">
-                  {loading
-                    ? "Loading..."
-                    : tokenData && tokenData.tokenSupply
-                    ? `${tokenData.tokenSupply.toLocaleString()} tokens`
-                    : "20,000,000,000 tokens"}
+                  {loading ? "Loading..." : `${supply.toLocaleString()} tokens`}
                 </div>
               </div>
             </li>
 
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">R</span>
+                <span className="text-white font-bold">N</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Token Network</div>
-                <div className="text-sm text-gray-300">Solana (SOL)</div>
+                <div className="text-white font-semibold">Network</div>
+                <div className="text-sm text-gray-300">Solana (SPL)</div>
               </div>
             </li>
 
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">O</span>
+                <span className="text-white font-bold">$</span>
               </div>
               <div>
                 <div className="text-white font-semibold">Current Price</div>
                 <div className="text-sm text-gray-300">
                   {loading
                     ? "Loading..."
-                    : tokenData && tokenData.price && tokenData.price > 0
+                    : tokenData?.price && tokenData.price > 0
                     ? `$${tokenData.price.toFixed(9)}`
-                    : "TBD"}
+                    : "—"}
                 </div>
               </div>
             </li>
 
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
+                <span className="text-white font-bold">L</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Liquidity</div>
+                <div className="text-white font-semibold">Liquidity (USD)</div>
                 <div className="text-sm text-gray-300">
                   {loading
                     ? "Loading..."
-                    : tokenData &&
-                      tokenData.liquidity &&
-                      tokenData.liquidity > 0
-                    ? `$${tokenData.liquidity.toLocaleString()}`
-                    : "TBD"}
+                    : liquidityUsd && liquidityUsd > 0
+                    ? `$${liquidityUsd.toLocaleString()}`
+                    : "—"}
                 </div>
               </div>
             </li>
 
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">A</span>
+                <span className="text-white font-bold">H</span>
               </div>
               <div>
                 <div className="text-white font-semibold">Holders</div>
                 <div className="text-sm text-gray-300">
                   {loading
                     ? "Loading..."
-                    : tokenData && tokenData.holders
-                    ? `${tokenData.holders.toLocaleString()} RTA holders`
-                    : "TBD"}
+                    : tokenData?.holders
+                    ? `${tokenData.holders.toLocaleString()}`
+                    : "—"}
                 </div>
               </div>
             </li>
 
             <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">!</span>
+                <span className="text-white font-bold">CA</span>
               </div>
               <div className="flex-1">
-                <div className="text-white font-semibold">Mint address</div>
-                <div className="text-sm text-gray-300 font-mono">3yeWY...xL1a</div>
+                <div className="text-white font-semibold">Token Address</div>
+                <div className="text-sm text-gray-300 font-mono">
+                  3yeWY...xL1a
+                </div>
               </div>
+
               <div className="relative">
                 <button
                   onClick={() => {
@@ -493,6 +454,7 @@ const Tokenomics = () => {
                     />
                   </svg>
                 </button>
+
                 {copied && (
                   <div className="absolute top-1 -left-3 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap z-20">
                     Copied!
