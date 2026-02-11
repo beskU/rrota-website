@@ -1,57 +1,80 @@
 "use client";
 import React from "react";
 
+type Status = "Verified" | "In Progress" | "Planned";
+
 const Roadmap = () => {
-  const roadmapItems = [
+  const roadmapItems: Array<{
+    title: string;
+    description: string;
+    status: Status;
+    icon: "check" | "clock";
+    side: "left" | "right";
+  }> = [
     {
-      title: "Phase 1 - Foundation",
+      title: "Phase 1 — Foundation (On-chain setup)",
       description:
-        "Liquidity locked, mint/freeze revoked. 1B+ $RTA tokens burned to establish scarcity and trust.",
-      status: "Completed",
+        "Token live on Solana. Core safety setup completed (mint authority revoked, freeze authority revoked). Scarcity actions (burns) and transparency links established.",
+      status: "Verified",
       icon: "check",
       side: "left",
     },
     {
-      title: "Phase 2 - Launch & Audit",
+      title: "Phase 2 — Trust Layer (Links + verification)",
       description:
-        "Spin-To-Win prototype launched, FreshCoins audit passed, initial meme push, airdrops and community formation. Live tracking on Jupiter, Raydium and Dexscreener.",
-      status: "Completed",
-      icon: "check",
+        "Audit/verification links published. Public hub for official links (Jupiter, Solscan, DEX charts). Website focused on clarity over hype.",
+      status: "In Progress",
+      icon: "clock",
       side: "right",
     },
     {
-      title: "Phase 3 - Game & Community",
+      title: "Phase 3 — Spin-to-Win (Core utility)",
       description:
-        "Spin-To-Win Game fully live with referral leaderboard system. Telegram BuyBot and PriceBot integration for enhanced user experience.",
-      status: "Completed",
-      icon: "check",
-      side: "left",
-    },
-    {
-      title: "Phase 4 - Growth & Burns",
-      description:
-        "Volume-based burn events implemented, website UX overhaul completed, and global social campaigns launched for mass adoption.",
-      status: "Completed",
-      icon: "check",
-      side: "right",
-    },
-    {
-      title: "Phase 5 - Expansion (Q4 2025)",
-      description:
-        "Crypto Shooter Game release, Spin-To-Win prototype deployment, wallet plugin integration, NFT mint passes, DAO governance proposal drafted, and mobile experience optimization.",
+        "Spin-to-Win reward logic + anti-farm system. Holder-based access rules. Beta test with controlled distribution before public release.",
       status: "In Progress",
       icon: "clock",
       side: "left",
     },
     {
-      title: "Phase 6 - Global Scale (Q1 2026)",
+      title: "Phase 4 — Telegram Tools (Community UX)",
       description:
-        "5B final burn countdown, CEX listings (MEXC, Gate, XT), staking pools & rewards vault, multi-chain research + token bridge plan, holder dashboard release, multi-language support & global ambassadors.",
-      status: "In Progress",
+        "Telegram tracking tools (buy/sell alerts, price, links) + clean onboarding. Optional leaderboard/referral systems only after abuse-proofing.",
+      status: "Planned",
+      icon: "clock",
+      side: "right",
+    },
+    {
+      title: "Phase 5 — Game Expansion (Shooter prototype)",
+      description:
+        "Shooter game prototype → playable beta. Rewards only if the economy is sustainable and resistant to farming.",
+      status: "Planned",
+      icon: "clock",
+      side: "left",
+    },
+    {
+      title: "Phase 6 — Ecosystem Scale (Listings + dashboards)",
+      description:
+        "Holder dashboard, multi-language support, and structured growth campaigns. CEX listing discussions only when liquidity, volume, and utility readiness meet requirements.",
+      status: "Planned",
       icon: "clock",
       side: "right",
     },
   ];
+
+  const statusStyles: Record<Status, { text: string; dot: string }> = {
+    Verified: {
+      text: "text-[#20befa]",
+      dot: "!bg-[#20befa] !border-[#20befa] shadow-lg shadow-[#20befa]/30",
+    },
+    "In Progress": {
+      text: "text-white",
+      dot: "!bg-[#1a1d23] !border-[#20befa] shadow-lg shadow-[#20befa]/20",
+    },
+    Planned: {
+      text: "text-white/80",
+      dot: "!bg-[#1a1d23] !border-[#2b3139] shadow-lg shadow-black/20",
+    },
+  };
 
   return (
     <section id="Roadmap" className="text-white">
@@ -60,38 +83,26 @@ const Roadmap = () => {
           RROTA Roadmap
         </h2>
 
+        {/* Intro (credibility-first) */}
         <div className="max-w-4xl mx-auto mb-16">
           <div className="bg-gradient-to-br from-[#1a1d23] to-[#202329] border border-[#2b3139] rounded-2xl p-8">
             <p className="text-gray-300 leading-relaxed mb-4">
-              RROTA&apos;s roadmap is built to guide the project from meme
-              momentum to long-term utility. Each phase introduces powerful
-              tools to empower holders: Spin-to-Win games incentivize on-chain
-              activity and volume, while the Transit App brings $RTA into
-              real-world payment use, enabling users to pay for transportation
-              with crypto. This fusion of fun and function helps RROTA stand out
-              in the Solana ecosystem.
+              RROTA is in an active build phase. This roadmap is designed to be
+              honest: we only mark items as <span className="text-[#20befa] font-semibold">Verified</span>{" "}
+              when they are publicly verifiable (on-chain or via published links).
+              Everything else is listed as <span className="font-semibold">In Progress</span>{" "}
+              or <span className="font-semibold">Planned</span>.
             </p>
+
             <p className="text-gray-300 leading-relaxed mb-4">
-              The next stages of growth include NFT staking, GameFi experiences,
-              and the rollout of DAO-based governance, where the community helps
-              shape the future. From leaderboards and rewards to mobile
-              integration and global campaigns, every milestone is designed to
-              deliver both value and engagement.
+              The goal is simple: ship utility in stages — development → beta →
+              release — and avoid “big claims” until features are actually live.
+              This keeps trust high and expectations aligned.
             </p>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              With strong tokenomics, aggressive burn mechanics, and
-              community-led marketing, RROTA is not just a meme — it&apos;s an
-              evolving decentralized utility token. Each phase is carefully
-              crafted to scale adoption, enhance liquidity, and grow user
-              participation.
-            </p>
+
             <p className="text-gray-300 leading-relaxed">
-              As we progress through our roadmap, RROTA remains committed to
-              aligning with Solana&apos;s scalable, fast, and eco-friendly
-              blockchain infrastructure. Whether you&apos;re a holder, a gamer,
-              a referral sharer, or a builder, RROTA is designed to reward
-              active participation, foster innovation, and expand our impact
-              across borders.
+              If you are following RROTA early, the most important signal is
+              execution: consistent updates, verified links, and real releases.
             </p>
           </div>
         </div>
@@ -110,14 +121,12 @@ const Roadmap = () => {
                     : "md:pl-8 md:text-left"
                 } z-10`}
               >
-                {/* Timeline connector */}
-
+                {/* Timeline dot */}
                 <div
-                  className={`absolute top-15 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full border-2 z-[-1]  ${
-                    item.status === "Completed"
-                      ? "!bg-[#20befa] !border-[#20befa] shadow-lg shadow-[#20befa]/30"
-                      : "!bg-[#1a1d23] !border-[#20befa] shadow-lg shadow-[#20befa]/20"
-                  } ${item.side === "left" ? "right-[-8px]" : "left-[-8px]"}`}
+                  className={`absolute top-15 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full border-2 z-[-1]
+                    ${statusStyles[item.status].dot}
+                    ${item.side === "left" ? "right-[-8px]" : "left-[-8px]"}
+                  `}
                 ></div>
 
                 {/* Roadmap item card */}
@@ -162,20 +171,20 @@ const Roadmap = () => {
                         </svg>
                       )}
                     </div>
+
                     <div className="flex-grow">
                       <h3 className="text-base font-semibold leading-tight">
                         {item.title}
                       </h3>
-                      <p className="text-xs leading-relaxed mt-1">
+                      <p className="text-xs leading-relaxed mt-1 text-white/75">
                         {item.description}
                       </p>
                     </div>
                   </div>
+
                   <span
                     className={`text-xs mt-2 block opacity-80 ${
-                      item.status === "Completed"
-                        ? "text-[#20befa]"
-                        : "text-white"
+                      statusStyles[item.status].text
                     }`}
                   >
                     {item.status}
@@ -183,6 +192,12 @@ const Roadmap = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Small note */}
+          <div className="max-w-4xl mx-auto mt-10 text-center text-white/50 text-sm">
+            Verified = publicly verifiable • In Progress = being built • Planned
+            = next phases (subject to readiness + security)
           </div>
         </div>
       </div>
