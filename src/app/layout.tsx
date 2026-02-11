@@ -32,9 +32,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Rrota: Decentralized Community Token on Solana Blockchain | RROTA",
+  title: "RROTA ($RTA) — Utility-First Solana Token | rrota.xyz",
   description:
-    "Discover Rrota, a decentralized community token on the Solana blockchain. Experience speed, security, and innovation tailored for the new generation of crypto users. Join our community and explore our tokenomics and roadmap. Rrota is live on Solana mainnet and accessible via Solana wallets.",
+    "RROTA ($RTA) is a utility-first token on Solana. Token is live with a transparent build roadmap and staged utility releases (Spin-to-Win, WebApp integration, and more). Explore token details, roadmap, and official links.",
 
   // ✅ GOOGLE SEARCH CONSOLE VERIFICATION
   verification: {
@@ -48,15 +48,15 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "RROTA — The Wheel That Builds Portfolios",
+    title: "RROTA ($RTA) — Utility-First Token on Solana",
     description:
-      "RROTA = REAL MONEY. Built by the community, for the community. Be Early • Be Community • Be Real Money",
+      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. Track progress, roadmap, and official links on rrota.xyz.",
     images: [
       {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA Token - The Wheel That Builds Portfolios",
+        alt: "RROTA ($RTA) — Utility-First Token on Solana",
       },
     ],
     type: "website",
@@ -65,9 +65,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "RROTA — The Wheel That Builds Portfolios",
+    title: "RROTA ($RTA) — Utility-First Token on Solana",
     description:
-      "RROTA = REAL MONEY. Built by the community, for the community. Be Early • Be Community • Be Real Money",
+      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. See roadmap + official links on rrota.xyz.",
     images: ["/rrota-og.jpg"],
   },
 };
