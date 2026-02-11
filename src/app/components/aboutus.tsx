@@ -1,213 +1,257 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import RrotaImage2 from "../../../public/rrota-image-2.jpg";
 import Image from "next/image";
 
 const AboutUs = () => {
+  const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+  const [copied, setCopied] = useState(false);
+
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(TOKEN_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch (e) {
+      console.error("Copy failed", e);
+    }
+  };
+
   return (
-    <section id="AboutUs" className="w-full px-4 mb-20">
+    <section id="AboutUs" className="w-full px-4 mb-20 text-white">
       <div className="max-w-[1300px] mx-auto">
         <h2 className="text-center text-3xl md:text-4xl font-extrabold bg-gradient-to-r pb-5 from-[#fff] via-[#fff] to-[#fff] bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(168,144,255,0.35)]">
           About RROTA
         </h2>
 
         {/* Quick Intro */}
-        <div className="text-center mb-12">
-          <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-6 max-w-4xl mx-auto">
             <span className="text-[#20befa] font-bold">RROTA ($RTA)</span> is a
-            decentralized Solana token that combines real-world utility with fun
-            gamified rewards. From transit payments to play-to-earn gaming,{" "}
-            <span className="text-[#20befa] font-bold">RROTA</span> is built for
-            community growth and financial freedom.
+            Solana token focused on <span className="text-[#20befa] font-bold">utility-first</span>{" "}
+            growth — combining gamified rewards with real-world direction (Spin-to-Win,
+            P2E experiences, and future transit tools).
           </p>
 
-          {/* Key Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="flex flex-col items-center p-6 rounded-xl border border-green-500/30 !bg-gradient-to-br !from-green-500/10 !to-transparent hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-green-400"
-                >
-                  <path d="M9 12l2 2 4-4" />
-                  <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z" />
-                  <path d="M3 5h18v6H3V5z" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-lg text-white mb-2">
-                ✅ Audited & Safe
-              </h3>
-              <p className="text-green-400 text-sm font-medium">
-                FreshCoins Verified
+          <p className="text-white/70 max-w-4xl mx-auto text-base md:text-lg leading-relaxed">
+            We keep it simple: real on-chain token, real liquidity, audited contract,
+            and a build-first approach. Hype can come later — structure comes first.
+          </p>
+        </div>
+
+        {/* Verify / Trust Box */}
+        <div className="max-w-4xl mx-auto mb-12 rounded-2xl border border-[#2b3139] bg-[#202329]/60 backdrop-blur-sm p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="space-y-2">
+              <p className="text-white font-semibold text-lg">✅ Verify the mint address</p>
+              <p className="text-white/70 text-sm">
+                Always verify the token address before swapping. Fake clones exist.
+              </p>
+              <p className="font-mono text-xs md:text-sm break-all text-white/90">
+                {TOKEN_ADDRESS}
               </p>
             </div>
 
-            <div className="flex flex-col items-center p-6 rounded-xl border border-blue-500/30 !bg-gradient-to-br !from-blue-500/10 !to-transparent hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-blue-400"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                  <path d="M9 9h.01" />
-                  <path d="M15 9h.01" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-lg text-white mb-2">
-                ⚙️ Utility + Fun
-              </h3>
-              <p className="text-blue-400 text-sm font-medium">
-                Games & Real Use Cases
-              </p>
-            </div>
+            <div className="flex gap-3 flex-wrap">
+              <button
+                onClick={copyAddress}
+                type="button"
+                className="px-4 py-3 rounded-xl border border-[#1cc2fc]/30 bg-[#1cc2fc]/10 hover:bg-[#1cc2fc]/15 transition text-[#7dd9ff] font-semibold"
+              >
+                {copied ? "Copied ✓" : "Copy Address"}
+              </button>
 
-            <div className="flex flex-col items-center p-6 rounded-xl border border-orange-500/30 !bg-gradient-to-br !from-orange-500/10 !to-transparent hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-orange-400"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                  <path d="M17 3l3 3-3 3" />
-                  <path d="M7 21l-3-3 3-3" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-lg text-white mb-2">
-                🔥 1B+ Burned
-              </h3>
-              <p className="text-orange-400 text-sm font-medium">
-                Deflationary Supply
-              </p>
+              <a
+                href={`https://solscan.io/token/${TOKEN_ADDRESS}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-white font-semibold"
+              >
+                Open Solscan ↗
+              </a>
+
+              <a
+                href="https://freshcoins.io/audit/rrota"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-3 rounded-xl border border-green-500/20 bg-green-500/10 hover:bg-green-500/15 transition text-green-300 font-semibold"
+              >
+                Audit ↗
+              </a>
             </div>
+          </div>
+
+          <div className="mt-4 text-xs text-white/60">
+            Tip: If an app doesn’t show $RTA, paste the mint address above.
           </div>
         </div>
 
+        {/* Key Highlights */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+          <div className="flex flex-col items-center p-6 rounded-xl border border-green-500/30 !bg-gradient-to-br !from-green-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-green-400"
+              >
+                <path d="M9 12l2 2 4-4" />
+                <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z" />
+                <path d="M3 5h18v6H3V5z" />
+              </svg>
+            </div>
+            <h3 className="font-bold text-lg text-white mb-2">Audited</h3>
+            <p className="text-green-400 text-sm font-medium">FreshCoins Verified</p>
+          </div>
+
+          <div className="flex flex-col items-center p-6 rounded-xl border border-blue-500/30 !bg-gradient-to-br !from-blue-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
+            <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-blue-400"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                <path d="M9 9h.01" />
+                <path d="M15 9h.01" />
+              </svg>
+            </div>
+            <h3 className="font-bold text-lg text-white mb-2">Utility-first</h3>
+            <p className="text-blue-400 text-sm font-medium">Games + future tools</p>
+          </div>
+
+          <div className="flex flex-col items-center p-6 rounded-xl border border-orange-500/30 !bg-gradient-to-br !from-orange-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
+            <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-orange-400"
+              >
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+                <path d="M17 3l3 3-3 3" />
+                <path d="M7 21l-3-3 3-3" />
+              </svg>
+            </div>
+            <h3 className="font-bold text-lg text-white mb-2">Deflationary</h3>
+            <p className="text-orange-400 text-sm font-medium">Supply burns tracked on-chain</p>
+          </div>
+        </div>
+
+        {/* Now vs Next */}
+        <div className="max-w-5xl mx-auto mb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="rounded-2xl border border-[#2b3139] bg-[#1c1f24] p-6">
+            <h3 className="text-[#20befa] font-bold text-lg mb-3">What exists now</h3>
+            <ul className="space-y-2 text-white/80 text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>Live token on Solana with visible on-chain data</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>Audit report available (FreshCoins)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>Community channels active: Telegram + X</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-[#2b3139] bg-[#1c1f24] p-6">
+            <h3 className="text-[#20befa] font-bold text-lg mb-3">What’s in development</h3>
+            <ul className="space-y-2 text-white/80 text-sm">
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>Spin-to-Win access & reward logic (anti-farm focus)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>P2E experiences (Crypto Shooter concept + expansion)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#20befa] mt-1">•</span>
+                <span>Utility integrations (website + WebApp + future tools)</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Image + Long Copy */}
         <div className="w-full bg-[#1c1f24] border border-[#2b3139] rounded-[24px] overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="relative w-full h-[300px] sm:h-[400px] md:h-full">
               <Image
-                alt="RROTA Team"
+                alt="RROTA Visual"
                 src={RrotaImage2}
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ objectPosition: "center top" }}
+                priority
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f14] via-transparent to-transparent opacity-70"></div>
             </div>
+
             <div className="text-[#aaa] text-sm mt-1 leading-relaxed space-y-6 p-4 md:p-6 flex flex-col justify-center">
               <p>
-                At <span className="text-[#20befa]">RROTA</span>, we are
-                redefining what it means to be part of a decentralized community
-                on the Solana blockchain. Our mission is to deliver a fast,
-                secure, and innovative token ecosystem that empowers the next
-                generation of crypto enthusiasts.
-              </p>
-              <p>
-                Built on Solana&apos;s high-performance infrastructure,{" "}
-                <span className="text-[#20befa]">RROTA</span> is designed to
-                provide speed, scalability, and low transaction costs without
-                compromising security. We believe in creating a transparent and
-                community-driven project that prioritizes real utility, user
-                engagement, and long-term growth.
-              </p>
-              <p>
-                Our vision is simple yet powerful: to build a thriving
-                decentralized ecosystem where users have a voice and value is
-                shared fairly. With clear tokenomics, an actionable roadmap, and
-                an active community, we aim to make{" "}
-                <span className="text-[#20befa]">RROTA</span> a cornerstone of
-                the Solana DeFi space.
+                <span className="text-[#20befa]">RROTA</span> is community-built
+                on Solana’s high-performance infrastructure — focused on speed,
+                low fees, and a clean on-chain footprint.
               </p>
 
-              <div className="space-y-4">
+              <p>
+                Our goal is to grow an ecosystem where holding and using $RTA
+                makes sense: rewards, games, and practical integrations — shipped
+                step-by-step, not promised overnight.
+              </p>
+
+              <div className="space-y-3">
                 <h3 className="text-[#20befa] font-semibold text-base">
-                  Why RROTA?
+                  Core principles
                 </h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>Lightning-fast transactions powered by Solana</span>
+                    <span>Transparency: link everything on-chain</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>
-                      Community-first approach with transparent governance
-                    </span>
+                    <span>Utility-first: ship working features before marketing</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>
-                      Sustainable growth through innovation and utility
-                      expansion
-                    </span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-[#20befa] font-semibold text-base">
-                  Looking Ahead
-                </h3>
-                <p>
-                  The future of <span className="text-[#20befa]">RROTA</span> is
-                  bright. We are committed to:
-                </p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>
-                      Expanding token utility across diverse platforms and
-                      services
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>
-                      Enhancing community engagement through initiatives,
-                      rewards, and governance participation
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>
-                      Driving innovation in the DeFi ecosystem with new features
-                      and integrations
-                    </span>
+                    <span>Community: rewards that prioritize real holders</span>
                   </li>
                 </ul>
               </div>
 
               <p className="text-[#20befa] font-medium">
-                Join us as we shape the future of decentralized finance on
-                Solana. Together, we&apos;ll push the boundaries of what&apos;s
-                possible.
+                If you’re here early — you’re here for the build phase.
               </p>
+
               <div className="flex gap-5 pt-2 flex-wrap">
                 <a
                   href="https://x.com/rrotacoin"
@@ -216,12 +260,7 @@ const AboutUs = () => {
                   className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition text-white"
                   aria-label="Twitter (X)"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5"
-                    fill="currentColor"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
                     <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z"></path>
                   </svg>
                 </a>
@@ -233,39 +272,22 @@ const AboutUs = () => {
                   className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
                   aria-label="Telegram"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-send w-5 h-5 text-white"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send w-5 h-5 text-white">
                     <path d="m22 2-7 20-4-9-9-4Z"></path>
                     <path d="M22 2 11 13"></path>
                   </svg>
                 </a>
 
                 <a
-                  href="https://discord.com/channels/1368206433933459466/1368206433933459469"
+                  href="https://freshcoins.io/audit/rrota"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
-                  aria-label="Discord"
+                  aria-label="Audit"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-5 h-5 text-white"
-                  >
-                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                 </a>
 
@@ -274,21 +296,21 @@ const AboutUs = () => {
                   className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
                   aria-label="Email"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-mail w-5 h-5 text-white"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail w-5 h-5 text-white">
                     <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                   </svg>
+                </a>
+              </div>
+
+              <div className="pt-2">
+                <a
+                  href="https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold bg-gradient-to-r from-[#1cc2fc] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#1cc2fc] transition-all duration-300 shadow-lg hover:shadow-[#1cc2fc]/30"
+                >
+                  Buy on Jupiter ↗
                 </a>
               </div>
             </div>
