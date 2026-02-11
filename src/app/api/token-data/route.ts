@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "nodejs"; // ensures Node runtime (better compatibility)
+export const runtime = "nodejs";
+
+type ErrorWithMessage = { message?: string };
 
 export async function GET(req: Request) {
   try {
@@ -12,7 +14,6 @@ export async function GET(req: Request) {
     }
 
     const apiKey = process.env.SOLANATRACKER_API_KEY;
-
     if (!apiKey) {
       return NextResponse.json(
         { error: "Missing SOLANATRACKER_API_KEY env var" },
@@ -21,13 +22,12 @@ export async function GET(req: Request) {
     }
 
     const upstream = await fetch(
-      `https://data.solanatracker.io/tokens/${token}`,
+      `https://data.solanatracker.io/tokens/${encodeURIComponent(token)}`,
       {
         headers: {
           "x-api-key": apiKey,
           "Content-Type": "application/json",
         },
-        // Optional: prevent caching issues on server
         cache: "no-store",
       }
     );
@@ -44,11 +44,16 @@ export async function GET(req: Request) {
       );
     }
 
-    const data = await upstream.json();
+    const data: unknown = await upstream.json();
     return NextResponse.json(data);
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message =
+      typeof err === "object" && err !== null
+        ? (err as ErrorWithMessage).message
+        : undefined;
+
     return NextResponse.json(
-      { error: "Server error", message: err?.message ?? "unknown" },
+      { error: "Server error", message: message ?? "unknown" },
       { status: 500 }
     );
   }
