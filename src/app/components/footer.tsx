@@ -1,8 +1,11 @@
 "use client";
+
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Footer = () => {
+  const tokenAddress = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
   return (
     <footer className="bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] text-white py-16">
       <div className="container mx-auto px-4">
@@ -22,14 +25,26 @@ const Footer = () => {
           </motion.div>
 
           <motion.blockquote
-            className="text-2xl md:text-3xl font-bold text-white mb-8 max-w-4xl mx-auto leading-relaxed"
+            className="text-2xl md:text-3xl font-bold text-white mb-4 max-w-4xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            RROTA = REAL MONEY. Built by the community, for the community.
+            Utility-first token on Solana — built step-by-step with transparent
+            execution.
           </motion.blockquote>
+
+          <motion.p
+            className="text-white/70 text-base md:text-lg max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.28 }}
+            viewport={{ once: true }}
+          >
+            Build phase: active. Releases ship when tested — no forced hype, no
+            fake promises.
+          </motion.p>
         </div>
 
         {/* CTA Buttons */}
@@ -41,7 +56,7 @@ const Footer = () => {
           viewport={{ once: true }}
         >
           <motion.a
-            href="https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a"
+            href={`https://jup.ag/tokens/${tokenAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 px-8 py-4 bg-[#1cc2fc] hover:bg-[#0ea5e9] text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 border-2 border-[#1cc2fc] hover:border-[#0ea5e9]"
@@ -105,56 +120,72 @@ const Footer = () => {
               className="w-5 h-5"
               fill="currentColor"
             >
-              <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z"></path>
+              <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z" />
             </svg>
-            Follow Twitter
+            Follow on X
           </motion.a>
         </motion.div>
 
-        {/* Trust Indicators */}
+        {/* Trust / Transparency Indicators */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           viewport={{ once: true }}
         >
           <motion.div
-            className="text-lg md:text-xl font-bold text-white mb-6"
+            className="text-lg md:text-xl font-semibold text-white/90 mb-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
             viewport={{ once: true }}
           >
-            ✔️ LP Locked ✔️ Audited ✔️ No Dev Wallets 👥 100% Community
+            Transparency first: on-chain verification + public roadmap
           </motion.div>
+
+          <div className="text-white/70 text-sm md:text-base">
+            ✔️ Token live on Solana • ✔️ Mint revoked • ✔️ Freeze revoked • ✔️
+            Audit verification available • Community-driven
+          </div>
         </motion.div>
 
-        {/* Motivational Hook */}
+        {/* Footer Hook (clean, no hype) */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
           viewport={{ once: true }}
         >
-          <motion.h1
-            className="text-3xl md:text-4xl font-bold text-[#1cc2fc] mb-4"
+          <motion.h3
+            className="text-2xl md:text-3xl font-bold text-[#1cc2fc] mb-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
             viewport={{ once: true }}
           >
-            💎 RROTA — The Wheel That Builds Portfolios
-          </motion.h1>
+            RROTA — Build & Ship
+          </motion.h3>
           <motion.p
-            className="text-xl md:text-2xl font-bold text-white"
+            className="text-white/75 text-base md:text-lg font-medium max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
             viewport={{ once: true }}
           >
-            🚀 Be Early • Be Community • Be Real Money
+            Follow updates as utilities move from development → beta → release.
+          </motion.p>
+
+          <motion.p
+            className="mt-4 text-white/50 text-xs md:text-sm max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            viewport={{ once: true }}
+          >
+            Disclaimer: RROTA is a crypto token. Nothing on this website is
+            financial advice. Always do your own research.
           </motion.p>
         </motion.div>
 
@@ -198,7 +229,7 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          © 2025 RROTA. All Rights Reserved. Built on Solana.
+          © {new Date().getFullYear()} RROTA. Built on Solana.
         </motion.div>
       </div>
     </footer>
