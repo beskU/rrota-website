@@ -3,21 +3,27 @@ import React from "react";
 
 type Status = "Verified" | "In Progress" | "Planned";
 
+type RoadmapItem = {
+  title: string;
+  description: string;
+  status: Status;
+  icon: "check" | "clock";
+  side: "left" | "right";
+  proof?: { label: string; href: string }; // optional proof link for Verified phases
+};
+
 const Roadmap = () => {
-  const roadmapItems: Array<{
-    title: string;
-    description: string;
-    status: Status;
-    icon: "check" | "clock";
-    side: "left" | "right";
-  }> = [
+  const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
+  const roadmapItems: RoadmapItem[] = [
     {
       title: "Phase 1 — Foundation (On-chain setup)",
       description:
-        "Token live on Solana. Core safety setup completed (mint authority revoked, freeze authority revoked). Scarcity actions (burns) and transparency links established.",
+        "Token live on Solana. Core safety setup completed (mint authority revoked, freeze authority revoked). Burns tracked on-chain and official links established.",
       status: "Verified",
       icon: "check",
       side: "left",
+      proof: { label: "View Solscan", href: `https://solscan.io/token/${TOKEN_ADDRESS}` },
     },
     {
       title: "Phase 2 — Trust Layer (Links + verification)",
@@ -26,6 +32,7 @@ const Roadmap = () => {
       status: "In Progress",
       icon: "clock",
       side: "right",
+      proof: { label: "Audit", href: "https://freshcoins.io/audit/rrota" },
     },
     {
       title: "Phase 3 — Spin-to-Win (Core utility)",
@@ -46,7 +53,7 @@ const Roadmap = () => {
     {
       title: "Phase 5 — Game Expansion (Shooter prototype)",
       description:
-        "Shooter game prototype → playable beta. Rewards only if the economy is sustainable and resistant to farming.",
+        "Shooter prototype → playable beta. Rewards only if the economy is sustainable and resistant to farming.",
       status: "Planned",
       icon: "clock",
       side: "left",
@@ -61,18 +68,27 @@ const Roadmap = () => {
     },
   ];
 
-  const statusStyles: Record<Status, { text: string; dot: string }> = {
+  const statusStyles: Record<
+    Status,
+    { text: string; dot: string; badge: string }
+  > = {
     Verified: {
       text: "text-[#20befa]",
       dot: "!bg-[#20befa] !border-[#20befa] shadow-lg shadow-[#20befa]/30",
+      badge:
+        "bg-[#20befa]/10 text-[#20befa] border border-[#20befa]/30",
     },
     "In Progress": {
       text: "text-white",
       dot: "!bg-[#1a1d23] !border-[#20befa] shadow-lg shadow-[#20befa]/20",
+      badge:
+        "bg-white/5 text-white border border-[#20befa]/25",
     },
     Planned: {
       text: "text-white/80",
       dot: "!bg-[#1a1d23] !border-[#2b3139] shadow-lg shadow-black/20",
+      badge:
+        "bg-white/5 text-white/80 border border-white/10",
     },
   };
 
@@ -88,16 +104,17 @@ const Roadmap = () => {
           <div className="bg-gradient-to-br from-[#1a1d23] to-[#202329] border border-[#2b3139] rounded-2xl p-8">
             <p className="text-gray-300 leading-relaxed mb-4">
               RROTA is in an active build phase. This roadmap is designed to be
-              honest: we only mark items as <span className="text-[#20befa] font-semibold">Verified</span>{" "}
-              when they are publicly verifiable (on-chain or via published links).
-              Everything else is listed as <span className="font-semibold">In Progress</span>{" "}
-              or <span className="font-semibold">Planned</span>.
+              honest: we only mark items as{" "}
+              <span className="text-[#20befa] font-semibold">Verified</span>{" "}
+              when they are publicly verifiable (on-chain or via published
+              links). Everything else is listed as{" "}
+              <span className="font-semibold">In Progress</span> or{" "}
+              <span className="font-semibold">Planned</span>.
             </p>
 
             <p className="text-gray-300 leading-relaxed mb-4">
               The goal is simple: ship utility in stages — development → beta →
-              release — and avoid “big claims” until features are actually live.
-              This keeps trust high and expectations aligned.
+              release — and avoid big claims until features are actually live.
             </p>
 
             <p className="text-gray-300 leading-relaxed">
@@ -121,22 +138,22 @@ const Roadmap = () => {
                     : "md:pl-8 md:text-left"
                 } z-10`}
               >
-                {/* Timeline dot */}
+                {/* Timeline dot (FIXED: tailwind top class) */}
                 <div
-                  className={`absolute top-15 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full border-2 z-[-1]
+                  className={`absolute top-8 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full border-2 z-[-1]
                     ${statusStyles[item.status].dot}
                     ${item.side === "left" ? "right-[-8px]" : "left-[-8px]"}
                   `}
-                ></div>
+                />
 
                 {/* Roadmap item card */}
-                <div className="p-3 rounded-[16px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
+                <div className="p-4 rounded-[16px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
                   <div
                     className={`flex items-start gap-3 ${
                       item.side === "left" ? "md:flex-row-reverse" : ""
                     }`}
                   >
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 mt-0.5">
                       {item.icon === "check" ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -173,22 +190,38 @@ const Roadmap = () => {
                     </div>
 
                     <div className="flex-grow">
-                      <h3 className="text-base font-semibold leading-tight">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs leading-relaxed mt-1 text-white/75">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="text-base font-semibold leading-tight">
+                          {item.title}
+                        </h3>
+
+                        {/* Status badge */}
+                        <span
+                          className={`shrink-0 text-[11px] px-2 py-1 rounded-full ${statusStyles[item.status].badge}`}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
+
+                      <p className="text-xs leading-relaxed mt-2 text-white/75">
                         {item.description}
                       </p>
+
+                      {/* Proof link (optional) */}
+                      {item.proof?.href && (
+                        <div className="mt-3">
+                          <a
+                            href={item.proof.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-semibold text-[#20befa] hover:opacity-80 transition"
+                          >
+                            {item.proof.label} ↗
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  <span
-                    className={`text-xs mt-2 block opacity-80 ${
-                      statusStyles[item.status].text
-                    }`}
-                  >
-                    {item.status}
-                  </span>
                 </div>
               </div>
             ))}
