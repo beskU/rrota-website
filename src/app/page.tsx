@@ -21,18 +21,26 @@ export default function Home() {
         <section className="w-full mb-20">
           <Why />
         </section>
+
         <section className="w-full mb-20">
           <Graph />
         </section>
+
         <section className="w-full mb-20">
           <Tokenomics />
         </section>
+
+        {/* ✅ Blog preview inserted here */}
+        <BlogPreview />
+
         <section className="w-full mb-20">
           <HowTo />
         </section>
+
         <section className="w-full mb-20">
           <Roadmap />
         </section>
+
         <section className="w-full my-20">
           <AboutUs />
         </section>
