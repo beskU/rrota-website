@@ -9,6 +9,16 @@ import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
 
+function JsonLd({ data }: { data: object }) {
+  return (
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
 function escapeHtml(str: string) {
   return str
     .replaceAll("&", "&amp;")
@@ -129,13 +139,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const a = getArticleBySlug(slug);
+    const canonical = `https://rrota.xyz/blog/${a.slug}`;
     return {
       title: `${a.meta.title} | RROTA Blog`,
       description: a.meta.description,
+      alternates: { canonical },
       openGraph: {
         title: a.meta.title,
         description: a.meta.description,
-        url: `https://rrota.xyz/blog/${a.slug}`,
+        url: canonical,
         type: "article",
       },
       twitter: {
@@ -162,6 +174,37 @@ export default async function BlogPostPage({ params }: PageProps) {
   const html = markdownToHtml(article.content);
   const rt = readingTimeMinutes(article.content);
 
+  const baseUrl = "https://rrota.xyz";
+  const canonicalUrl = `${baseUrl}/blog/${article.slug}`;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.meta.title,
+    description: article.meta.description,
+    datePublished: article.meta.date,
+    dateModified: article.meta.date,
+    author: {
+      "@type": "Organization",
+      name: article.meta.author ?? "RROTA Team",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "RROTA",
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseUrl}/rrota-og.jpg`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    url: canonicalUrl,
+    keywords: (article.meta.tags ?? []).join(", "),
+    wordCount: rt.words,
+  };
+
   return (
     <BlogShell
       crumbs={[
@@ -172,7 +215,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       title={article.meta.title}
       subtitle={article.meta.description}
     >
-      {/* Meta row */}
+      <JsonLd data={articleSchema} />
+
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="text-sm text-white/60">
           <span>{article.meta.date}</span>
@@ -184,7 +228,6 @@ export default async function BlogPostPage({ params }: PageProps) {
         <ShareButtons title={`${article.meta.title} — RROTA Blog`} />
       </div>
 
-      {/* Tags */}
       {article.meta.tags?.length ? (
         <div className="mb-8 flex flex-wrap gap-2">
           {article.meta.tags.map((t: string) => (
@@ -198,7 +241,6 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       ) : null}
 
-      {/* Typography */}
       <article
         className="prose prose-invert prose-lg max-w-none
                    prose-headings:tracking-tight
