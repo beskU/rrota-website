@@ -6,6 +6,15 @@ import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 
 type RouteParams = { slug: string };
 
+function isRouteParams(v: unknown): v is RouteParams {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "slug" in v &&
+    typeof (v as { slug?: unknown }).slug === "string"
+  );
+}
+
 function escapeHtml(str: string) {
   return str
     .replaceAll("&", "&amp;")
@@ -115,16 +124,15 @@ export async function generateStaticParams(): Promise<RouteParams[]> {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
 
-// Next 15 typing can be weird with PageProps, so we accept unknown and narrow safely.
-export async function generateMetadata({
-  params,
-}: {
-  params: unknown;
-}): Promise<Record<string, unknown>> {
-  const p = params as RouteParams;
+export async function generateMetadata(input: unknown): Promise<Record<string, unknown>> {
+  const obj =
+    typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
+  const params = obj["params"];
+
+  if (!isRouteParams(params)) return {};
 
   try {
-    const a = getArticleBySlug(p.slug);
+    const a = getArticleBySlug(params.slug);
     return {
       title: `${a.meta.title} | RROTA ($RTA)`,
       description: a.meta.description,
@@ -145,7 +153,18 @@ export async function generateMetadata({
   }
 }
 
-export default function BlogPostPage({ params }: { params: RouteParams }) {
+// DO NOT TYPE PROPS HERE (avoids Next 15 PageProps Promise constraint)
+export default function BlogPostPage() {
+  // Next passes props as first argument — we safely read it without typing the signature.
+  const firstArg = arguments[0] as unknown;
+  const obj =
+    typeof firstArg === "object" && firstArg !== null
+      ? (firstArg as Record<string, unknown>)
+      : {};
+  const params = obj["params"];
+
+  if (!isRouteParams(params)) return notFound();
+
   let article;
   try {
     article = getArticleBySlug(params.slug);
