@@ -5,15 +5,7 @@ import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 
 type RouteParams = { slug: string };
-
-function isRouteParams(v: unknown): v is RouteParams {
-  return (
-    typeof v === "object" &&
-    v !== null &&
-    "slug" in v &&
-    typeof (v as { slug?: unknown }).slug === "string"
-  );
-}
+type PageProps = { params: Promise<RouteParams> };
 
 function escapeHtml(str: string) {
   return str
@@ -124,15 +116,11 @@ export async function generateStaticParams(): Promise<RouteParams[]> {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata(input: unknown): Promise<Record<string, unknown>> {
-  const obj =
-    typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
-  const params = obj["params"];
-
-  if (!isRouteParams(params)) return {};
+export async function generateMetadata({ params }: PageProps): Promise<Record<string, unknown>> {
+  const { slug } = await params;
 
   try {
-    const a = getArticleBySlug(params.slug);
+    const a = getArticleBySlug(slug);
     return {
       title: `${a.meta.title} | RROTA ($RTA)`,
       description: a.meta.description,
@@ -153,21 +141,12 @@ export async function generateMetadata(input: unknown): Promise<Record<string, u
   }
 }
 
-// DO NOT TYPE PROPS HERE (avoids Next 15 PageProps Promise constraint)
-export default function BlogPostPage() {
-  // Next passes props as first argument — we safely read it without typing the signature.
-  const firstArg = arguments[0] as unknown;
-  const obj =
-    typeof firstArg === "object" && firstArg !== null
-      ? (firstArg as Record<string, unknown>)
-      : {};
-  const params = obj["params"];
-
-  if (!isRouteParams(params)) return notFound();
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params;
 
   let article;
   try {
-    article = getArticleBySlug(params.slug);
+    article = getArticleBySlug(slug);
   } catch {
     return notFound();
   }
