@@ -1,11 +1,8 @@
 export const runtime = "nodejs";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  getArticleBySlug,
-  getArticleSlugs,
-  type Article,
-} from "@/app/lib/articles";
+import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 
 function escapeHtml(str: string) {
   return str
@@ -121,11 +118,8 @@ export async function generateStaticParams() {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}) {
+// IMPORTANT: avoid strict PageProps typing here (Next 15 can infer)
+export async function generateMetadata({ params }: any) {
   try {
     const a = getArticleBySlug(params.slug);
     return {
@@ -148,9 +142,8 @@ export async function generateMetadata({
   }
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  let article: Article;
-
+export default function BlogPostPage({ params }: any) {
+  let article;
   try {
     article = getArticleBySlug(params.slug);
   } catch {
@@ -217,4 +210,3 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     </main>
   );
 }
-
