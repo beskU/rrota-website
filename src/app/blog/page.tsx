@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import Link from "next/link";
 import { getAllArticles } from "@/app/lib/articles";
 
