@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 
+type RouteParams = { slug: string };
+
 function escapeHtml(str: string) {
   return str
     .replaceAll("&", "&amp;")
@@ -13,7 +15,6 @@ function escapeHtml(str: string) {
     .replaceAll("'", "&#039;");
 }
 
-// Simple markdown -> HTML (headings, paragraphs, bullets, links, code blocks).
 function simpleMarkdownToHtml(md: string) {
   const lines = md.split("\n");
 
@@ -25,7 +26,6 @@ function simpleMarkdownToHtml(md: string) {
     const line = rawLine.replace(/\r$/, "");
     const l = line.trim();
 
-    // Code fences
     if (l.startsWith("```")) {
       if (!inCode) {
         if (inList) {
@@ -54,7 +54,6 @@ function simpleMarkdownToHtml(md: string) {
       continue;
     }
 
-    // Headings
     if (l.startsWith("# ")) {
       if (inList) {
         html += "</ul>";
@@ -80,7 +79,6 @@ function simpleMarkdownToHtml(md: string) {
       continue;
     }
 
-    // Lists
     if (l.startsWith("- ") || l.startsWith("• ")) {
       if (!inList) {
         html += "<ul>";
@@ -90,7 +88,6 @@ function simpleMarkdownToHtml(md: string) {
       continue;
     }
 
-    // Links [text](url)
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     const withLinks = escapeHtml(l).replace(
       linkRegex,
@@ -114,14 +111,20 @@ function simpleMarkdownToHtml(md: string) {
   return html;
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<RouteParams[]> {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
 
-// IMPORTANT: avoid strict PageProps typing here (Next 15 can infer)
-export async function generateMetadata({ params }: any) {
+// Next 15 typing can be weird with PageProps, so we accept unknown and narrow safely.
+export async function generateMetadata({
+  params,
+}: {
+  params: unknown;
+}): Promise<Record<string, unknown>> {
+  const p = params as RouteParams;
+
   try {
-    const a = getArticleBySlug(params.slug);
+    const a = getArticleBySlug(p.slug);
     return {
       title: `${a.meta.title} | RROTA ($RTA)`,
       description: a.meta.description,
@@ -142,7 +145,7 @@ export async function generateMetadata({ params }: any) {
   }
 }
 
-export default function BlogPostPage({ params }: any) {
+export default function BlogPostPage({ params }: { params: RouteParams }) {
   let article;
   try {
     article = getArticleBySlug(params.slug);
