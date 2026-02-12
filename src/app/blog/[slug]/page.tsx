@@ -1,7 +1,9 @@
 export const runtime = "nodejs";
 
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import BlogShell from "@/app/components/blog/blog-shell";
+import ShareButtons from "@/app/components/blog/share-buttons";
 import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 
 type RouteParams = { slug: string };
@@ -16,7 +18,7 @@ function escapeHtml(str: string) {
     .replaceAll("'", "&#039;");
 }
 
-function simpleMarkdownToHtml(md: string) {
+function markdownToHtml(md: string) {
   const lines = md.split("\n");
 
   let html = "";
@@ -112,17 +114,23 @@ function simpleMarkdownToHtml(md: string) {
   return html;
 }
 
+function readingTimeMinutes(text: string) {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return { words, minutes };
+}
+
 export async function generateStaticParams(): Promise<RouteParams[]> {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Record<string, unknown>> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
   try {
     const a = getArticleBySlug(slug);
     return {
-      title: `${a.meta.title} | RROTA ($RTA)`,
+      title: `${a.meta.title} | RROTA Blog`,
       description: a.meta.description,
       openGraph: {
         title: a.meta.title,
@@ -151,63 +159,58 @@ export default async function BlogPostPage({ params }: PageProps) {
     return notFound();
   }
 
-  const html = simpleMarkdownToHtml(article.content);
+  const html = markdownToHtml(article.content);
+  const rt = readingTimeMinutes(article.content);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/blog" className="text-sm opacity-80 hover:opacity-100">
-        ← Back to Blog
-      </Link>
-
-      <header className="mt-6">
-        <h1 className="text-3xl font-bold">{article.meta.title}</h1>
-        <p className="mt-2 text-sm opacity-80">{article.meta.description}</p>
-
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs opacity-70">
+    <BlogShell
+      crumbs={[
+        { label: "Home", href: "/" },
+        { label: "Blog", href: "/blog" },
+        { label: article.meta.title },
+      ]}
+      title={article.meta.title}
+      subtitle={article.meta.description}
+    >
+      {/* Meta row */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div className="text-sm text-white/60">
           <span>{article.meta.date}</span>
-          {article.meta.author ? <span>• {article.meta.author}</span> : null}
-          {article.meta.tags?.length ? (
-            <>
-              <span>•</span>
-              <span>{article.meta.tags.join(", ")}</span>
-            </>
-          ) : null}
+          {article.meta.author ? <span> • {article.meta.author}</span> : null}
+          <span> • {rt.minutes} min read</span>
+          <span> • {rt.words} words</span>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm">
-          <div className="flex flex-col gap-1">
-            <a
-              href="https://rrota.xyz"
-              target="_blank"
-              rel="noreferrer"
-              className="opacity-90 hover:opacity-100 underline underline-offset-4"
-            >
-              Website: https://rrota.xyz
-            </a>
-            <a
-              href="https://t.me/rrotaOfficial"
-              target="_blank"
-              rel="noreferrer"
-              className="opacity-90 hover:opacity-100 underline underline-offset-4"
-            >
-              Telegram: https://t.me/rrotaOfficial
-            </a>
-            <a
-              href="https://x.com/rrotacoin"
-              target="_blank"
-              rel="noreferrer"
-              className="opacity-90 hover:opacity-100 underline underline-offset-4"
-            >
-              X: https://x.com/rrotacoin
-            </a>
-          </div>
-        </div>
-      </header>
+        <ShareButtons title={`${article.meta.title} — RROTA Blog`} />
+      </div>
 
+      {/* Tags */}
+      {article.meta.tags?.length ? (
+        <div className="mb-8 flex flex-wrap gap-2">
+          {article.meta.tags.map((t: string) => (
+            <span
+              key={t}
+              className="text-xs px-3 py-1 rounded-full bg-white/10 text-white/70 border border-white/10"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {/* Typography */}
       <article
-        className="prose prose-invert mt-8 max-w-none"
+        className="prose prose-invert prose-lg max-w-none
+                   prose-headings:tracking-tight
+                   prose-h2:mt-10 prose-h2:mb-3
+                   prose-h3:mt-8 prose-h3:mb-2
+                   prose-p:leading-relaxed
+                   prose-a:text-[#7dd9ff] prose-a:no-underline hover:prose-a:underline
+                   prose-strong:text-white
+                   prose-pre:bg-black/40 prose-pre:border prose-pre:border-white/10
+                   prose-code:text-white/90"
         dangerouslySetInnerHTML={{ __html: html }}
       />
-    </main>
+    </BlogShell>
   );
 }
