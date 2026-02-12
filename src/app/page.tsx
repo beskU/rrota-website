@@ -1,3 +1,4 @@
+import BlogPreview from "./components/blog-preview";
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";
 import Why from "./components/why";
