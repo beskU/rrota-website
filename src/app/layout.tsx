@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Gluten, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import ScrollToTop from "./utils/scroll-to-top";
@@ -31,14 +31,52 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "RROTA ($RTA) — Utility-First Solana Token | rrota.xyz",
-  description:
-    "RROTA ($RTA) is a utility-first token on Solana. Token is live with a transparent build roadmap and staged utility releases (Spin-to-Win, WebApp integration, and more). Explore token details, roadmap, and official links.",
+// ✅ Viewport (Next 15 best practice)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0B1220",
+  colorScheme: "dark",
+};
 
-  // ✅ GOOGLE SEARCH CONSOLE VERIFICATION
+export const metadata: Metadata = {
+  metadataBase: new URL("https://rrota.xyz"),
+
+  title: {
+    default: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
+    template: "%s | RROTA ($RTA)",
+  },
+
+  description:
+    "RROTA ($RTA) is the official Solana SPL token focused on real utility development. Contract: 3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a. Explore roadmap, tokenomics, official links, and verify authenticity only at rrota.xyz.",
+
+  applicationName: "RROTA",
+  category: "cryptocurrency",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
   verification: {
     google: "fTDZlE_L9Qw-pp0Ojr45vyyCoxix2X0w0GCl2l60udE",
+  },
+
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
   },
 
   icons: {
@@ -48,28 +86,45 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "RROTA ($RTA) — Utility-First Token on Solana",
+    title: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
     description:
-      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. Track progress, roadmap, and official links on rrota.xyz.",
+      "RROTA is building on-chain utilities with transparent execution. Official contract: 3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a. Verify all official links at rrota.xyz.",
+    url: "https://rrota.xyz",
+    siteName: "RROTA",
+    type: "website",
     images: [
       {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA ($RTA) — Utility-First Token on Solana",
+        alt: "RROTA ($RTA) Official Website",
       },
     ],
-    type: "website",
-    siteName: "RROTA",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "RROTA ($RTA) — Utility-First Token on Solana",
+    title: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
     description:
-      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. See roadmap + official links on rrota.xyz.",
+      "Official RROTA ($RTA) website. Solana SPL token with real utility roadmap. Verify links only at rrota.xyz.",
     images: ["/rrota-og.jpg"],
+    site: "@rrotacoin",
+    creator: "@rrotacoin",
   },
+};
+
+// ✅ Organization schema (strong anti-phishing signal)
+const ORG_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "RROTA",
+  url: "https://rrota.xyz",
+  logo: "https://rrota.xyz/favicon.ico",
+  sameAs: [
+    "https://t.me/rrotaOfficial",
+    "https://x.com/rrotacoin",
+    "https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a",
+  ],
 };
 
 export default function RootLayout({
@@ -78,7 +133,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${gluten.variable} ${inter.variable} ${poppins.variable} antialiased`}
       >
