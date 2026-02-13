@@ -1,4 +1,3 @@
-check this code and make the changes need,   
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Gluten, Inter, Poppins } from "next/font/google";
 import "./globals.css";
