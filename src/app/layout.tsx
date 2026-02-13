@@ -1,42 +1,43 @@
+check this code and make the changes need,   
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Gluten, Inter, Poppins } from "next/font/google";
+import "./globals.css";
+import ScrollToTop from "./utils/scroll-to-top";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const gluten = Gluten({
+  variable: "--font-gluten",
+  subsets: ["latin"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rrota.xyz"),
-
-  title: {
-    default: "RROTA Coin ($RTA) – Official Solana Utility Token | rrota.xyz",
-    template: "%s | rrota.xyz",
-  },
-
+  title: "RROTA ($RTA) — Utility-First Solana Token | rrota.xyz",
   description:
-    "RROTA Coin ($RTA) is a Solana-based utility token in transparent build phase. Official RROTA coin website: rrota.xyz. Track roadmap, token details, and verified links. Avoid typosquatting/phishing sites—verify before connecting a wallet.",
+    "RROTA ($RTA) is a utility-first token on Solana. Token is live with a transparent build roadmap and staged utility releases (Spin-to-Win, WebApp integration, and more). Explore token details, roadmap, and official links.",
 
-  keywords: [
-    "RROTA coin",
-    "RROTA",
-    "RROTA token",
-    "$RTA",
-    "RTA coin",
-    "Solana token",
-    "RROTA official website",
-    "buy RROTA",
-    "Jupiter Solana",
-  ],
-
-  alternates: {
-    canonical: "/",
-  },
-
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      maxImagePreview: "large",
-      maxSnippet: -1,
-      maxVideoPreview: -1,
-    },
-  },
-
+  // ✅ GOOGLE SEARCH CONSOLE VERIFICATION
   verification: {
     google: "fTDZlE_L9Qw-pp0Ojr45vyyCoxix2X0w0GCl2l60udE",
   },
@@ -48,30 +49,43 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "RROTA Coin ($RTA) – Official Solana Utility Token",
+    title: "RROTA ($RTA) — Utility-First Token on Solana",
     description:
-      "RROTA Coin ($RTA) is a Solana utility token building real on-chain utilities with transparent execution. Official website: rrota.xyz. Verify links before connecting a wallet.",
-    url: "https://rrota.xyz/",
-    siteName: "RROTA Coin",
+      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. Track progress, roadmap, and official links on rrota.xyz.",
     images: [
       {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA Coin ($RTA) – Official Solana Utility Token",
+        alt: "RROTA ($RTA) — Utility-First Token on Solana",
       },
     ],
     type: "website",
-    locale: "en_US",
+    siteName: "RROTA",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "RROTA Coin ($RTA) – Official Solana Utility Token",
+    title: "RROTA ($RTA) — Utility-First Token on Solana",
     description:
-      "Official RROTA Coin ($RTA) website: rrota.xyz. Track roadmap, token details, verified links. Avoid phishing/typosquatting—verify before connecting a wallet.",
+      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. See roadmap + official links on rrota.xyz.",
     images: ["/rrota-og.jpg"],
-    creator: "@rrotacoin",
-    site: "@rrotacoin",
   },
 };
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${gluten.variable} ${inter.variable} ${poppins.variable} antialiased`}
+      >
+        {children}
+        <ScrollToTop />
+      </body>
+    </html>
+  );
+}
