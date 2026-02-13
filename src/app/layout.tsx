@@ -1,40 +1,47 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Gluten, Inter, Poppins } from "next/font/google";
-import "./globals.css";
-import ScrollToTop from "./utils/scroll-to-top";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const gluten = Gluten({
-  variable: "--font-gluten",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "RROTA ($RTA) — Utility-First Solana Token | rrota.xyz",
+  metadataBase: new URL("https://rrota.xyz"),
+
+  // ✅ SEO TITLE: must include "RROTA Coin"
+  title: {
+    default: "RROTA Coin ($RTA) – Official Solana Utility Token | rrota.xyz",
+    template: "%s | rrota.xyz",
+  },
+
+  // ✅ SEO DESCRIPTION: must include "RROTA coin" + "official website" + anti-phishing hint
   description:
-    "RROTA ($RTA) is a utility-first token on Solana. Token is live with a transparent build roadmap and staged utility releases (Spin-to-Win, WebApp integration, and more). Explore token details, roadmap, and official links.",
+    "RROTA Coin ($RTA) is a Solana-based utility token in transparent build phase. Official RROTA coin website: rrota.xyz. Track roadmap, token details, and verified links. Avoid typosquatting/phishing sites—verify before connecting a wallet.",
+
+  // Helps Google understand topic relevance
+  keywords: [
+    "RROTA coin",
+    "RROTA",
+    "RROTA token",
+    "$RTA",
+    "RTA coin",
+    "Solana token",
+    "Solana coin",
+    "RROTA official website",
+    "buy RROTA",
+    "Jupiter Solana",
+  ],
+
+  // ✅ Canonical URL (critical for "official")
+  alternates: {
+    canonical: "/",
+  },
+
+  // ✅ Indexing guidance
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 
   // ✅ GOOGLE SEARCH CONSOLE VERIFICATION
   verification: {
@@ -48,43 +55,30 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "RROTA ($RTA) — Utility-First Token on Solana",
+    title: "RROTA Coin ($RTA) – Official Solana Utility Token",
     description:
-      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. Track progress, roadmap, and official links on rrota.xyz.",
+      "RROTA Coin ($RTA) is a Solana utility token building real on-chain utilities with transparent execution. Official website: rrota.xyz. Verify links before connecting a wallet.",
+    url: "https://rrota.xyz/",
+    siteName: "RROTA Coin",
     images: [
       {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA ($RTA) — Utility-First Token on Solana",
+        alt: "RROTA Coin ($RTA) – Official Solana Utility Token",
       },
     ],
     type: "website",
-    siteName: "RROTA",
+    locale: "en_US",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "RROTA ($RTA) — Utility-First Token on Solana",
+    title: "RROTA Coin ($RTA) – Official Solana Utility Token",
     description:
-      "RROTA is building on-chain utilities with transparent execution and staged releases. Token is live on Solana. See roadmap + official links on rrota.xyz.",
+      "Official RROTA Coin ($RTA) website: rrota.xyz. Track roadmap, token details, verified links. Avoid phishing/typosquatting—verify before connecting a wallet.",
     images: ["/rrota-og.jpg"],
+    creator: "@rrotacoin",
+    site: "@rrotacoin",
   },
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${gluten.variable} ${inter.variable} ${poppins.variable} antialiased`}
-      >
-        {children}
-        <ScrollToTop />
-      </body>
-    </html>
-  );
-}
