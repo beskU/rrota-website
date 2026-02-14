@@ -4,49 +4,62 @@ import { getArticleSlugs, getArticleBySlug } from "./lib/articles";
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://rrota.xyz";
 
-  const now = new Date();
+  // Use build time once (not regenerated per entry)
+  const buildDate = new Date();
 
-  // 🔹 Core static pages (strong SEO structure)
+  // 🔹 Core static pages
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: now,
+      lastModified: buildDate,
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: `${baseUrl}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
+      url: `${baseUrl}/verify`,
+      lastModified: buildDate,
+      changeFrequency: "weekly",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/claim`,
+      lastModified: buildDate,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/roadmap`,
-      lastModified: now,
+      lastModified: buildDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/tokenomics`,
-      lastModified: now,
+      lastModified: buildDate,
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/links`,
-      lastModified: now,
+      url: `${baseUrl}/about`,
+      lastModified: buildDate,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/links`,
+      lastModified: buildDate,
+      changeFrequency: "monthly",
+      priority: 0.75,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified: now,
+      lastModified: buildDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
   ];
 
-  // 🔹 Blog articles (real lastModified from frontmatter date)
+  // 🔹 Blog articles (real date from frontmatter)
   const blogRoutes: MetadataRoute.Sitemap = getArticleSlugs().map((slug) => {
     const article = getArticleBySlug(slug);
 
