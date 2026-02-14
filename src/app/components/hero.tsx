@@ -22,6 +22,7 @@ const Hero = () => {
   const [copied, setCopied] = useState(false);
 
   const tokenAddress = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+  const OFFICIAL_DOMAIN = "https://rrota.xyz";
 
   // Links (keep centralized so you can change later once)
   const LINKS = {
@@ -97,11 +98,9 @@ const Hero = () => {
   const StatusRow = ({
     dot,
     label,
-    tone = "neutral",
   }: {
     dot: "green" | "yellow" | "blue";
     label: string;
-    tone?: "neutral";
   }) => {
     const dotClass =
       dot === "green"
@@ -149,7 +148,6 @@ const Hero = () => {
                   "drop-shadow(0 0 20px rgba(28, 194, 252, 0.3)) drop-shadow(0 0 40px rgba(28, 194, 252, 0.2)) drop-shadow(0 0 80px rgba(28, 194, 252, 0.1))",
               }}
             />
-           _toggle
             <div className="absolute inset-0 bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 rounded-full blur-3xl scale-150" />
           </motion.div>
         </motion.div>
@@ -170,13 +168,13 @@ const Hero = () => {
             {/* LEFT */}
             <div className="flex flex-col gap-3 min-w-0 h-full">
               <div className="flex flex-col gap-3 my-auto">
-                {/* Headline */}
+                {/* ✅ SEO Headline (H1) */}
                 <motion.h1
                   className="font-display text-[44px] md:text-[54px] font-bold text-[#1bbffb] leading-tight"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                  RROTA ($RTA) — Utility-First Token on Solana
+                  RROTA Coin (RTA) — Official Utility Token on Solana
                 </motion.h1>
 
                 {/* Subheading */}
@@ -188,6 +186,32 @@ const Hero = () => {
                   Transparent build phase with staged releases. Track real status,
                   verify on-chain data, and follow development progress.
                 </motion.p>
+
+                {/* ✅ SEO reinforcement box (no spam, just clarity) */}
+                <motion.div
+                  className="p-4 rounded-xl border border-gray-700/50 bg-[#202329]/40 backdrop-blur-sm max-w-[72ch]"
+                  variants={itemVariants}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                >
+                  <p className="text-white/90 font-poppins font-semibold">
+                    What is RROTA coin?
+                  </p>
+                  <p className="mt-2 text-white/75 text-sm leading-[26px]">
+                    <strong>RROTA coin</strong> (also searched as <strong>RROTA token</strong> or{" "}
+                    <strong>RROTA crypto</strong>) is the <strong>RTA token</strong> on Solana,
+                    built with a transparent development approach and on-chain verification. The{" "}
+                    <strong>official website</strong> is{" "}
+                    <a
+                      href={OFFICIAL_DOMAIN}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1cc2fc] font-semibold hover:underline"
+                    >
+                      {OFFICIAL_DOMAIN}
+                    </a>
+                    .
+                  </p>
+                </motion.div>
 
                 {/* Primary CTAs */}
                 <motion.div
@@ -276,7 +300,10 @@ const Hero = () => {
                     <StatusRow dot="green" label="Token live on Solana" />
                     <StatusRow dot="green" label="Mint revoked / Freeze revoked" />
                     <StatusRow dot="green" label="Audit verification available" />
-                    <StatusRow dot="yellow" label="Spin-to-Win: reward logic & anti-farm in development" />
+                    <StatusRow
+                      dot="yellow"
+                      label="Spin-to-Win: reward logic & anti-farm in development"
+                    />
                     <StatusRow dot="yellow" label="Telegram WebApp: integration in progress" />
                     <StatusRow dot="blue" label="Shooter game: prototype planning" />
                     <StatusRow dot="blue" label="Transit utility: research phase" />
@@ -292,6 +319,30 @@ const Hero = () => {
                   RROTA is being built step-by-step with transparent execution.
                   Utilities ship when tested — not as promises.
                 </motion.p>
+
+                {/* ✅ Official domain + anti-phishing warning (counter-attack) */}
+                <motion.div
+                  className="mt-4 mb-2 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm"
+                  variants={itemVariants}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.28 }}
+                >
+                  <p className="text-amber-50 font-poppins font-semibold">
+                    Official RROTA Website
+                  </p>
+                  <p className="mt-2 text-amber-50/90 text-sm leading-[26px]">
+                    The only official domain for <strong>RROTA coin</strong> is{" "}
+                    <a
+                      href={OFFICIAL_DOMAIN}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-amber-100 font-semibold underline decoration-amber-200/40 hover:decoration-amber-200"
+                    >
+                      {OFFICIAL_DOMAIN}
+                    </a>
+                    . ⚠ Beware of fake domains such as <strong>rr0ta.xyz</strong> (zero instead of
+                    letter “o”). Always verify the contract before connecting your wallet.
+                  </p>
+                </motion.div>
 
                 {/* Token Address Section */}
                 <motion.div
@@ -623,7 +674,6 @@ const Hero = () => {
                     </div>
                   </div>
 
-                  {/* (Removed 5-star rating – keeps it more credible pre-utility) */}
                   <div className="mt-6 text-center text-white/50 text-xs">
                     Build phase: active • Updates ship when ready
                   </div>
