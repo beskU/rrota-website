@@ -329,7 +329,7 @@ const Hero = () => {
                   <p className="text-amber-50 font-poppins font-semibold">
                     Official RROTA Website
                   </p>
-                  <p className="mt-2 text-amber-50/90 text-sm leading-[26px]">
+                  <p className="mt-2 text-amber-50 text-sm leading-[26px]">
                     The only official domain for <strong>RROTA coin</strong> is{" "}
                     <a
                       href={OFFICIAL_DOMAIN}
