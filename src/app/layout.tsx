@@ -31,6 +31,9 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const OFFICIAL_DOMAIN = "https://rrota.xyz";
+const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
 // ✅ Viewport (Next 15 best practice)
 export const viewport: Viewport = {
   width: "device-width",
@@ -40,21 +43,25 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rrota.xyz"),
+  metadataBase: new URL(OFFICIAL_DOMAIN),
 
+  // ✅ Stronger, keyword-accurate default title
   title: {
-    default: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
-    template: "%s | RROTA ($RTA)",
+    default: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
+    template: "%s | RROTA Coin (RTA)",
   },
 
+  // ✅ Clearer description (keywords + official domain + contract)
   description:
-    "RROTA ($RTA) is the official Solana SPL token focused on real utility development. Contract: 3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a. Explore roadmap, tokenomics, official links, and verify authenticity only at rrota.xyz.",
+    `RROTA coin (RTA token) is the official Solana SPL token focused on real utility development and transparent execution. ` +
+    `Official contract: ${TOKEN_ADDRESS}. Verify authenticity and official links only at ${OFFICIAL_DOMAIN}.`,
 
   applicationName: "RROTA",
   category: "cryptocurrency",
 
+  // ✅ Canonical should be absolute (best anti-clone signal)
   alternates: {
-    canonical: "/",
+    canonical: `${OFFICIAL_DOMAIN}/`,
   },
 
   robots: {
@@ -85,11 +92,12 @@ export const metadata: Metadata = {
     apple: "/favicon.ico",
   },
 
+  // ✅ OpenGraph tuned to “coin/token” queries
   openGraph: {
-    title: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
+    title: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     description:
-      "RROTA is building on-chain utilities with transparent execution. Official contract: 3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a. Verify all official links at rrota.xyz.",
-    url: "https://rrota.xyz",
+      `Official RROTA coin (RTA token) website. Verify contract ${TOKEN_ADDRESS}, track status, roadmap, tokenomics, and official links only at ${OFFICIAL_DOMAIN}.`,
+    url: OFFICIAL_DOMAIN,
     siteName: "RROTA",
     type: "website",
     images: [
@@ -97,33 +105,111 @@ export const metadata: Metadata = {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA ($RTA) Official Website",
+        alt: "RROTA Coin (RTA) – Official Website",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "RROTA ($RTA) Official Website | Verified Solana SPL Token",
+    title: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     description:
-      "Official RROTA ($RTA) website. Solana SPL token with real utility roadmap. Verify links only at rrota.xyz.",
+      `Official RROTA coin (RTA token) website. Verify contract ${TOKEN_ADDRESS}. Avoid fake domains and verify only at ${OFFICIAL_DOMAIN}.`,
     images: ["/rrota-og.jpg"],
     site: "@rrotacoin",
     creator: "@rrotacoin",
   },
+
+  // (Optional) keywords: not a ranking factor for Google, but harmless and can help other systems
+  keywords: [
+    "RROTA coin",
+    "RROTA token",
+    "RTA token",
+    "RROTA crypto",
+    "Solana token",
+    "SPL token",
+    TOKEN_ADDRESS,
+  ],
 };
 
-// ✅ Organization schema (strong anti-phishing signal)
+// ✅ Organization schema (improved)
 const ORG_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "RROTA",
-  url: "https://rrota.xyz",
-  logo: "https://rrota.xyz/favicon.ico",
+  url: OFFICIAL_DOMAIN,
+  logo: `${OFFICIAL_DOMAIN}/favicon.ico`,
   sameAs: [
     "https://t.me/rrotaOfficial",
     "https://x.com/rrotacoin",
-    "https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a",
+    `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
+    `https://solscan.io/token/${TOKEN_ADDRESS}`,
+  ],
+};
+
+// ✅ WebSite schema (helps entity linking)
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "RROTA",
+  url: OFFICIAL_DOMAIN,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${OFFICIAL_DOMAIN}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
+// ✅ Cryptocurrency schema (entity reinforcement)
+const CRYPTO_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Cryptocurrency",
+  name: "RROTA",
+  alternateName: ["RROTA coin", "RROTA token", "RTA token"],
+  tickerSymbol: "RTA",
+  url: OFFICIAL_DOMAIN,
+  description:
+    `RROTA coin (RTA token) is a Solana SPL token. Official contract: ${TOKEN_ADDRESS}. Verify authenticity only at ${OFFICIAL_DOMAIN}.`,
+  additionalProperty: [
+    { "@type": "PropertyValue", name: "Blockchain", value: "Solana" },
+    { "@type": "PropertyValue", name: "Contract Address", value: TOKEN_ADDRESS },
+  ],
+};
+
+// ✅ FAQ schema (anti-phishing rich snippet weapon)
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is RROTA coin?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          `RROTA coin (RTA token) is a Solana-based SPL token focused on real utility development and transparent execution. ` +
+          `The official contract address is ${TOKEN_ADDRESS}.`,
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the official RROTA website?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          `The only official website for RROTA coin is ${OFFICIAL_DOMAIN}. ` +
+          `Beware of look-alike domains such as rr0ta.xyz (zero instead of letter “o”).`,
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I verify I am on the real RROTA site?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          `Always verify the domain is exactly ${OFFICIAL_DOMAIN} and confirm the token contract address is ${TOKEN_ADDRESS} before connecting any wallet.`,
+      },
+    },
   ],
 };
 
@@ -135,9 +221,28 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* ✅ Canonical hard-set (extra redundancy; fine alongside metadata.alternates) */}
+        <link rel="canonical" href={`${OFFICIAL_DOMAIN}/`} />
+
+        {/* ✅ Referrer policy (minor security hardening) */}
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+        {/* ✅ JSON-LD bundles */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(CRYPTO_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
         />
       </head>
       <body
