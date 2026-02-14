@@ -112,7 +112,7 @@ const Hero = () => {
     return (
       <div className="flex items-center gap-3">
         <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
-        <span className="text-white/80 text-sm">{label}</span>
+        <span className="text-white/85 text-sm">{label}</span>
       </div>
     );
   };
@@ -179,7 +179,7 @@ const Hero = () => {
 
                 {/* Subheading */}
                 <motion.p
-                  className="font-inter text-[14px] md:text-[15px] text-white/75 leading-[26px] max-w-[54ch]"
+                  className="font-inter text-[14px] md:text-[15px] text-white/80 leading-[26px] max-w-[54ch]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
                 >
@@ -187,20 +187,29 @@ const Hero = () => {
                   verify on-chain data, and follow development progress.
                 </motion.p>
 
-                {/* ✅ SEO reinforcement box (no spam, just clarity) */}
+                {/* ✅ SEO reinforcement box (clarity + high contrast) */}
                 <motion.div
-                  className="p-4 rounded-xl border border-gray-700/50 bg-[#202329]/40 backdrop-blur-sm max-w-[72ch]"
+                  className="p-4 rounded-xl border border-gray-700/50 bg-[#202329]/55 backdrop-blur-sm max-w-[72ch]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                 >
-                  <p className="text-white/90 font-poppins font-semibold">
+                  <p className="text-white/95 font-poppins font-semibold">
                     What is RROTA coin?
                   </p>
-                  <p className="mt-2 text-white/75 text-sm leading-[26px]">
-                    <strong>RROTA coin</strong> (also searched as <strong>RROTA token</strong> or{" "}
-                    <strong>RROTA crypto</strong>) is the <strong>RTA token</strong> on Solana,
-                    built with a transparent development approach and on-chain verification. The{" "}
-                    <strong>official website</strong> is{" "}
+
+                  {/* FIX: remove low opacity + make keywords pure white */}
+                  <p className="mt-2 text-white/90 text-sm leading-[26px]">
+                    <span className="font-semibold text-white">RROTA coin</span>{" "}
+                    (also searched as{" "}
+                    <span className="font-semibold text-white">RROTA token</span>{" "}
+                    or{" "}
+                    <span className="font-semibold text-white">RROTA crypto</span>
+                    ) is the{" "}
+                    <span className="font-semibold text-white">RTA token</span>{" "}
+                    on Solana, built with a transparent development approach and
+                    on-chain verification. The{" "}
+                    <span className="font-semibold text-white">official website</span>{" "}
+                    is{" "}
                     <a
                       href={OFFICIAL_DOMAIN}
                       target="_blank"
@@ -273,16 +282,16 @@ const Hero = () => {
 
                 {/* Project Status Bar */}
                 <motion.div
-                  className="mb-6 p-4 rounded-xl border border-gray-700/50 bg-[#202329]/40 backdrop-blur-sm"
+                  className="mb-6 p-4 rounded-xl border border-gray-700/50 bg-[#202329]/55 backdrop-blur-sm"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                 >
                   <div className="flex items-center justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <span className="text-white/90 font-poppins font-semibold">
+                      <span className="text-white/95 font-poppins font-semibold">
                         Project Status
                       </span>
-                      <span className="text-white/50 text-xs">
+                      <span className="text-white/55 text-xs">
                         (Live / In Progress)
                       </span>
                     </div>
@@ -304,7 +313,10 @@ const Hero = () => {
                       dot="yellow"
                       label="Spin-to-Win: reward logic & anti-farm in development"
                     />
-                    <StatusRow dot="yellow" label="Telegram WebApp: integration in progress" />
+                    <StatusRow
+                      dot="yellow"
+                      label="Telegram WebApp: integration in progress"
+                    />
                     <StatusRow dot="blue" label="Shooter game: prototype planning" />
                     <StatusRow dot="blue" label="Transit utility: research phase" />
                   </div>
@@ -312,7 +324,7 @@ const Hero = () => {
 
                 {/* Short “what it is” line (no hype) */}
                 <motion.p
-                  className="font-inter text-[14px] text-white/70 leading-[26px]"
+                  className="font-inter text-[14px] text-white/75 leading-[26px]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
                 >
@@ -320,17 +332,21 @@ const Hero = () => {
                   Utilities ship when tested — not as promises.
                 </motion.p>
 
-                {/* ✅ Official domain + anti-phishing warning (counter-attack) */}
+                {/* ✅ Official domain + anti-phishing warning (high contrast) */}
                 <motion.div
-                  className="mt-4 mb-2 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 backdrop-blur-sm"
+                  className="mt-4 mb-2 p-4 rounded-xl border border-amber-500/35 bg-amber-500/10 backdrop-blur-sm"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.28 }}
                 >
                   <p className="text-amber-50 font-poppins font-semibold">
                     Official RROTA Website
                   </p>
+
+                  {/* FIX: remove /90 washout + highlight fake domain */}
                   <p className="mt-2 text-amber-50 text-sm leading-[26px]">
-                    The only official domain for <strong>RROTA coin</strong> is{" "}
+                    The only official domain for{" "}
+                    <span className="font-semibold text-amber-50">RROTA coin</span>{" "}
+                    is{" "}
                     <a
                       href={OFFICIAL_DOMAIN}
                       target="_blank"
@@ -339,8 +355,10 @@ const Hero = () => {
                     >
                       {OFFICIAL_DOMAIN}
                     </a>
-                    . ⚠ Beware of fake domains such as <strong>rr0ta.xyz</strong> (zero instead of
-                    letter “o”). Always verify the contract before connecting your wallet.
+                    . ⚠ Beware of fake domains such as{" "}
+                    <span className="font-semibold text-amber-100">rr0ta.xyz</span>{" "}
+                    (zero instead of letter “o”). Always verify the contract before
+                    connecting your wallet.
                   </p>
                 </motion.div>
 
@@ -366,7 +384,7 @@ const Hero = () => {
                             fill="currentColor"
                           />
                           <path
-                            d="M5.02734 5.80469C5.10938 5.72266 5.22656 5.67578 5.34375 5.67578H21.6562C21.8203 5.67578 21.9023 5.88281 21.7773 6.00781L18.9727 8.8125C18.8906 8.89453 18.7734 8.94141 18.6562 8.94141H2.34375C2.17969 8.94141 2.09766 8.73438 2.22266 8.60938L5.02734 5.80469Z"
+                            d="M5.02734 5.80469C5.10938 5.72266 5.22656 5.67578 5.34375 5.67578H21.6562C21.8203 5.67578 21.9023 15.2656 21.7773 6.00781L18.9727 8.8125C18.8906 8.89453 18.7734 8.94141 18.6562 8.94141H2.34375C2.17969 8.94141 2.09766 8.73438 2.22266 8.60938L5.02734 5.80469Z"
                             fill="currentColor"
                           />
                           <path
