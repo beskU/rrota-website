@@ -222,7 +222,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const authorName = article.meta.author ?? "RROTA Team";
   const tags = article.meta.tags ?? [];
 
-  // ✅ Stronger BlogPosting schema + anti-phishing signals
+  // ✅ BlogPosting schema
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -238,15 +238,12 @@ export default async function BlogPostPage({ params }: PageProps) {
       "@id": canonicalUrl,
     },
     url: canonicalUrl,
-
-    // Author can be Person or Organization. Keep as Organization for brand consistency.
     author: {
       "@type": "Organization",
       "@id": `${SITE_URL}#organization`,
       name: authorName,
       url: SITE_URL,
     },
-
     publisher: {
       "@type": "Organization",
       "@id": `${SITE_URL}#organization`,
@@ -263,21 +260,14 @@ export default async function BlogPostPage({ params }: PageProps) {
         `https://solscan.io/token/${TOKEN_ADDRESS}`,
       ],
     },
-
     isPartOf: {
       "@type": "Blog",
       "@id": `${BLOG_URL}#blog`,
       name: `${SITE_NAME} Blog`,
       url: BLOG_URL,
     },
-
-    // Anti-phishing “about” anchors (entity clarity)
     about: [
-      {
-        "@type": "Thing",
-        name: "RROTA coin",
-        sameAs: SITE_URL,
-      },
+      { "@type": "Thing", name: "RROTA coin", sameAs: SITE_URL },
       {
         "@type": "Thing",
         name: "RROTA token / RTA token",
@@ -289,7 +279,6 @@ export default async function BlogPostPage({ params }: PageProps) {
         description: `Verify authenticity only at ${SITE_URL}`,
       },
     ],
-
     articleSection: "Blog",
     keywords: [
       ...tags,
@@ -303,6 +292,32 @@ export default async function BlogPostPage({ params }: PageProps) {
     wordCount: rt.words,
   };
 
+  // ✅ BreadcrumbList schema (adds breadcrumb rich results + hierarchy signal)
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: BLOG_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.meta.title,
+        item: canonicalUrl,
+      },
+    ],
+  };
+
   return (
     <BlogShell
       crumbs={[
@@ -314,6 +329,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       subtitle={article.meta.description}
     >
       <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="text-sm text-white/60">
@@ -352,7 +368,6 @@ export default async function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: html }}
       />
 
-      {/* ✅ Tiny trust footer (helps humans + reinforces official domain) */}
       <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-5">
         <div className="text-sm text-white/75">
           Official site:{" "}
