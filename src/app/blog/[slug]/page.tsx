@@ -9,6 +9,13 @@ import { getArticleBySlug, getArticleSlugs } from "../../lib/articles";
 type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
 
+const SITE_URL = "https://rrota.xyz";
+const SITE_NAME = "RROTA";
+const BLOG_URL = `${SITE_URL}/blog`;
+const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg`;
+const PUBLISHER_LOGO = `${SITE_URL}/favicon.ico`;
+
 function JsonLd({ data }: { data: object }) {
   return (
     <script
@@ -130,6 +137,13 @@ function readingTimeMinutes(text: string) {
   return { words, minutes };
 }
 
+function toISODate(dateStr: string) {
+  // expects YYYY-MM-DD
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return new Date().toISOString();
+  return d.toISOString();
+}
+
 export async function generateStaticParams(): Promise<RouteParams[]> {
   return getArticleSlugs().map((slug) => ({ slug }));
 }
@@ -139,8 +153,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const a = getArticleBySlug(slug);
-    const canonical = `https://rrota.xyz/blog/${a.slug}`;
+
+    const canonical = `${SITE_URL}/blog/${a.slug}`;
+    const ogImage = a.meta.coverImage
+      ? a.meta.coverImage.startsWith("http")
+        ? a.meta.coverImage
+        : `${SITE_URL}${a.meta.coverImage}`
+      : DEFAULT_OG;
+
     return {
+      metadataBase: new URL(SITE_URL),
       title: `${a.meta.title} | RROTA Blog`,
       description: a.meta.description,
       alternates: { canonical },
@@ -149,11 +171,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description: a.meta.description,
         url: canonical,
         type: "article",
+        siteName: SITE_NAME,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: a.meta.title,
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: a.meta.title,
         description: a.meta.description,
+        images: [ogImage],
+        site: "@rrotacoin",
+        creator: "@rrotacoin",
       },
     };
   } catch {
@@ -174,34 +208,98 @@ export default async function BlogPostPage({ params }: PageProps) {
   const html = markdownToHtml(article.content);
   const rt = readingTimeMinutes(article.content);
 
-  const baseUrl = "https://rrota.xyz";
-  const canonicalUrl = `${baseUrl}/blog/${article.slug}`;
+  const canonicalUrl = `${SITE_URL}/blog/${article.slug}`;
 
+  const publishedISO = toISODate(article.meta.date);
+  const modifiedISO = toISODate(article.meta.date); // upgrade later if you add updatedAt
+
+  const ogImage = article.meta.coverImage
+    ? article.meta.coverImage.startsWith("http")
+      ? article.meta.coverImage
+      : `${SITE_URL}${article.meta.coverImage}`
+    : DEFAULT_OG;
+
+  const authorName = article.meta.author ?? "RROTA Team";
+  const tags = article.meta.tags ?? [];
+
+  // ✅ Stronger BlogPosting schema + anti-phishing signals
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#blogposting`,
     headline: article.meta.title,
     description: article.meta.description,
-    datePublished: article.meta.date,
-    dateModified: article.meta.date,
-    author: {
-      "@type": "Organization",
-      name: article.meta.author ?? "RROTA Team",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "RROTA",
-      logo: {
-        "@type": "ImageObject",
-        url: `${baseUrl}/rrota-og.jpg`,
-      },
-    },
+    image: [ogImage],
+    datePublished: publishedISO,
+    dateModified: modifiedISO,
+    inLanguage: "en",
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": canonicalUrl,
     },
     url: canonicalUrl,
-    keywords: (article.meta.tags ?? []).join(", "),
+
+    // Author can be Person or Organization. Keep as Organization for brand consistency.
+    author: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}#organization`,
+      name: authorName,
+      url: SITE_URL,
+    },
+
+    publisher: {
+      "@type": "Organization",
+      "@id": `${SITE_URL}#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: PUBLISHER_LOGO,
+      },
+      sameAs: [
+        "https://t.me/rrotaOfficial",
+        "https://x.com/rrotacoin",
+        `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
+        `https://solscan.io/token/${TOKEN_ADDRESS}`,
+      ],
+    },
+
+    isPartOf: {
+      "@type": "Blog",
+      "@id": `${BLOG_URL}#blog`,
+      name: `${SITE_NAME} Blog`,
+      url: BLOG_URL,
+    },
+
+    // Anti-phishing “about” anchors (entity clarity)
+    about: [
+      {
+        "@type": "Thing",
+        name: "RROTA coin",
+        sameAs: SITE_URL,
+      },
+      {
+        "@type": "Thing",
+        name: "RROTA token / RTA token",
+        description: `Official Solana token contract: ${TOKEN_ADDRESS}`,
+      },
+      {
+        "@type": "Thing",
+        name: "Official domain",
+        description: `Verify authenticity only at ${SITE_URL}`,
+      },
+    ],
+
+    articleSection: "Blog",
+    keywords: [
+      ...tags,
+      "RROTA coin",
+      "RROTA token",
+      "RTA token",
+      "Solana SPL",
+      TOKEN_ADDRESS,
+      "rrota.xyz",
+    ],
     wordCount: rt.words,
   };
 
@@ -228,9 +326,9 @@ export default async function BlogPostPage({ params }: PageProps) {
         <ShareButtons title={`${article.meta.title} — RROTA Blog`} />
       </div>
 
-      {article.meta.tags?.length ? (
+      {tags.length ? (
         <div className="mb-8 flex flex-wrap gap-2">
-          {article.meta.tags.map((t: string) => (
+          {tags.map((t: string) => (
             <span
               key={t}
               className="text-xs px-3 py-1 rounded-full bg-white/10 text-white/70 border border-white/10"
@@ -253,6 +351,23 @@ export default async function BlogPostPage({ params }: PageProps) {
                    prose-code:text-white/90"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+
+      {/* ✅ Tiny trust footer (helps humans + reinforces official domain) */}
+      <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div className="text-sm text-white/75">
+          Official site:{" "}
+          <a
+            href={SITE_URL}
+            className="text-[#7dd9ff] font-semibold hover:underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {SITE_URL}
+          </a>{" "}
+          • Official contract:{" "}
+          <span className="font-mono text-white/90">{TOKEN_ADDRESS}</span>
+        </div>
+      </div>
     </BlogShell>
   );
 }
