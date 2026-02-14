@@ -34,6 +34,11 @@ const poppins = Poppins({
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
+// IDs for entity linking (strong anti-phishing signal)
+const ORG_ID = `${OFFICIAL_DOMAIN}#organization`;
+const WEBSITE_ID = `${OFFICIAL_DOMAIN}#website`;
+const HOMEPAGE_ID = `${OFFICIAL_DOMAIN}/#webpage`;
+
 // ✅ Viewport (Next 15 best practice)
 export const viewport: Viewport = {
   width: "device-width",
@@ -45,13 +50,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(OFFICIAL_DOMAIN),
 
-  // ✅ Stronger, keyword-accurate default title
   title: {
     default: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     template: "%s | RROTA Coin (RTA)",
   },
 
-  // ✅ Clearer description (keywords + official domain + contract)
   description:
     `RROTA coin (RTA token) is the official Solana SPL token focused on real utility development and transparent execution. ` +
     `Official contract: ${TOKEN_ADDRESS}. Verify authenticity and official links only at ${OFFICIAL_DOMAIN}.`,
@@ -59,7 +62,6 @@ export const metadata: Metadata = {
   applicationName: "RROTA",
   category: "cryptocurrency",
 
-  // ✅ Canonical should be absolute (best anti-clone signal)
   alternates: {
     canonical: `${OFFICIAL_DOMAIN}/`,
   },
@@ -92,7 +94,6 @@ export const metadata: Metadata = {
     apple: "/favicon.ico",
   },
 
-  // ✅ OpenGraph tuned to “coin/token” queries
   openGraph: {
     title: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     description:
@@ -120,7 +121,6 @@ export const metadata: Metadata = {
     creator: "@rrotacoin",
   },
 
-  // (Optional) keywords: not a ranking factor for Google, but harmless and can help other systems
   keywords: [
     "RROTA coin",
     "RROTA token",
@@ -132,13 +132,17 @@ export const metadata: Metadata = {
   ],
 };
 
-// ✅ Organization schema (improved)
+// ✅ Organization schema (improved + linked)
 const ORG_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": ORG_ID,
   name: "RROTA",
   url: OFFICIAL_DOMAIN,
-  logo: `${OFFICIAL_DOMAIN}/favicon.ico`,
+  logo: {
+    "@type": "ImageObject",
+    url: `${OFFICIAL_DOMAIN}/favicon.ico`,
+  },
   sameAs: [
     "https://t.me/rrotaOfficial",
     "https://x.com/rrotacoin",
@@ -147,17 +151,38 @@ const ORG_JSON_LD = {
   ],
 };
 
-// ✅ WebSite schema (helps entity linking)
+// ✅ WebSite schema (SearchAction fixed + linked)
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": WEBSITE_ID,
   name: "RROTA",
   url: OFFICIAL_DOMAIN,
+  publisher: { "@id": ORG_ID },
   potentialAction: {
     "@type": "SearchAction",
-    target: `${OFFICIAL_DOMAIN}/search?q={search_term_string}`,
+    // Safer: you have /blog already (even if no search UI yet)
+    target: `${OFFICIAL_DOMAIN}/blog?query={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
+};
+
+// ✅ Homepage WebPage schema (extra authority + entity tying)
+const HOMEPAGE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": HOMEPAGE_ID,
+  url: `${OFFICIAL_DOMAIN}/`,
+  name: "RROTA Coin (RTA) – Official Solana Token",
+  isPartOf: { "@id": WEBSITE_ID },
+  about: [
+    { "@type": "Thing", name: "RROTA coin", sameAs: OFFICIAL_DOMAIN },
+    {
+      "@type": "Thing",
+      name: "RTA token (Solana SPL)",
+      description: `Official contract: ${TOKEN_ADDRESS}`,
+    },
+  ],
 };
 
 // ✅ Cryptocurrency schema (entity reinforcement)
@@ -235,6 +260,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(HOMEPAGE_JSON_LD) }}
         />
         <script
           type="application/ld+json"
