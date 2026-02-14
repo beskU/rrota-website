@@ -1,26 +1,18 @@
+// src/app/robots.ts
 import type { MetadataRoute } from "next";
 
-const baseUrl = "https://rrota.xyz";
-
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = "https://rrota.xyz";
+
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: [
-          "/api/",
-          "/admin/",
-          "/private/",
-          "/draft/",
-        ],
-      },
-      // Explicitly allow Next.js static assets for rendering
-      {
-        userAgent: "*",
-        allow: ["/_next/static/", "/static/"],
+        allow: ["/", "/_next/static/", "/static/"],
+        disallow: ["/api/", "/admin/", "/private/", "/draft/"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }
