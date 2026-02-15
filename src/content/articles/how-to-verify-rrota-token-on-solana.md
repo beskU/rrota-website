@@ -32,4 +32,62 @@ Always double-check the spelling.
 ## Step 2 – Verify the Contract Address
 
 Official RROTA contract:
+3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+
+
+Never trust:
+- Screenshots
+- Random Telegram messages
+- Unverified links
+
+Always copy the contract from the official website.
+
+---
+
+## Step 3 – Check on Solscan
+
+Visit:
+
+https://solscan.io/token/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+
+Verify:
+- Mint status
+- Freeze status
+- Supply data
+- Holder distribution
+
+---
+
+## Step 4 – Cross-Check on Jupiter
+
+Use Jupiter directly:
+
+https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+
+If the contract differs, do not proceed.
+
+---
+
+## Common Red Flags
+
+🚩 Website asks to “claim” before verification  
+🚩 Domain slightly misspelled  
+🚩 No contract displayed  
+🚩 No transparency page  
+🚩 No roadmap or documentation  
+
+---
+
+## Final Reminder
+
+RROTA official domain:
+https://rrota.xyz
+
+Official contract:
+3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+
+Verification protects you.
+
+Always confirm before connecting your wallet.
+
 
