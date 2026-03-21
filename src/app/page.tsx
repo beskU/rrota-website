@@ -11,40 +11,41 @@ import AboutUs from "./components/aboutus";
 
 export default function Home() {
   return (
-    <div className="relative w-full mx-auto overflow-hidden font-inter">
+    <div className="relative mx-auto w-full overflow-hidden font-inter">
       <Navbar />
-      <div className="relative w-full mt-10">
-        <section className="w-full mb-20">
+
+      <main className="relative mt-10 w-full">
+        <section className="mb-20 w-full">
           <Hero />
         </section>
 
-        <section className="w-full mb-20">
+        <section className="mb-20 w-full">
           <Why />
         </section>
 
-        <section className="w-full mb-20">
+        <section className="mb-20 w-full">
           <Graph />
         </section>
 
-        <section className="w-full mb-20">
+        <section className="mb-20 w-full">
           <Tokenomics />
         </section>
 
-        {/* ✅ Blog preview inserted here */}
         <BlogPreview />
 
-        <section className="w-full mb-20">
+        <section className="mb-20 w-full">
           <HowTo />
         </section>
 
-        <section className="w-full mb-20">
+        <section className="mb-20 w-full">
           <Roadmap />
         </section>
 
-        <section className="w-full my-20">
+        <section className="my-20 w-full">
           <AboutUs />
         </section>
-      </div>
+      </main>
+
       <Footer />
     </div>
   );
