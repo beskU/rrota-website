@@ -34,12 +34,10 @@ const poppins = Poppins({
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-// IDs for entity linking (strong anti-phishing signal)
 const ORG_ID = `${OFFICIAL_DOMAIN}#organization`;
 const WEBSITE_ID = `${OFFICIAL_DOMAIN}#website`;
 const HOMEPAGE_ID = `${OFFICIAL_DOMAIN}/#webpage`;
 
-// ✅ Viewport (Next 15 best practice)
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -56,8 +54,8 @@ export const metadata: Metadata = {
   },
 
   description:
-    `RROTA coin (RTA token) is the official Solana SPL token focused on real utility development and transparent execution. ` +
-    `Official contract: ${TOKEN_ADDRESS}. Verify authenticity and official links only at ${OFFICIAL_DOMAIN}.`,
+    `RROTA coin (RTA token) is the official Solana SPL token focused on real utility development, transparent execution, and ecosystem growth on Solana. ` +
+    `Official contract: ${TOKEN_ADDRESS}. Explore tokenomics, roadmap, utilities, and official links at ${OFFICIAL_DOMAIN}.`,
 
   applicationName: "RROTA",
   category: "cryptocurrency",
@@ -97,7 +95,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     description:
-      `Official RROTA coin (RTA token) website. Verify contract ${TOKEN_ADDRESS}, track status, roadmap, tokenomics, and official links only at ${OFFICIAL_DOMAIN}.`,
+      `Official RROTA coin (RTA token) website. Explore contract ${TOKEN_ADDRESS}, roadmap, tokenomics, utilities, and official community links at ${OFFICIAL_DOMAIN}.`,
     url: OFFICIAL_DOMAIN,
     siteName: "RROTA",
     type: "website",
@@ -115,7 +113,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RROTA Coin (RTA) – Official Solana Token | rrota.xyz",
     description:
-      `Official RROTA coin (RTA token) website. Verify contract ${TOKEN_ADDRESS}. Avoid fake domains and verify only at ${OFFICIAL_DOMAIN}.`,
+      `Official RROTA coin (RTA token) website. Explore contract ${TOKEN_ADDRESS}, tokenomics, utilities, and community links at ${OFFICIAL_DOMAIN}.`,
     images: ["/rrota-og.jpg"],
     site: "@rrotacoin",
     creator: "@rrotacoin",
@@ -132,7 +130,6 @@ export const metadata: Metadata = {
   ],
 };
 
-// ✅ Organization schema (improved + linked)
 const ORG_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -151,7 +148,6 @@ const ORG_JSON_LD = {
   ],
 };
 
-// ✅ WebSite schema (SearchAction fixed + linked)
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -161,13 +157,11 @@ const WEBSITE_JSON_LD = {
   publisher: { "@id": ORG_ID },
   potentialAction: {
     "@type": "SearchAction",
-    // Safer: you have /blog already (even if no search UI yet)
     target: `${OFFICIAL_DOMAIN}/blog?query={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
 
-// ✅ Homepage WebPage schema (extra authority + entity tying)
 const HOMEPAGE_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -185,7 +179,6 @@ const HOMEPAGE_JSON_LD = {
   ],
 };
 
-// ✅ Cryptocurrency schema (entity reinforcement)
 const CRYPTO_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Cryptocurrency",
@@ -194,14 +187,13 @@ const CRYPTO_JSON_LD = {
   tickerSymbol: "RTA",
   url: OFFICIAL_DOMAIN,
   description:
-    `RROTA coin (RTA token) is a Solana SPL token. Official contract: ${TOKEN_ADDRESS}. Verify authenticity only at ${OFFICIAL_DOMAIN}.`,
+    `RROTA coin (RTA token) is a Solana SPL token. Official contract: ${TOKEN_ADDRESS}. Explore official updates, tokenomics, and utilities at ${OFFICIAL_DOMAIN}.`,
   additionalProperty: [
     { "@type": "PropertyValue", name: "Blockchain", value: "Solana" },
     { "@type": "PropertyValue", name: "Contract Address", value: TOKEN_ADDRESS },
   ],
 };
 
-// ✅ FAQ schema (anti-phishing rich snippet weapon)
 const FAQ_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -221,18 +213,16 @@ const FAQ_JSON_LD = {
       name: "What is the official RROTA website?",
       acceptedAnswer: {
         "@type": "Answer",
-        text:
-          `The only official website for RROTA coin is ${OFFICIAL_DOMAIN}. ` +
-          `Beware of look-alike domains such as rr0ta.xyz (zero instead of letter “o”).`,
+        text: `The official website for RROTA coin is ${OFFICIAL_DOMAIN}.`,
       },
     },
     {
       "@type": "Question",
-      name: "How do I verify I am on the real RROTA site?",
+      name: "How do I verify the RROTA token?",
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          `Always verify the domain is exactly ${OFFICIAL_DOMAIN} and confirm the token contract address is ${TOKEN_ADDRESS} before connecting any wallet.`,
+          `You can verify the official RROTA token by confirming the contract address is ${TOKEN_ADDRESS} on Solana explorers and official RROTA links.`,
       },
     },
   ],
@@ -246,13 +236,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* ✅ Canonical hard-set (extra redundancy; fine alongside metadata.alternates) */}
         <link rel="canonical" href={`${OFFICIAL_DOMAIN}/`} />
-
-        {/* ✅ Referrer policy (minor security hardening) */}
         <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-        {/* ✅ JSON-LD bundles */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }}
