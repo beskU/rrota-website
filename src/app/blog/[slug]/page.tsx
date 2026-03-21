@@ -35,23 +35,67 @@ function escapeHtml(str: string) {
     .replaceAll("'", "&#039;");
 }
 
+function formatInline(text: string) {
+  let out = escapeHtml(text);
+
+  // links
+  out = out.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    (_m, label, url) =>
+      `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`
+  );
+
+  // bold
+  out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  // italic
+  out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // inline code
+  out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  return out;
+}
+
 function markdownToHtml(md: string) {
   const lines = md.split("\n");
 
   let html = "";
-  let inList = false;
+  let inUl = false;
+  let inOl = false;
   let inCode = false;
+  let inTable = false;
+  let tableHeaderParsed = false;
 
-  for (const rawLine of lines) {
-    const line = rawLine.replace(/\r$/, "");
-    const l = line.trim();
+  const closeLists = () => {
+    if (inUl) {
+      html += "</ul>";
+      inUl = false;
+    }
+    if (inOl) {
+      html += "</ol>";
+      inOl = false;
+    }
+  };
 
+  const closeTable = () => {
+    if (inTable) {
+      html += "</tbody></table>";
+      inTable = false;
+      tableHeaderParsed = false;
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i].replace(/\r$/, "");
+    const l = rawLine.trim();
+
+    // Code fences
     if (l.startsWith("```")) {
+      closeLists();
+      closeTable();
+
       if (!inCode) {
-        if (inList) {
-          html += "</ul>";
-          inList = false;
-        }
         inCode = true;
         html += "<pre><code>";
       } else {
@@ -62,71 +106,119 @@ function markdownToHtml(md: string) {
     }
 
     if (inCode) {
-      html += `${escapeHtml(line)}\n`;
+      html += `${escapeHtml(rawLine)}\n`;
       continue;
     }
 
+    // Blank line
     if (!l) {
-      if (inList) {
-        html += "</ul>";
-        inList = false;
-      }
+      closeLists();
+      closeTable();
       continue;
     }
 
+    // Headings
     if (l.startsWith("# ")) {
-      if (inList) {
-        html += "</ul>";
-        inList = false;
-      }
-      html += `<h1>${escapeHtml(l.slice(2))}</h1>`;
+      closeLists();
+      closeTable();
+      html += `<h1>${formatInline(l.slice(2))}</h1>`;
       continue;
     }
+
     if (l.startsWith("## ")) {
-      if (inList) {
-        html += "</ul>";
-        inList = false;
-      }
-      html += `<h2>${escapeHtml(l.slice(3))}</h2>`;
+      closeLists();
+      closeTable();
+      html += `<h2>${formatInline(l.slice(3))}</h2>`;
       continue;
     }
+
     if (l.startsWith("### ")) {
-      if (inList) {
-        html += "</ul>";
-        inList = false;
-      }
-      html += `<h3>${escapeHtml(l.slice(4))}</h3>`;
+      closeLists();
+      closeTable();
+      html += `<h3>${formatInline(l.slice(4))}</h3>`;
       continue;
     }
 
+    // Markdown tables
+    if (l.startsWith("|") && l.endsWith("|")) {
+      closeLists();
+
+      const cells = l
+        .split("|")
+        .slice(1, -1)
+        .map((c) => c.trim());
+
+      const nextLine = lines[i + 1]?.trim() || "";
+      const isDivider = /^(\|\s*:?-{3,}:?\s*)+\|$/.test(nextLine);
+
+      if (!inTable) {
+        inTable = true;
+        tableHeaderParsed = false;
+      }
+
+      if (!tableHeaderParsed && isDivider) {
+        html += "<table><thead><tr>";
+        for (const cell of cells) {
+          html += `<th>${formatInline(cell)}</th>`;
+        }
+        html += "</tr></thead><tbody>";
+        tableHeaderParsed = true;
+        i++; // skip divider line
+      } else {
+        if (!tableHeaderParsed) {
+          html += "<table><tbody>";
+          tableHeaderParsed = true;
+        }
+
+        html += "<tr>";
+        for (const cell of cells) {
+          html += `<td>${formatInline(cell)}</td>`;
+        }
+        html += "</tr>";
+      }
+      continue;
+    } else {
+      closeTable();
+    }
+
+    // Unordered list
     if (l.startsWith("- ") || l.startsWith("• ")) {
-      if (!inList) {
-        html += "<ul>";
-        inList = true;
+      if (inOl) {
+        html += "</ol>";
+        inOl = false;
       }
-      html += `<li>${escapeHtml(l.slice(2))}</li>`;
+      if (!inUl) {
+        html += "<ul>";
+        inUl = true;
+      }
+      html += `<li>${formatInline(l.slice(2))}</li>`;
       continue;
     }
 
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const withLinks = escapeHtml(l).replace(
-      linkRegex,
-      (_m, text, url) =>
-        `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(
-          text
-        )}</a>`
-    );
-
-    if (inList) {
-      html += "</ul>";
-      inList = false;
+    // Ordered list
+    if (/^\d+\.\s+/.test(l)) {
+      if (inUl) {
+        html += "</ul>";
+        inUl = false;
+      }
+      if (!inOl) {
+        html += "<ol>";
+        inOl = true;
+      }
+      html += `<li>${formatInline(l.replace(/^\d+\.\s+/, ""))}</li>`;
+      continue;
     }
 
-    html += `<p>${withLinks}</p>`;
+    closeLists();
+    html += `<p>${formatInline(l)}</p>`;
   }
 
-  if (inList) html += "</ul>";
-  if (inCode) html += "</code></pre>";
+  closeLists();
+  closeTable();
+
+  if (inCode) {
+    html += "</code></pre>";
+  }
 
   return html;
 }
@@ -138,7 +230,6 @@ function readingTimeMinutes(text: string) {
 }
 
 function toISODate(dateStr: string) {
-  // expects YYYY-MM-DD
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return new Date().toISOString();
   return d.toISOString();
@@ -211,7 +302,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const canonicalUrl = `${SITE_URL}/blog/${article.slug}`;
 
   const publishedISO = toISODate(article.meta.date);
-  const modifiedISO = toISODate(article.meta.date); // upgrade later if you add updatedAt
+  const modifiedISO = toISODate(article.meta.date);
 
   const ogImage = article.meta.coverImage
     ? article.meta.coverImage.startsWith("http")
@@ -222,7 +313,6 @@ export default async function BlogPostPage({ params }: PageProps) {
   const authorName = article.meta.author ?? "RROTA Team";
   const tags = article.meta.tags ?? [];
 
-  // ✅ BlogPosting schema
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -292,7 +382,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     wordCount: rt.words,
   };
 
-  // ✅ BreadcrumbList schema (adds breadcrumb rich results + hierarchy signal)
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -357,12 +446,18 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <article
         className="prose prose-invert prose-lg max-w-none
-                   prose-headings:tracking-tight
-                   prose-h2:mt-10 prose-h2:mb-3
-                   prose-h3:mt-8 prose-h3:mb-2
-                   prose-p:leading-relaxed
+                   prose-headings:tracking-tight prose-headings:text-white
+                   prose-h1:text-4xl prose-h1:mb-6
+                   prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+                   prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                   prose-p:text-white/85 prose-p:leading-8 prose-p:mb-5
+                   prose-ul:my-5 prose-ol:my-5
+                   prose-li:my-1 prose-li:text-white/85
                    prose-a:text-[#7dd9ff] prose-a:no-underline hover:prose-a:underline
                    prose-strong:text-white
+                   prose-table:w-full prose-table:border-collapse
+                   prose-th:border prose-th:border-white/10 prose-th:bg-white/5 prose-th:px-4 prose-th:py-2 prose-th:text-left
+                   prose-td:border prose-td:border-white/10 prose-td:px-4 prose-td:py-2
                    prose-pre:bg-black/40 prose-pre:border prose-pre:border-white/10
                    prose-code:text-white/90"
         dangerouslySetInnerHTML={{ __html: html }}
