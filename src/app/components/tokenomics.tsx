@@ -30,12 +30,8 @@ const Tokenomics = () => {
 
   const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-  /**
-   * IMPORTANT:
-   * If you have an exact burn amount, set it here.
-   * If you don't, set it to 0 and remove the Burned slice below.
-   */
-  const BURNED_TOKENS = 0; // <-- replace with real number if you have it (example: 1000000000)
+  // Set this only when you want to show a confirmed on-chain burn amount.
+  const BURNED_TOKENS = 0;
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -45,16 +41,16 @@ const Tokenomics = () => {
         setTokenData(data);
 
         if (data.price === 0 && data.holders === 0 && data.liquidity === 0) {
-          setError("Token data API temporarily unavailable");
+          setError("Live token data is temporarily unavailable");
         }
       } catch (err) {
         console.error("Failed to fetch token data:", err);
-        setError("Failed to load token data");
+        setError("Failed to load live token data");
         setTokenData({
           price: 0,
           liquidity: 0,
           marketCap: 0,
-          tokenSupply: 17446373786, // fallback supply
+          tokenSupply: 17446373786,
           holders: 0,
           lastUpdated: Date.now(),
           priceChange24h: 0,
@@ -69,14 +65,11 @@ const Tokenomics = () => {
 
   const supply = tokenData?.tokenSupply ?? 17446373786;
   const liquidityUsd = tokenData?.liquidity ?? 0;
-
-  // A conservative, credibility-first distribution.
-  // (If you want wallet-specific allocations, you MUST link the wallet list / vesting proofs.)
-  const derivedLiquidityTokensEstimate = 0; // we do NOT guess LP token amounts here
+  const marketCap = tokenData?.marketCap ?? 0;
 
   const safeSlices = [
     {
-      name: "Circulating (Estimated)",
+      name: "Circulating Supply",
       value: Math.max(supply - BURNED_TOKENS, 0),
       amount: `${Math.max(supply - BURNED_TOKENS, 0).toLocaleString()} tokens`,
       color: "#1cc2fc",
@@ -84,20 +77,10 @@ const Tokenomics = () => {
     ...(BURNED_TOKENS > 0
       ? [
           {
-            name: "Burned (On-chain)",
+            name: "Burned Tokens",
             value: BURNED_TOKENS,
             amount: `${BURNED_TOKENS.toLocaleString()} tokens`,
             color: "#F59E0B",
-          },
-        ]
-      : []),
-    ...(derivedLiquidityTokensEstimate > 0
-      ? [
-          {
-            name: "Liquidity (Tokens)",
-            value: derivedLiquidityTokensEstimate,
-            amount: `${derivedLiquidityTokensEstimate.toLocaleString()} tokens`,
-            color: "#10B981",
           },
         ]
       : []),
@@ -105,10 +88,12 @@ const Tokenomics = () => {
 
   const totalForChart = safeSlices.reduce((a, b) => a + (b.value as number), 0);
 
-  const pieChartData: PieChartData[] = safeSlices.map((s) => ({
-    ...s,
-    // Convert to percentage display for pie
-    value: totalForChart > 0 ? Number(((s.value / totalForChart) * 100).toFixed(2)) : 0,
+  const pieChartData: PieChartData[] = safeSlices.map((slice) => ({
+    ...slice,
+    value:
+      totalForChart > 0
+        ? Number(((slice.value / totalForChart) * 100).toFixed(2))
+        : 0,
   }));
 
   const CustomTooltip = ({
@@ -121,10 +106,10 @@ const Tokenomics = () => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#1a1a1a] border border-gray-600 rounded-lg p-3 shadow-lg">
-          <p className="text-white font-semibold">{data.name}</p>
-          <p className="text-gray-300 text-sm">{data.value}%</p>
-          <p className="text-gray-300 text-sm">{data.amount}</p>
+        <div className="rounded-lg border border-gray-600 bg-[#1a1a1a] p-3 shadow-lg">
+          <p className="font-semibold text-white">{data.name}</p>
+          <p className="text-sm text-gray-300">{data.value}%</p>
+          <p className="text-sm text-gray-300">{data.amount}</p>
         </div>
       );
     }
@@ -157,8 +142,19 @@ const Tokenomics = () => {
     },
   };
 
+  const formatPrice = (price: number) => {
+    if (!price || price <= 0) return "—";
+    if (price < 0.000001) return `$${price.toExponential(2)}`;
+    return `$${price.toFixed(9)}`;
+  };
+
+  const formatMoney = (value: number) => {
+    if (!value || value <= 0) return "—";
+    return `$${value.toLocaleString()}`;
+  };
+
   return (
-    <section id="Tokenomics" className="max-w-7xl mx-auto px-4 text-white">
+    <section id="Tokenomics" className="mx-auto max-w-7xl px-4 text-white">
       <motion.div
         ref={ref}
         className="mt-10 space-y-6"
@@ -167,45 +163,43 @@ const Tokenomics = () => {
         variants={containerVariants}
       >
         <motion.div
-          className="text-center space-y-6 mb-16"
+          className="mb-16 space-y-6 text-center"
           variants={titleVariants}
         >
           <div className="relative inline-block">
             <img
               src="/rrota-logo2.png"
               alt="RROTA Token"
-              className="w-32 h-32 mx-auto"
+              className="mx-auto h-32 w-32"
             />
-            <div className="absolute inset-0 rounded-full bg-purple-500 opacity-10 blur-xl -z-10"></div>
+            <div className="absolute inset-0 -z-10 rounded-full bg-purple-500 opacity-10 blur-xl" />
           </div>
 
           <h2 className="text-5xl font-bold">Tokenomics</h2>
 
-          <p className="text-[#aaa] max-w-3xl mx-auto text-lg leading-relaxed">
-            This page focuses on verifiable facts (on-chain + live market data).
-            Claims like “locked”, “anti-whale”, or wallet allocations should only
-            be shown when proof links are provided.
+          <p className="mx-auto max-w-3xl text-lg leading-relaxed text-[#aaa]">
+            A clean overview of the RROTA token using live market data and
+            verifiable on-chain references.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3 mt-4">
-            <span className="px-3 py-1 rounded-full bg-[#1cc2fc]/20 text-[#1cc2fc] border border-[#1cc2fc]/30 text-sm">
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <span className="rounded-full border border-[#1cc2fc]/30 bg-[#1cc2fc]/20 px-3 py-1 text-sm text-[#1cc2fc]">
               Solana SPL Token
             </span>
-            <span className="px-3 py-1 rounded-full bg-white/10 text-white/70 border border-white/10 text-sm">
-              Build Phase
+            <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-white/70">
+              Live Market Data
             </span>
-            <span className="px-3 py-1 rounded-full bg-emerald-900/30 text-emerald-300 border border-emerald-800/50 text-sm">
-              Proof Links Included
+            <span className="rounded-full border border-emerald-800/50 bg-emerald-900/30 px-3 py-1 text-sm text-emerald-300">
+              On-Chain References
             </span>
           </div>
 
-          {/* Proof links */}
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <a
               href={`https://solscan.io/token/${TOKEN_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
             >
               Solscan
             </a>
@@ -213,7 +207,7 @@ const Tokenomics = () => {
               href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
             >
               Jupiter
             </a>
@@ -221,7 +215,7 @@ const Tokenomics = () => {
               href="https://www.dextools.io/app/token/rrota"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
             >
               DEXTools
             </a>
@@ -229,7 +223,7 @@ const Tokenomics = () => {
               href="https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#202329] border border-[#2b3139] hover:border-[#1cc2fc] transition text-sm"
+              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
             >
               GeckoTerminal
             </a>
@@ -238,25 +232,25 @@ const Tokenomics = () => {
 
         {error && (
           <motion.div
-            className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6"
+            className="mb-6 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <p className="text-yellow-400 text-center">
-              ⚠️ {error}. Showing fallback values where needed.
+            <p className="text-center text-yellow-400">
+              ⚠️ {error}. Fallback values are shown where needed.
             </p>
           </motion.div>
         )}
 
         <motion.h3
-          className="text-center text-3xl font-bold mb-8"
+          className="mb-8 text-center text-3xl font-bold"
           variants={titleVariants}
         >
-          <span className="relative inline-block mt-10">
+          <span className="relative mt-10 inline-block">
             <span className="relative z-10">Supply Overview</span>
             <motion.span
-              className="absolute bottom-0 left-0 w-full h-2 bg-[#1cc2fc] -z-0"
+              className="absolute bottom-0 left-0 -z-0 h-2 w-full bg-[#1cc2fc]"
               initial={{ width: 0 }}
               animate={isInView ? { width: "100%" } : { width: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
@@ -265,57 +259,56 @@ const Tokenomics = () => {
         </motion.h3>
 
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start"
+          className="grid grid-cols-1 items-start gap-10 md:grid-cols-3"
           variants={cardVariants}
         >
-          {/* Left list (explain chart meaning) */}
           <ul className="space-y-4">
-            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-[#1cc2fc]">
+            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
+              <span className="rounded bg-[#1cc2fc] px-3 py-1 text-sm font-bold text-white">
                 Info
               </span>
               <div>
-                <div className="font-semibold text-white leading-tight">
-                  Credibility-first chart
+                <div className="leading-tight font-semibold text-white">
+                  Supply summary
                 </div>
                 <div className="text-sm text-gray-300">
-                  We only show categories we can support without guessing.
+                  The chart focuses on confirmed token supply information.
                 </div>
               </div>
             </li>
 
-            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-[#F59E0B]">
+            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
+              <span className="rounded bg-[#F59E0B] px-3 py-1 text-sm font-bold text-white">
                 Note
               </span>
               <div>
-                <div className="font-semibold text-white leading-tight">
-                  “Locked / Anti-whale” claims
+                <div className="leading-tight font-semibold text-white">
+                  Burn data
                 </div>
                 <div className="text-sm text-gray-300">
-                  Add those only when proof links + rules are published.
+                  Burned supply can be added here once you want to display the
+                  exact confirmed amount.
                 </div>
               </div>
             </li>
 
-            <li className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 bg-[#20232934] hover:bg-[#202329] border border-[#2b3139] rounded-[24px] text-white">
-              <span className="text-sm font-bold text-white px-3 py-1 rounded bg-emerald-500">
-                Proof
+            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
+              <span className="rounded bg-emerald-500 px-3 py-1 text-sm font-bold text-white">
+                Links
               </span>
               <div>
-                <div className="font-semibold text-white leading-tight">
-                  Official links section
+                <div className="leading-tight font-semibold text-white">
+                  Market and on-chain references
                 </div>
                 <div className="text-sm text-gray-300">
-                  Solscan / Jupiter / DEX charts are linked above.
+                  Official token and chart links are provided above.
                 </div>
               </div>
             </li>
           </ul>
 
-          {/* Chart */}
-          <div className="flex justify-center items-center h-full">
-            <div className="w-[400px] h-[400px]">
+          <div className="flex h-full items-center justify-center">
+            <div className="h-[400px] w-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -346,85 +339,89 @@ const Tokenomics = () => {
             </div>
           </div>
 
-          {/* Stats cards */}
           <ul className="space-y-4">
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">S</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                <span className="font-bold text-white">S</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Total Supply</div>
+                <div className="font-semibold text-white">Total Supply</div>
                 <div className="text-sm text-gray-300">
-                  {loading ? "Loading..." : `${supply.toLocaleString()} tokens`}
+                  {loading ? "Loading supply..." : `${supply.toLocaleString()} tokens`}
                 </div>
               </div>
             </li>
 
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">N</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500">
+                <span className="font-bold text-white">N</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Network</div>
+                <div className="font-semibold text-white">Network</div>
                 <div className="text-sm text-gray-300">Solana (SPL)</div>
               </div>
             </li>
 
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">$</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500">
+                <span className="font-bold text-white">$</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Current Price</div>
+                <div className="font-semibold text-white">Current Price</div>
                 <div className="text-sm text-gray-300">
-                  {loading
-                    ? "Loading..."
-                    : tokenData?.price && tokenData.price > 0
-                    ? `$${tokenData.price.toFixed(9)}`
-                    : "—"}
+                  {loading ? "Loading price..." : formatPrice(tokenData?.price ?? 0)}
                 </div>
               </div>
             </li>
 
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">L</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500">
+                <span className="font-bold text-white">M</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Liquidity (USD)</div>
+                <div className="font-semibold text-white">Market Cap</div>
                 <div className="text-sm text-gray-300">
-                  {loading
-                    ? "Loading..."
-                    : liquidityUsd && liquidityUsd > 0
-                    ? `$${liquidityUsd.toLocaleString()}`
-                    : "—"}
+                  {loading ? "Loading market cap..." : formatMoney(marketCap)}
                 </div>
               </div>
             </li>
 
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">H</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                <span className="font-bold text-white">L</span>
               </div>
               <div>
-                <div className="text-white font-semibold">Holders</div>
+                <div className="font-semibold text-white">Liquidity (USD)</div>
+                <div className="text-sm text-gray-300">
+                  {loading ? "Loading liquidity..." : formatMoney(liquidityUsd)}
+                </div>
+              </div>
+            </li>
+
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500">
+                <span className="font-bold text-white">H</span>
+              </div>
+              <div>
+                <div className="font-semibold text-white">Holders</div>
                 <div className="text-sm text-gray-300">
                   {loading
-                    ? "Loading..."
+                    ? "Loading holders..."
                     : tokenData?.holders
-                    ? `${tokenData.holders.toLocaleString()}`
+                    ? tokenData.holders.toLocaleString()
                     : "—"}
                 </div>
               </div>
             </li>
 
-            <li className="flex items-center gap-4 p-3 rounded-[24px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
-              <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">CA</span>
+            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500">
+                <span className="font-bold text-white">CA</span>
               </div>
+
               <div className="flex-1">
-                <div className="text-white font-semibold">Token Address</div>
-                <div className="text-sm text-gray-300 font-mono">
+                <div className="font-semibold text-white">Token Address</div>
+                <div className="font-mono text-sm text-gray-300">
                   3yeWY...xL1a
                 </div>
               </div>
@@ -436,12 +433,12 @@ const Tokenomics = () => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors duration-200 group"
+                  className="group rounded-full bg-gray-700 p-3 transition-colors duration-200 hover:bg-gray-600"
                   title="Copy full address"
                   type="button"
                 >
                   <svg
-                    className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors"
+                    className="h-4 w-4 text-gray-300 transition-colors group-hover:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -456,9 +453,9 @@ const Tokenomics = () => {
                 </button>
 
                 {copied && (
-                  <div className="absolute top-1 -left-3 transform -translate-x-1/2 bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-medium whitespace-nowrap z-20">
+                  <div className="absolute -left-3 top-1 z-20 -translate-x-1/2 transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1 text-sm font-medium text-white">
                     Copied!
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500"></div>
+                    <div className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 transform border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500" />
                   </div>
                 )}
               </div>
