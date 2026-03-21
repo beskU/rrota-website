@@ -24,7 +24,6 @@ const Hero = () => {
   const tokenAddress = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
   const OFFICIAL_DOMAIN = "https://rrota.xyz";
 
-  // Links (keep centralized so you can change later once)
   const LINKS = {
     jupiter: `https://jup.ag/tokens/${tokenAddress}`,
     solscan: `https://solscan.io/token/${tokenAddress}`,
@@ -112,23 +111,23 @@ const Hero = () => {
     return (
       <div className="flex items-center gap-3">
         <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
-        <span className="text-white/85 text-sm">{label}</span>
+        <span className="text-sm text-white/85">{label}</span>
       </div>
     );
   };
 
   return (
-    <div className="w-full !bg-transparent flex justify-center">
+    <div className="flex w-full justify-center !bg-transparent">
       <motion.section
         id="Hero"
-        className="relative w-full text-white py-[10px] mt-[50px] lg:mt-[100px] overflow-hidden"
+        className="relative mt-[50px] w-full overflow-hidden py-[10px] text-white lg:mt-[100px]"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
         {/* Glowing spinning background logo */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         >
@@ -148,38 +147,34 @@ const Hero = () => {
                   "drop-shadow(0 0 20px rgba(28, 194, 252, 0.3)) drop-shadow(0 0 40px rgba(28, 194, 252, 0.2)) drop-shadow(0 0 80px rgba(28, 194, 252, 0.1))",
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 rounded-full blur-3xl scale-150" />
+            <div className="absolute inset-0 scale-150 rounded-full bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 blur-3xl" />
           </motion.div>
         </motion.div>
 
-        <div className="container mx-auto px-4 flex items-start overflow-hidden box-border max-[1100px] relative z-10">
+        <div className="container relative z-10 mx-auto box-border flex items-start overflow-hidden px-4 max-[1100px]">
           <div
             className="
               grid grid-cols-1
               min-[1100px]:grid-cols-[3fr_2fr]
-              gap-8 lg:gap-14
-              p-5 
-              items-center
+              items-center gap-8 rounded-lg p-5
               !bg-[#202329]/50
               backdrop-blur-[10px]
-              rounded-lg
+              lg:gap-14
             "
           >
             {/* LEFT */}
-            <div className="flex flex-col gap-3 min-w-0 h-full">
-              <div className="flex flex-col gap-3 my-auto">
-                {/* ✅ SEO Headline (H1) */}
+            <div className="flex h-full min-w-0 flex-col gap-3">
+              <div className="my-auto flex flex-col gap-3">
                 <motion.h1
-                  className="font-display text-[44px] md:text-[54px] font-bold text-[#1bbffb] leading-tight"
+                  className="font-display text-[44px] font-bold leading-tight text-[#1bbffb] md:text-[54px]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
                   RROTA Coin (RTA) — Official Utility Token on Solana
                 </motion.h1>
 
-                {/* Subheading */}
                 <motion.p
-                  className="font-inter text-[14px] md:text-[15px] text-white/80 leading-[26px] max-w-[54ch]"
+                  className="max-w-[54ch] font-inter text-[14px] leading-[26px] text-white/80 md:text-[15px]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
                 >
@@ -187,18 +182,16 @@ const Hero = () => {
                   verify on-chain data, and follow development progress.
                 </motion.p>
 
-                {/* ✅ SEO reinforcement box (clarity + high contrast) */}
                 <motion.div
-                  className="p-4 rounded-xl border border-gray-700/50 bg-[#202329]/55 backdrop-blur-sm max-w-[72ch]"
+                  className="max-w-[72ch] rounded-xl border border-gray-700/50 bg-[#202329]/55 p-4 backdrop-blur-sm"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                 >
-                  <p className="text-white/95 font-poppins font-semibold">
+                  <p className="font-poppins font-semibold text-white/95">
                     What is RROTA coin?
                   </p>
 
-                  {/* FIX: remove low opacity + make keywords pure white */}
-                  <p className="mt-2 text-white/90 text-sm leading-[26px]">
+                  <p className="mt-2 text-sm leading-[26px] text-white/90">
                     <span className="font-semibold text-white">RROTA coin</span>{" "}
                     (also searched as{" "}
                     <span className="font-semibold text-white">RROTA token</span>{" "}
@@ -214,7 +207,7 @@ const Hero = () => {
                       href={OFFICIAL_DOMAIN}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#1cc2fc] font-semibold hover:underline"
+                      className="font-semibold text-[#1cc2fc] hover:underline"
                     >
                       {OFFICIAL_DOMAIN}
                     </a>
@@ -222,9 +215,8 @@ const Hero = () => {
                   </p>
                 </motion.div>
 
-                {/* Primary CTAs */}
                 <motion.div
-                  className="flex flex-col sm:flex-row gap-4 mb-4"
+                  className="mb-4 flex flex-col gap-4 sm:flex-row"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
                 >
@@ -232,7 +224,7 @@ const Hero = () => {
                     href={LINKS.jupiter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 px-8 py-4 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc] text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc]"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -258,7 +250,7 @@ const Hero = () => {
                     href={LINKS.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 px-8 py-4 !bg-gradient-to-r !from-[#0088cc] !to-[#006699] hover:!from-[#006699] hover:!to-[#0088cc] text-white font-bold text-lg rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#0088cc] !to-[#006699] hover:!from-[#006699] hover:!to-[#0088cc]"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -280,18 +272,17 @@ const Hero = () => {
                   </motion.a>
                 </motion.div>
 
-                {/* Project Status Bar */}
                 <motion.div
-                  className="mb-6 p-4 rounded-xl border border-gray-700/50 bg-[#202329]/55 backdrop-blur-sm"
+                  className="mb-6 rounded-xl border border-gray-700/50 bg-[#202329]/55 p-4 backdrop-blur-sm"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                 >
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-white/95 font-poppins font-semibold">
+                      <span className="font-poppins font-semibold text-white/95">
                         Project Status
                       </span>
-                      <span className="text-white/55 text-xs">
+                      <span className="text-xs text-white/55">
                         (Live / In Progress)
                       </span>
                     </div>
@@ -299,13 +290,13 @@ const Hero = () => {
                       href={LINKS.solscan}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#1cc2fc] text-sm hover:underline"
+                      className="text-sm text-[#1cc2fc] hover:underline"
                     >
                       Verify on Solscan →
                     </a>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <StatusRow dot="green" label="Token live on Solana" />
                     <StatusRow dot="green" label="Mint revoked / Freeze revoked" />
                     <StatusRow dot="green" label="Audit verification available" />
@@ -322,9 +313,8 @@ const Hero = () => {
                   </div>
                 </motion.div>
 
-                {/* Short “what it is” line (no hype) */}
                 <motion.p
-                  className="font-inter text-[14px] text-white/75 leading-[26px]"
+                  className="font-inter text-[14px] leading-[26px] text-white/75"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
                 >
@@ -332,44 +322,13 @@ const Hero = () => {
                   Utilities ship when tested — not as promises.
                 </motion.p>
 
-                {/* ✅ Official domain + anti-phishing warning (high contrast) */}
                 <motion.div
-                  className="mt-4 mb-2 p-4 rounded-xl border border-amber-500/35 bg-amber-500/10 backdrop-blur-sm"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.28 }}
-                >
-                  <p className="text-amber-50 font-poppins font-semibold">
-                    Official RROTA Website
-                  </p>
-
-                  {/* FIX: remove /90 washout + highlight fake domain */}
-                  <p className="mt-2 text-amber-50 text-sm leading-[26px]">
-                    The only official domain for{" "}
-                    <span className="font-semibold text-amber-50">RROTA coin</span>{" "}
-                    is{" "}
-                    <a
-                      href={OFFICIAL_DOMAIN}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-100 font-semibold underline decoration-amber-200/40 hover:decoration-amber-200"
-                    >
-                      {OFFICIAL_DOMAIN}
-                    </a>
-                    . ⚠ Beware of fake domains such as{" "}
-                    <span className="font-semibold text-amber-100">rr0ta.xyz</span>{" "}
-                    (zero instead of letter “o”). Always verify the contract before
-                    connecting your wallet.
-                  </p>
-                </motion.div>
-
-                {/* Token Address Section */}
-                <motion.div
-                  className="mt-6 mb-6"
+                  className="mb-6 mt-6"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
                 >
-                  <div className="flex flex-col lg:flex-row items-center gap-3 p-4 !bg-[#202329]/50 border border-gray-700/50 rounded-lg backdrop-blur-sm">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="flex flex-col items-center gap-3 rounded-lg border border-gray-700/50 p-4 backdrop-blur-sm !bg-[#202329]/50 lg:flex-row">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
                       <div className="flex-shrink-0">
                         <svg
                           width="24"
@@ -393,9 +352,9 @@ const Hero = () => {
                           />
                         </svg>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white/70 text-sm mb-1">Token Address</p>
-                        <p className="text-white font-mono text-sm break-all">
+                      <div className="min-w-0 flex-1">
+                        <p className="mb-1 text-sm text-white/70">Token Address</p>
+                        <p className="break-all font-mono text-sm text-white">
                           {tokenAddress}
                         </p>
                       </div>
@@ -403,7 +362,7 @@ const Hero = () => {
                     <div className="flex items-center gap-3">
                       <motion.button
                         onClick={copyToClipboard}
-                        className="flex items-center gap-2 px-4 py-2 !bg-[#1cc2fc]/20 !hover:bg-[#1cc2fc]/30 border border-[#1cc2fc]/30 rounded-lg transition-all duration-300 text-[#1cc2fc] hover:text-white"
+                        className="flex items-center gap-2 rounded-lg border border-[#1cc2fc]/30 px-4 py-2 text-[#1cc2fc] transition-all duration-300 hover:text-white !bg-[#1cc2fc]/20 !hover:bg-[#1cc2fc]/30"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.0, duration: 0.6 }}
@@ -424,7 +383,7 @@ const Hero = () => {
                             >
                               <path d="M20 6L9 17l-5-5" />
                             </svg>
-                            <span className="text-green-400 text-sm font-medium">
+                            <span className="text-sm font-medium text-green-400">
                               Copied!
                             </span>
                           </>
@@ -451,7 +410,7 @@ const Hero = () => {
 
                       <motion.button
                         onClick={() => window.open(LINKS.solscan, "_blank")}
-                        className="flex items-center gap-2 px-4 py-2 !bg-[#9945FF]/20 !hover:bg-[#9945FF]/30 border border-[#9945FF]/30 rounded-lg transition-all duration-300 text-[#9945FF] hover:text-white"
+                        className="flex items-center gap-2 rounded-lg border border-[#9945FF]/30 px-4 py-2 text-[#9945FF] transition-all duration-300 hover:text-white !bg-[#9945FF]/20 !hover:bg-[#9945FF]/30"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.1, duration: 0.6 }}
@@ -477,9 +436,8 @@ const Hero = () => {
                   </div>
                 </motion.div>
 
-                {/* Quick Links */}
                 <motion.div
-                  className="flex flex-wrap gap-4 justify-start"
+                  className="flex flex-wrap justify-start gap-4"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.35 }}
                 >
@@ -494,7 +452,7 @@ const Hero = () => {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 hover:!bg-[#202329] text-white px-6 py-4 rounded-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 shadow-lg hover:shadow-xl"
+                      className="flex items-center gap-3 rounded-xl border border-gray-700 px-6 py-4 text-white shadow-lg transition-all duration-300 hover:border-gray-600 hover:shadow-xl hover:!bg-[#202329]"
                       whileTap={{ scale: 0.95 }}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -505,9 +463,8 @@ const Hero = () => {
                   ))}
                 </motion.div>
 
-                {/* Social Icons */}
                 <motion.div
-                  className="mt-6 flex items-center gap-3 flex-wrap"
+                  className="mt-6 flex flex-wrap items-center gap-3"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
                 >
@@ -515,7 +472,7 @@ const Hero = () => {
                     href={LINKS.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition text-white"
+                    className="rounded-full bg-[#202329] p-3 text-white transition hover:opacity-80"
                     aria-label="Twitter (X)"
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 20 }}
@@ -525,7 +482,7 @@ const Hero = () => {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      className="w-5 h-5"
+                      className="h-5 w-5"
                       fill="currentColor"
                     >
                       <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z" />
@@ -536,7 +493,7 @@ const Hero = () => {
                     href={LINKS.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
+                    className="rounded-full bg-[#202329] p-3 transition hover:opacity-80"
                     aria-label="Telegram"
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 20 }}
@@ -553,19 +510,18 @@ const Hero = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="w-5 h-5 text-white"
+                      className="h-5 w-5 text-white"
                     >
                       <path d="m22 2-7 20-4-9-9-4Z" />
                       <path d="M22 2 11 13" />
                     </svg>
                   </motion.a>
 
-                  {/* Audit link chip */}
                   <motion.a
                     href={LINKS.audit}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-0 sm:ml-2 px-4 py-2 rounded-full bg-[#202329] border border-gray-700/50 hover:border-gray-600 text-white/80 hover:text-white transition text-sm"
+                    className="ml-0 rounded-full border border-gray-700/50 bg-[#202329] px-4 py-2 text-sm text-white/80 transition hover:border-gray-600 hover:text-white sm:ml-2"
                     whileTap={{ scale: 0.98 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -579,13 +535,13 @@ const Hero = () => {
 
             {/* RIGHT */}
             <motion.div
-              className="flex items-center md:justify-end justify-center min-h-[400px]"
+              className="flex min-h-[400px] items-center justify-center md:justify-end"
               variants={itemVariants}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
             >
               <div className="relative">
                 <motion.div
-                  className="!bg-gradient-to-br !from-[#353558] !via-[#16213e] !to-[#035ece] backdrop-blur-sm border border-[#1cc2fc]/30 rounded-2xl p-10 shadow-2xl min-w-[320px] w-full max-w-[380px]"
+                  className="min-w-[320px] w-full max-w-[380px] rounded-2xl border border-[#1cc2fc]/30 p-10 shadow-2xl backdrop-blur-sm !bg-gradient-to-br !from-[#353558] !via-[#16213e] !to-[#035ece]"
                   animate={{
                     y: [-12, 12, -12],
                     rotate: [0, 2, -2, 0],
@@ -599,26 +555,26 @@ const Hero = () => {
                     transition: { duration: 0.3 },
                   }}
                 >
-                  <div className="text-center mb-6">
+                  <div className="mb-6 text-center">
                     <motion.div
-                      className="w-20 h-20 bg-gradient-to-br from-[#1cc2fc] to-[#0ea5e9] rounded-full mx-auto mb-4 flex items-center justify-center"
+                      className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#1cc2fc] to-[#0ea5e9]"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                     >
                       <Image src={logo} alt="logo" width={64} height={64} />
                     </motion.div>
 
-                    <h3 className="text-white font-poppins font-bold text-xl mb-2">
+                    <h3 className="mb-2 font-poppins text-xl font-bold text-white">
                       RROTA ($RTA)
                     </h3>
-                    <p className="text-white/70 text-sm">Token live on Solana</p>
+                    <p className="text-sm text-white/70">Token live on Solana</p>
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">Price</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/70">Price</span>
                       <motion.span
-                        className="text-[#1cc2fc] font-bold"
+                        className="font-bold text-[#1cc2fc]"
                         animate={{ opacity: [0.7, 1, 0.7] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
@@ -632,8 +588,8 @@ const Hero = () => {
                       </motion.span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">24h Change</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/70">24h Change</span>
                       <motion.span
                         className={`font-bold ${
                           (tokenData?.priceChange24h || 0) >= 0
@@ -653,10 +609,10 @@ const Hero = () => {
                       </motion.span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">Market Cap</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/70">Market Cap</span>
                       <motion.span
-                        className="text-white font-bold"
+                        className="font-bold text-white"
                         animate={{ opacity: [0.7, 1, 0.7] }}
                         transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                       >
@@ -670,36 +626,35 @@ const Hero = () => {
                       </motion.span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">Mint</span>
-                      <span className="text-green-400 font-bold">Revoked</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/70">Mint</span>
+                      <span className="font-bold text-green-400">Revoked</span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70 text-sm">Freeze</span>
-                      <span className="text-green-400 font-bold">Revoked</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-white/70">Freeze</span>
+                      <span className="font-bold text-green-400">Revoked</span>
                     </div>
 
-                    <div className="flex justify-between items-center gap-4">
-                      <span className="text-white/70 text-sm">Audit verification</span>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-sm text-white/70">Audit verification</span>
                       <Link
                         href={LINKS.audit}
                         target="_blank"
-                        className="text-[#1cc2fc] font-semibold hover:underline"
+                        className="font-semibold text-[#1cc2fc] hover:underline"
                       >
                         View →
                       </Link>
                     </div>
                   </div>
 
-                  <div className="mt-6 text-center text-white/50 text-xs">
+                  <div className="mt-6 text-center text-xs text-white/50">
                     Build phase: active • Updates ship when ready
                   </div>
                 </motion.div>
 
-                {/* Floating particles (kept) */}
                 <motion.div
-                  className="absolute -top-4 -right-4 w-3 h-3 bg-[#1cc2fc] rounded-full shadow-lg"
+                  className="absolute -right-4 -top-4 h-3 w-3 rounded-full bg-[#1cc2fc] shadow-lg"
                   animate={{
                     y: [0, -30, 0],
                     x: [0, 5, 0],
@@ -709,7 +664,7 @@ const Hero = () => {
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 />
                 <motion.div
-                  className="absolute -bottom-4 -left-4 w-2 h-2 bg-[#0ea5e9] rounded-full shadow-lg"
+                  className="absolute -bottom-4 -left-4 h-2 w-2 rounded-full bg-[#0ea5e9] shadow-lg"
                   animate={{
                     y: [0, 25, 0],
                     x: [0, -8, 0],
@@ -724,7 +679,7 @@ const Hero = () => {
                   }}
                 />
                 <motion.div
-                  className="absolute top-1/2 -left-6 w-1.5 h-1.5 bg-white rounded-full shadow-lg"
+                  className="absolute -left-6 top-1/2 h-1.5 w-1.5 rounded-full bg-white shadow-lg"
                   animate={{
                     x: [0, 15, 0],
                     y: [0, -10, 0],
@@ -739,7 +694,7 @@ const Hero = () => {
                   }}
                 />
                 <motion.div
-                  className="absolute top-1/4 -right-8 w-2 h-2 bg-[#1cc2fc]/60 rounded-full shadow-lg"
+                  className="absolute -right-8 top-1/4 h-2 w-2 rounded-full bg-[#1cc2fc]/60 shadow-lg"
                   animate={{
                     y: [0, -20, 0],
                     x: [0, -5, 0],
