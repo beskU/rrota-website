@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Gluten, Inter, Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ScrollToTop from "./utils/scroll-to-top";
 
@@ -265,6 +266,7 @@ export default function RootLayout({
       >
         {children}
         <ScrollToTop />
+        <Analytics />
       </body>
     </html>
   );
