@@ -25,6 +25,7 @@ const Hero = () => {
   const OFFICIAL_DOMAIN = "https://rrota.xyz";
 
   const LINKS = {
+    spinToWin: `${OFFICIAL_DOMAIN}/spin-to-win`,
     jupiter: `https://jup.ag/tokens/${tokenAddress}`,
     solscan: `https://solscan.io/token/${tokenAddress}`,
     dexscreener: `https://dexscreener.com/solana/${tokenAddress}`,
@@ -125,7 +126,6 @@ const Hero = () => {
         animate="visible"
         variants={containerVariants}
       >
-        {/* Glowing spinning background logo */}
         <motion.div
           className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
           animate={{ rotate: 360 }}
@@ -165,30 +165,42 @@ const Hero = () => {
             {/* LEFT */}
             <div className="flex h-full min-w-0 flex-col gap-3">
               <div className="my-auto flex flex-col gap-3">
-                <motion.h1
-                  className="font-display text-[44px] font-bold leading-tight text-[#1bbffb] md:text-[54px]"
+                <motion.div
+                  className="mb-1 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-1.5"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                  RROTA Coin (RTA) — Official Utility Token on Solana
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_14px_rgba(110,231,183,0.8)]" />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-300">
+                    Spin-to-Win is Live
+                  </span>
+                </motion.div>
+
+                <motion.h1
+                  className="font-display text-[40px] font-bold leading-tight text-[#1bbffb] md:text-[54px]"
+                  variants={itemVariants}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
+                  RROTA Spin-to-Win is Live — Official Utility Token on Solana
                 </motion.h1>
 
                 <motion.p
-                  className="max-w-[54ch] font-inter text-[14px] leading-[26px] text-white/80 md:text-[15px]"
+                  className="max-w-[56ch] font-inter text-[14px] leading-[26px] text-white/80 md:text-[15px]"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
                 >
-                  Transparent build phase with staged releases. Track real status,
-                  verify on-chain data, and follow development progress.
+                  Play the official RROTA Spin-to-Win game, earn rewards, use free spins,
+                  bonus spins, and Boost Credits, and interact with the live RROTA ecosystem
+                  through real gameplay utility.
                 </motion.p>
 
                 <motion.div
-                  className="max-w-[72ch] rounded-xl border border-gray-700/50 bg-[#202329]/55 p-4 backdrop-blur-sm"
+                  className="max-w-[74ch] rounded-xl border border-cyan-500/20 bg-[#202329]/55 p-4 backdrop-blur-sm"
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
                 >
                   <p className="font-poppins font-semibold text-white/95">
-                    What is RROTA coin?
+                    What is RROTA coin now?
                   </p>
 
                   <p className="mt-2 text-sm leading-[26px] text-white/90">
@@ -199,8 +211,9 @@ const Hero = () => {
                     <span className="font-semibold text-white">RROTA crypto</span>
                     ) is the{" "}
                     <span className="font-semibold text-white">RTA token</span>{" "}
-                    on Solana, built with a transparent development approach and
-                    on-chain verification. The{" "}
+                    on Solana, now powering the official{" "}
+                    <span className="font-semibold text-white">RROTA Spin-to-Win</span>{" "}
+                    launch experience. The{" "}
                     <span className="font-semibold text-white">official website</span>{" "}
                     is{" "}
                     <a
@@ -220,6 +233,35 @@ const Hero = () => {
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
                 >
+                  <motion.a
+                    href={LINKS.spinToWin}
+                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc]"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 2v4" />
+                      <path d="M12 18v4" />
+                      <path d="m4.93 4.93 2.83 2.83" />
+                      <path d="m16.24 16.24 2.83 2.83" />
+                      <path d="M2 12h4" />
+                      <path d="M18 12h4" />
+                      <path d="m4.93 19.07 2.83-2.83" />
+                      <path d="m16.24 7.76 2.83-2.83" />
+                    </svg>
+                    Play Spin-to-Win
+                  </motion.a>
+
                   <motion.a
                     href={LINKS.jupiter}
                     target="_blank"
@@ -300,16 +342,10 @@ const Hero = () => {
                     <StatusRow dot="green" label="Token live on Solana" />
                     <StatusRow dot="green" label="Mint revoked / Freeze revoked" />
                     <StatusRow dot="green" label="Audit verification available" />
-                    <StatusRow
-                      dot="yellow"
-                      label="Spin-to-Win: reward logic & anti-farm in development"
-                    />
-                    <StatusRow
-                      dot="yellow"
-                      label="Telegram WebApp: integration in progress"
-                    />
-                    <StatusRow dot="blue" label="Shooter game: prototype planning" />
-                    <StatusRow dot="blue" label="Transit utility: research phase" />
+                    <StatusRow dot="green" label="Spin-to-Win live on rrota.xyz" />
+                    <StatusRow dot="green" label="Wallet connect, deposit, withdraw active" />
+                    <StatusRow dot="yellow" label="Telegram growth and launch campaign in progress" />
+                    <StatusRow dot="blue" label="More RROTA utility expansions planned" />
                   </div>
                 </motion.div>
 
@@ -318,8 +354,8 @@ const Hero = () => {
                   variants={itemVariants}
                   transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
                 >
-                  RROTA is being built step-by-step with transparent execution.
-                  Utilities ship when tested — not as promises.
+                  RROTA is now moving from transparent build phase into live utility.
+                  Spin-to-Win is the first major public gameplay release.
                 </motion.p>
 
                 <motion.div
@@ -567,7 +603,7 @@ const Hero = () => {
                     <h3 className="mb-2 font-poppins text-xl font-bold text-white">
                       RROTA ($RTA)
                     </h3>
-                    <p className="text-sm text-white/70">Token live on Solana</p>
+                    <p className="text-sm text-white/70">Spin-to-Win live on rrota.xyz</p>
                   </div>
 
                   <div className="space-y-3">
@@ -648,8 +684,15 @@ const Hero = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6 text-center text-xs text-white/50">
-                    Build phase: active • Updates ship when ready
+                  <a
+                    href={LINKS.spinToWin}
+                    className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.18)] transition-all duration-300 hover:scale-[1.02] hover:brightness-110"
+                  >
+                    Launch the Game
+                  </a>
+
+                  <div className="mt-4 text-center text-xs text-white/50">
+                    Official game live • Wallet connect, rewards, and withdrawals active
                   </div>
                 </motion.div>
 
