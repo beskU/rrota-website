@@ -12,6 +12,7 @@ const Navbar = () => {
   const [isLinksOpen, setIsLinksOpen] = useState(false);
 
   const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+  const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 
   const links = useMemo(
     () => [
@@ -87,6 +88,15 @@ const Navbar = () => {
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-2 text-white font-medium text-sm">
+          <a
+            href={SPIN_TO_WIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2 text-[#1cc2fc] hover:text-white transition"
+          >
+            Spin-to-Win
+          </a>
+
           <button
             onClick={() => scrollToSection("AboutUs")}
             className="px-3 py-2 hover:text-[#1cc2fc] transition"
@@ -108,7 +118,6 @@ const Navbar = () => {
             Tokenomics
           </button>
 
-          {/* ✅ BLOG LINK ADDED */}
           <Link
             href="/blog"
             className="px-3 py-2 hover:text-[#1cc2fc] transition"
@@ -116,7 +125,6 @@ const Navbar = () => {
             Blog
           </Link>
 
-          {/* Links dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsLinksOpen((v) => !v)}
@@ -154,12 +162,13 @@ const Navbar = () => {
         {/* Desktop CTA */}
         <div className="hidden lg:block">
           <Button
-            as={Link}
-            href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
+            as="a"
+            href={SPIN_TO_WIN_URL}
             target="_blank"
+            rel="noopener noreferrer"
             className="bg-gradient-to-r from-[#1cc2fc] to-[#0ea5e9] text-white font-bold px-6 py-3 rounded-xl"
           >
-            Buy on Jupiter
+            Play Spin-to-Win
           </Button>
         </div>
 
@@ -181,6 +190,17 @@ const Navbar = () => {
             className="lg:hidden bg-[#0c0f14] border-t border-white/10 p-4 space-y-3"
           >
             <button onClick={() => scrollToSection("top")}>Home</button>
+
+            <a
+              href={SPIN_TO_WIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-[#1cc2fc]"
+            >
+              Spin-to-Win
+            </a>
+
             <button onClick={() => scrollToSection("AboutUs")}>About</button>
             <button onClick={() => scrollToSection("Roadmap")}>
               Roadmap
@@ -189,7 +209,6 @@ const Navbar = () => {
               Tokenomics
             </button>
 
-            {/* ✅ BLOG MOBILE */}
             <Link
               href="/blog"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -211,6 +230,16 @@ const Navbar = () => {
                 </a>
               ))}
             </div>
+
+            <a
+              href={SPIN_TO_WIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#1cc2fc] to-[#0ea5e9] font-bold text-white"
+            >
+              Play Spin-to-Win
+            </a>
           </motion.div>
         )}
       </AnimatePresence>
