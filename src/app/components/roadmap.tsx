@@ -1,236 +1,198 @@
 "use client";
+
 import React from "react";
 
-type Status = "Verified" | "In Progress" | "Planned";
+type Status = "Shipped" | "Live" | "In Progress" | "Planned";
 
 type RoadmapItem = {
   title: string;
   description: string;
   status: Status;
-  icon: "check" | "clock";
-  side: "left" | "right";
-  proof?: { label: string; href: string }; // optional proof link for Verified phases
+  proof?: { label: string; href: string };
 };
 
-const Roadmap = () => {
-  const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
+const Roadmap = () => {
   const roadmapItems: RoadmapItem[] = [
     {
-      title: "Phase 1 — Foundation (On-chain setup)",
+      title: "Foundation",
       description:
-        "Token live on Solana. Core safety setup completed (mint authority revoked, freeze authority revoked). Burns tracked on-chain and official links established.",
-      status: "Verified",
-      icon: "check",
-      side: "left",
-      proof: { label: "View Solscan", href: `https://solscan.io/token/${TOKEN_ADDRESS}` },
+        "RROTA token deployed on Solana with official website, contract verification links, community channels, and public token references.",
+      status: "Shipped",
+      proof: {
+        label: "Verify token",
+        href: `https://solscan.io/token/${TOKEN_ADDRESS}`,
+      },
     },
     {
-      title: "Phase 2 — Trust Layer (Links + verification)",
+      title: "Trust Layer",
       description:
-        "Audit/verification links published. Public hub for official links (Jupiter, Solscan, DEX charts). Website focused on clarity over hype.",
+        "Official links, audit reference, token verification, privacy/terms pages, and clear project messaging prepared for public users.",
+      status: "Shipped",
+      proof: {
+        label: "View audit",
+        href: "https://freshcoins.io/audit/rrota",
+      },
+    },
+    {
+      title: "Spin-to-Win Utility",
+      description:
+        "Official RROTA Spin-to-Win app with login, daily bonus, free spins, Boost Credits, Phantom wallet connection, deposit flow, and eligible reward withdrawal system.",
+      status: "Live",
+      proof: {
+        label: "Play game",
+        href: "https://spin.rrota.xyz",
+      },
+    },
+    {
+      title: "Controlled Wallet Economy",
+      description:
+        "Deposit/withdraw systems, wallet detection, mobile Phantom handling, and gameplay economy rules continue under controlled rollout and launch testing.",
       status: "In Progress",
-      icon: "clock",
-      side: "right",
-      proof: { label: "Audit", href: "https://freshcoins.io/audit/rrota" },
+      proof: {
+        label: "Open game",
+        href: "https://spin.rrota.xyz",
+      },
     },
     {
-      title: "Phase 3 — Spin-to-Win (Core utility)",
+      title: "Community Growth Layer",
       description:
-        "Spin-to-Win reward logic + anti-farm system. Holder-based access rules. Beta test with controlled distribution before public release.",
+        "Telegram/X campaigns, content, onboarding guides, player education, and safer link verification are being improved before larger public promotion.",
       status: "In Progress",
-      icon: "clock",
-      side: "left",
+      proof: {
+        label: "Join Telegram",
+        href: "https://t.me/rrotaOfficial",
+      },
     },
     {
-      title: "Phase 4 — Telegram Tools (Community UX)",
+      title: "Next Utility Expansion",
       description:
-        "Telegram tracking tools (buy/sell alerts, price, links) + clean onboarding. Optional leaderboard/referral systems only after abuse-proofing.",
+        "Crypto Shooter, leaderboard features, referral systems, dashboards, and future tools remain planned after Spin-to-Win launch stability is confirmed.",
       status: "Planned",
-      icon: "clock",
-      side: "right",
-    },
-    {
-      title: "Phase 5 — Game Expansion (Shooter prototype)",
-      description:
-        "Shooter prototype → playable beta. Rewards only if the economy is sustainable and resistant to farming.",
-      status: "Planned",
-      icon: "clock",
-      side: "left",
-    },
-    {
-      title: "Phase 6 — Ecosystem Scale (Listings + dashboards)",
-      description:
-        "Holder dashboard, multi-language support, and structured growth campaigns. CEX listing discussions only when liquidity, volume, and utility readiness meet requirements.",
-      status: "Planned",
-      icon: "clock",
-      side: "right",
     },
   ];
 
   const statusStyles: Record<
     Status,
-    { text: string; dot: string; badge: string }
+    {
+      badge: string;
+      dot: string;
+      glow: string;
+      card: string;
+    }
   > = {
-    Verified: {
-      text: "text-[#20befa]",
-      dot: "!bg-[#20befa] !border-[#20befa] shadow-lg shadow-[#20befa]/30",
-      badge:
-        "bg-[#20befa]/10 text-[#20befa] border border-[#20befa]/30",
+    Shipped: {
+      badge: "border-cyan-400/22 bg-cyan-400/10 text-cyan-200",
+      dot: "bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.9)]",
+      glow: "from-cyan-400/20",
+      card: "hover:border-cyan-300/28 hover:bg-cyan-400/6",
+    },
+    Live: {
+      badge: "border-emerald-400/22 bg-emerald-400/10 text-emerald-200",
+      dot: "bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.9)]",
+      glow: "from-emerald-400/20",
+      card: "hover:border-emerald-300/28 hover:bg-emerald-400/6",
     },
     "In Progress": {
-      text: "text-white",
-      dot: "!bg-[#1a1d23] !border-[#20befa] shadow-lg shadow-[#20befa]/20",
-      badge:
-        "bg-white/5 text-white border border-[#20befa]/25",
+      badge: "border-amber-400/22 bg-amber-400/10 text-amber-200",
+      dot: "bg-amber-300 shadow-[0_0_18px_rgba(250,204,21,0.8)]",
+      glow: "from-amber-400/18",
+      card: "hover:border-amber-300/28 hover:bg-amber-400/6",
     },
     Planned: {
-      text: "text-white/80",
-      dot: "!bg-[#1a1d23] !border-[#2b3139] shadow-lg shadow-black/20",
-      badge:
-        "bg-white/5 text-white/80 border border-white/10",
+      badge: "border-white/12 bg-white/[0.055] text-white/70",
+      dot: "bg-white/45 shadow-[0_0_12px_rgba(255,255,255,0.25)]",
+      glow: "from-white/10",
+      card: "hover:border-white/18 hover:bg-white/[0.055]",
     },
   };
 
   return (
-    <section id="Roadmap" className="text-white">
-      <div className="container mx-auto px-4 lg:px-0">
-        <h2 className="text-center text-3xl md:text-4xl font-extrabold bg-gradient-to-r pb-5 from-[#fff] via-[#fff] to-[#fff] bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(168,144,255,0.35)]">
-          RROTA Roadmap
-        </h2>
+    <section id="Roadmap" className="relative mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.15),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.13),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
 
-        {/* Intro (credibility-first) */}
-        <div className="max-w-4xl mx-auto mb-16">
-          <div className="bg-gradient-to-br from-[#1a1d23] to-[#202329] border border-[#2b3139] rounded-2xl p-8">
-            <p className="text-gray-300 leading-relaxed mb-4">
-              RROTA is in an active build phase. This roadmap is designed to be
-              honest: we only mark items as{" "}
-              <span className="text-[#20befa] font-semibold">Verified</span>{" "}
-              when they are publicly verifiable (on-chain or via published
-              links). Everything else is listed as{" "}
-              <span className="font-semibold">In Progress</span> or{" "}
-              <span className="font-semibold">Planned</span>.
-            </p>
+        <div className="relative">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+              Roadmap
+            </div>
 
-            <p className="text-gray-300 leading-relaxed mb-4">
-              The goal is simple: ship utility in stages — development → beta →
-              release — and avoid big claims until features are actually live.
-            </p>
+            <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+              RROTA roadmap:
+              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                shipped, live, and next.
+              </span>
+            </h2>
 
-            <p className="text-gray-300 leading-relaxed">
-              If you are following RROTA early, the most important signal is
-              execution: consistent updates, verified links, and real releases.
+            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
+              The roadmap is organized by execution status. RROTA only looks strong long-term if
+              shipped features, live utility, and planned work are clearly separated.
             </p>
           </div>
-        </div>
 
-        <div className="relative max-w-4xl mx-auto mt-16">
-          {/* Timeline line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-[2px] !bg-gradient-to-b !from-[#2b3139] !via-[#20befa]/30 !to-[#2b3139] z-0"></div>
+          <div className="mt-10 grid gap-4 lg:grid-cols-3">
+            {roadmapItems.map((item, index) => {
+              const style = statusStyles[item.status];
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {roadmapItems.map((item, index) => (
-              <div
-                key={index}
-                className={`relative ${
-                  item.side === "left"
-                    ? "md:pr-8 md:text-right"
-                    : "md:pl-8 md:text-left"
-                } z-10`}
-              >
-                {/* Timeline dot (FIXED: tailwind top class) */}
+              return (
                 <div
-                  className={`absolute top-8 -translate-y-1/2 hidden md:block w-4 h-4 rounded-full border-2 z-[-1]
-                    ${statusStyles[item.status].dot}
-                    ${item.side === "left" ? "right-[-8px]" : "left-[-8px]"}
-                  `}
-                />
-
-                {/* Roadmap item card */}
-                <div className="p-4 rounded-[16px] border border-[#2b3139] transition-all duration-300 bg-[#202329] hover:shadow-lg relative z-10">
+                  key={item.title}
+                  className={`group relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all ${style.card}`}
+                >
                   <div
-                    className={`flex items-start gap-3 ${
-                      item.side === "left" ? "md:flex-row-reverse" : ""
-                    }`}
-                  >
-                    <div className="flex-shrink-0 mt-0.5">
-                      {item.icon === "check" ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="lucide lucide-circle-check-big w-5 h-5 text-[#20befa]"
-                        >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <path d="m9 11 3 3L22 4"></path>
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="lucide lucide-clock w-5 h-5 text-white"
-                        >
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                      )}
-                    </div>
+                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${style.glow} to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                  />
 
-                    <div className="flex-grow">
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-base font-semibold leading-tight">
-                          {item.title}
-                        </h3>
-
-                        {/* Status badge */}
-                        <span
-                          className={`shrink-0 text-[11px] px-2 py-1 rounded-full ${statusStyles[item.status].badge}`}
-                        >
-                          {item.status}
-                        </span>
+                  <div className="relative">
+                    <div className="mb-5 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-2.5 w-2.5 rounded-full ${style.dot}`} />
+                        <div className="font-mono text-xs font-black text-white/40">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
                       </div>
 
-                      <p className="text-xs leading-relaxed mt-2 text-white/75">
-                        {item.description}
-                      </p>
-
-                      {/* Proof link (optional) */}
-                      {item.proof?.href && (
-                        <div className="mt-3">
-                          <a
-                            href={item.proof.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs font-semibold text-[#20befa] hover:opacity-80 transition"
-                          >
-                            {item.proof.label} ↗
-                          </a>
-                        </div>
-                      )}
+                      <span
+                        className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${style.badge}`}
+                      >
+                        {item.status}
+                      </span>
                     </div>
+
+                    <h3 className="text-xl font-black text-white">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-white/60">{item.description}</p>
+
+                    {item.proof?.href && (
+                      <a
+                        href={item.proof.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex h-10 items-center justify-center rounded-2xl border border-cyan-400/16 bg-cyan-400/8 px-4 text-sm font-bold text-cyan-100 transition hover:bg-cyan-400/14"
+                      >
+                        {item.proof.label} ↗
+                      </a>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Small note */}
-          <div className="max-w-4xl mx-auto mt-10 text-center text-white/50 text-sm">
-            Verified = publicly verifiable • In Progress = being built • Planned
-            = next phases (subject to readiness + security)
+          <div className="mt-8 grid gap-3 rounded-[30px] border border-cyan-400/14 bg-cyan-400/6 p-5 sm:grid-cols-4">
+            {[
+              ["Shipped", "Completed and published"],
+              ["Live", "Available to users now"],
+              ["In Progress", "Being tested or improved"],
+              ["Planned", "Future phases"],
+            ].map(([label, text]) => (
+              <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                <div className="text-sm font-black text-white">{label}</div>
+                <div className="mt-1 text-xs leading-5 text-white/52">{text}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
