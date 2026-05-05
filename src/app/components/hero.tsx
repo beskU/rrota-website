@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import logo from "../../../public/rrota-logo2.png";
 import Image from "next/image";
+import logo from "../../../public/rrota-logo2.png";
 import { getTokenData } from "../lib/token-data";
-import Link from "next/link";
 
 interface TokenData {
   price: number;
@@ -15,37 +14,229 @@ interface TokenData {
   priceChange24h: number;
 }
 
-const Hero = () => {
+const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const OFFICIAL_DOMAIN = "https://rrota.xyz";
+const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
+
+const LINKS = {
+  spinToWin: SPIN_TO_WIN_URL,
+  jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
+  solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
+  dexscreener: `https://dexscreener.com/solana/${TOKEN_ADDRESS}`,
+  birdeye: `https://birdeye.so/token/${TOKEN_ADDRESS}?chain=solana`,
+  geckoterminal: `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
+  telegram: "https://t.me/rrotaOfficial",
+  twitter: "https://x.com/rrotacoin",
+  audit: "https://freshcoins.io/audit/rrota",
+};
+
+function formatPrice(price: number) {
+  if (!price || price <= 0) return "Live chart";
+  if (price < 0.000001) return `$${price.toExponential(2)}`;
+  return `$${price.toFixed(9)}`;
+}
+
+function formatCompact(value: number) {
+  if (!value || value <= 0) return "Live chart";
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(2)}`;
+}
+
+function formatPriceChange(change: number) {
+  const sign = change >= 0 ? "+" : "";
+  return `${sign}${change.toFixed(2)}%`;
+}
+
+function shortAddress(address: string) {
+  return `${address.slice(0, 6)}...${address.slice(-6)}`;
+}
+
+function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+function CopyIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+    </svg>
+  );
+}
+
+function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function SparkIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 2v4" />
+      <path d="M12 18v4" />
+      <path d="m4.93 4.93 2.83 2.83" />
+      <path d="m16.24 16.24 2.83 2.83" />
+      <path d="M2 12h4" />
+      <path d="M18 12h4" />
+      <path d="m4.93 19.07 2.83-2.83" />
+      <path d="m16.24 7.76 2.83-2.83" />
+    </svg>
+  );
+}
+
+function ShieldIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+function WalletIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M19 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h14a2 2 0 0 1 2 2v2" />
+      <path d="M3 6v12a3 3 0 0 0 3 3h13a2 2 0 0 0 2-2v-3" />
+      <path d="M18 12h4v4h-4a2 2 0 0 1 0-4Z" />
+    </svg>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  tone = "cyan",
+}: {
+  label: string;
+  value: string;
+  tone?: "cyan" | "green" | "fuchsia" | "amber";
+}) {
+  const toneClass =
+    tone === "green"
+      ? "text-emerald-300 border-emerald-400/18 bg-emerald-400/7"
+      : tone === "fuchsia"
+        ? "text-fuchsia-300 border-fuchsia-400/18 bg-fuchsia-400/7"
+        : tone === "amber"
+          ? "text-amber-300 border-amber-400/18 bg-amber-400/7"
+          : "text-cyan-300 border-cyan-400/18 bg-cyan-400/7";
+
+  return (
+    <div className={`rounded-2xl border px-4 py-3 ${toneClass}`}>
+      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
+        {label}
+      </div>
+      <div className="mt-1 text-sm font-black text-white sm:text-base">{value}</div>
+    </div>
+  );
+}
+
+function StatusPill({
+  label,
+  tone = "green",
+}: {
+  label: string;
+  tone?: "green" | "cyan" | "fuchsia" | "amber";
+}) {
+  const toneClass =
+    tone === "cyan"
+      ? "border-cyan-400/20 bg-cyan-400/8 text-cyan-200"
+      : tone === "fuchsia"
+        ? "border-fuchsia-400/20 bg-fuchsia-400/8 text-fuchsia-200"
+        : tone === "amber"
+          ? "border-amber-400/20 bg-amber-400/8 text-amber-200"
+          : "border-emerald-400/20 bg-emerald-400/8 text-emerald-200";
+
+  return (
+    <div
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] ${toneClass}`}
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_10px_currentColor]" />
+      {label}
+    </div>
+  );
+}
+
+export default function Hero() {
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  const tokenAddress = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-  const OFFICIAL_DOMAIN = "https://rrota.xyz";
-
-  const LINKS = {
-    spinToWin: `${OFFICIAL_DOMAIN}/spin-to-win`,
-    jupiter: `https://jup.ag/tokens/${tokenAddress}`,
-    solscan: `https://solscan.io/token/${tokenAddress}`,
-    dexscreener: `https://dexscreener.com/solana/${tokenAddress}`,
-    birdeye: `https://birdeye.so/token/${tokenAddress}?chain=solana`,
-    geckoterminal: `https://www.geckoterminal.com/solana/tokens/${tokenAddress}`,
-    telegram: "https://t.me/rrotaOfficial",
-    twitter: "https://x.com/rrotacoin",
-    audit: "https://freshcoins.io/audit/rrota",
-  };
+  const [hasDataError, setHasDataError] = useState(false);
 
   useEffect(() => {
     const fetchTokenData = async () => {
       try {
         setLoading(true);
-        const data = await getTokenData(tokenAddress);
+        const data = await getTokenData(TOKEN_ADDRESS);
         setTokenData(data);
-        setError(null);
+        setHasDataError(false);
       } catch (err) {
-        setError("Failed to fetch token data");
         console.error("Error fetching token data:", err);
+        setHasDataError(true);
       } finally {
         setLoading(false);
       }
@@ -53,711 +244,470 @@ const Hero = () => {
 
     fetchTokenData();
     const interval = setInterval(fetchTokenData, 5 * 60 * 1000);
+
     return () => clearInterval(interval);
-  }, [tokenAddress]);
+  }, []);
 
-  const formatPrice = (price: number) => {
-    if (price < 0.000001) return `$${price.toExponential(2)}`;
-    return `$${price.toFixed(9)}`;
-  };
-
-  const formatMarketCap = (marketCap: number) => {
-    if (marketCap >= 1000000) return `$${(marketCap / 1000000).toFixed(2)}M`;
-    if (marketCap >= 1000) return `$${(marketCap / 1000).toFixed(2)}K`;
-    return `$${marketCap.toFixed(2)}`;
-  };
-
-  const formatPriceChange = (change: number) => {
-    const sign = change >= 0 ? "+" : "";
-    return `${sign}${change.toFixed(2)}%`;
-  };
-
-  const copyToClipboard = async () => {
+  const copyTokenAddress = async () => {
     try {
-      await navigator.clipboard.writeText(tokenAddress);
+      await navigator.clipboard.writeText(TOKEN_ADDRESS);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 2200);
     } catch (err) {
-      console.error("Failed to copy: ", err);
+      console.error("Failed to copy token address:", err);
     }
   };
+
+  const priceText =
+    loading || hasDataError ? "Live chart" : formatPrice(tokenData?.price || 0);
+
+  const marketCapText =
+    loading || hasDataError
+      ? "Live chart"
+      : formatCompact(tokenData?.marketCap || 0);
+
+  const liquidityText =
+    loading || hasDataError
+      ? "Live chart"
+      : formatCompact(tokenData?.liquidity || 0);
+
+  const priceChangeText =
+    loading || hasDataError
+      ? "Open chart"
+      : formatPriceChange(tokenData?.priceChange24h || 0);
+
+  const priceChangePositive = (tokenData?.priceChange24h || 0) >= 0;
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.25, delayChildren: 0.15 },
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1,
+      },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 24, opacity: 0 },
+    hidden: { y: 26, opacity: 0 },
     visible: { y: 0, opacity: 1 },
   };
 
-  const StatusRow = ({
-    dot,
-    label,
-  }: {
-    dot: "green" | "yellow" | "blue";
-    label: string;
-  }) => {
-    const dotClass =
-      dot === "green"
-        ? "bg-green-400"
-        : dot === "yellow"
-        ? "bg-yellow-400"
-        : "bg-sky-400";
-
-    return (
-      <div className="flex items-center gap-3">
-        <span className={`h-2.5 w-2.5 rounded-full ${dotClass}`} />
-        <span className="text-sm text-white/85">{label}</span>
-      </div>
-    );
-  };
-
   return (
-    <div className="flex w-full justify-center !bg-transparent">
-      <motion.section
-        id="Hero"
-        className="relative mt-[50px] w-full overflow-hidden py-[10px] text-white lg:mt-[100px]"
+    <section
+      id="Hero"
+      className="relative isolate w-full overflow-hidden bg-[#050711] px-4 pb-16 pt-28 text-white sm:px-6 sm:pb-20 lg:px-8 lg:pb-24 lg:pt-32"
+    >
+      {/* Premium background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(34,211,238,0.18),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(217,70,239,0.16),transparent_28%),radial-gradient(circle_at_50%_85%,rgba(250,204,21,0.09),transparent_30%),linear-gradient(180deg,#050711_0%,#07101d_45%,#050711_100%)]" />
+        <div className="absolute inset-0 opacity-[0.13] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:60px_60px]" />
+        <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[110px]" />
+        <div className="absolute bottom-[-220px] right-[-120px] h-[520px] w-[520px] rounded-full bg-fuchsia-500/10 blur-[115px]" />
+        <div className="absolute left-[-180px] top-[240px] h-[420px] w-[420px] rounded-full bg-amber-400/6 blur-[100px]" />
+      </div>
+
+      {/* Animated ambience */}
+      <motion.div
+        className="pointer-events-none absolute left-[8%] top-[22%] h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_22px_rgba(34,211,238,0.9)]"
+        animate={{ y: [0, -28, 0], opacity: [0.35, 1, 0.35], scale: [0.8, 1.35, 0.8] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="pointer-events-none absolute right-[12%] top-[26%] h-2.5 w-2.5 rounded-full bg-fuchsia-300 shadow-[0_0_22px_rgba(217,70,239,0.9)]"
+        animate={{ y: [0, 24, 0], opacity: [0.25, 0.9, 0.25], scale: [0.7, 1.25, 0.7] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+      />
+      <motion.div
+        className="pointer-events-none absolute bottom-[18%] left-[18%] h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_18px_rgba(250,204,21,0.8)]"
+        animate={{ x: [0, 22, 0], opacity: [0.25, 0.9, 0.25], scale: [0.6, 1.3, 0.6] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
+      />
+
+      <motion.div
+        className="mx-auto grid w-full max-w-7xl items-center gap-8 lg:grid-cols-[1.08fr_0.92fr]"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <motion.div
-          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
+        {/* Left content */}
+        <div className="relative z-10">
           <motion.div
-            className="relative"
-            animate={{ scale: [1, 1.1, 1], opacity: [0.08, 0.18, 0.08] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            variants={itemVariants}
+            className="flex flex-wrap items-center gap-2"
           >
-            <Image
-              src={logo}
-              alt="RROTA Logo Background"
-              width={400}
-              height={400}
-              className="filter drop-shadow-2xl"
-              style={{
-                filter:
-                  "drop-shadow(0 0 20px rgba(28, 194, 252, 0.3)) drop-shadow(0 0 40px rgba(28, 194, 252, 0.2)) drop-shadow(0 0 80px rgba(28, 194, 252, 0.1))",
-              }}
-            />
-            <div className="absolute inset-0 scale-150 rounded-full bg-gradient-to-r from-[#1cc2fc]/20 via-transparent to-[#1cc2fc]/20 blur-3xl" />
+            <StatusPill label="Spin-to-Win Live" />
+            <StatusPill label="Solana SPL" tone="cyan" />
+            <StatusPill label="Mint / Freeze Revoked" tone="fuchsia" />
           </motion.div>
-        </motion.div>
 
-        <div className="container relative z-10 mx-auto box-border flex items-start overflow-hidden px-4 max-[1100px]">
-          <div
-            className="
-              grid grid-cols-1
-              min-[1100px]:grid-cols-[3fr_2fr]
-              items-center gap-8 rounded-lg p-5
-              !bg-[#202329]/50
-              backdrop-blur-[10px]
-              lg:gap-14
-            "
+          <motion.div variants={itemVariants} className="mt-7">
+            <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-white/64 backdrop-blur-xl">
+              Official RROTA ecosystem hub
+            </div>
+
+            <h1 className="mt-5 max-w-5xl text-[42px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[64px] lg:text-[78px]">
+              RROTA is no longer just a token.
+              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                It has live utility.
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg">
+              RROTA ($RTA) is a utility-first Solana project now connected to the
+              official Spin-to-Win game. Play, claim daily bonuses, use Boost Credits,
+              connect Phantom, and verify everything through official links.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
           >
-            {/* LEFT */}
-            <div className="flex h-full min-w-0 flex-col gap-3">
-              <div className="my-auto flex flex-col gap-3">
-                <motion.div
-                  className="mb-1 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-4 py-1.5"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+            <a
+              href={LINKS.spinToWin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/35 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_38px_rgba(34,211,238,0.23),0_0_70px_rgba(217,70,239,0.12)] transition-all hover:scale-[1.02] hover:brightness-110"
+            >
+              <SparkIcon className="h-5 w-5 transition-transform group-hover:rotate-90" />
+              Play Spin-to-Win
+            </a>
+
+            <a
+              href={LINKS.jupiter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-white"
+            >
+              Buy $RTA
+              <ExternalIcon />
+            </a>
+
+            <a
+              href={LINKS.solscan}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.035] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/78 backdrop-blur-xl transition-all hover:border-emerald-300/25 hover:bg-emerald-400/8 hover:text-white"
+            >
+              Verify Contract
+              <ShieldIcon className="h-5 w-5" />
+            </a>
+          </motion.div>
+
+          {/* Token address lockbox */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 max-w-3xl rounded-[28px] border border-cyan-400/14 bg-[#08111f]/75 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_0_38px_rgba(34,211,238,0.08)] backdrop-blur-xl"
+          >
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-300/70">
+                  <ShieldIcon className="h-4 w-4" />
+                  Official Solana Contract
+                </div>
+                <div className="mt-2 break-all font-mono text-sm font-semibold text-white/88">
+                  {TOKEN_ADDRESS}
+                </div>
+              </div>
+
+              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+                <button
+                  onClick={copyTokenAddress}
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100 transition-all hover:bg-cyan-400/15"
                 >
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_14px_rgba(110,231,183,0.8)]" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-300">
-                    Spin-to-Win is Live
-                  </span>
-                </motion.div>
+                  {copied ? (
+                    <>
+                      <CheckIcon className="h-4 w-4 text-emerald-300" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <CopyIcon />
+                      Copy
+                    </>
+                  )}
+                </button>
 
-                <motion.h1
-                  className="font-display text-[40px] font-bold leading-tight text-[#1bbffb] md:text-[54px]"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                <a
+                  href={LINKS.solscan}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-sm font-bold text-fuchsia-100 transition-all hover:bg-fuchsia-400/14"
                 >
-                  RROTA Spin-to-Win is Live — Official Utility Token on Solana
-                </motion.h1>
+                  Solscan
+                  <ExternalIcon />
+                </a>
+              </div>
+            </div>
+          </motion.div>
 
-                <motion.p
-                  className="max-w-[56ch] font-inter text-[14px] leading-[26px] text-white/80 md:text-[15px]"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-                >
-                  Play the official RROTA Spin-to-Win game, earn rewards, use free spins,
-                  bonus spins, and Boost Credits, and interact with the live RROTA ecosystem
-                  through real gameplay utility.
-                </motion.p>
+          {/* Feature strip */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-6 grid max-w-3xl gap-3 sm:grid-cols-3"
+          >
+            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/10 text-cyan-200">
+                <SparkIcon />
+              </div>
+              <div className="mt-3 text-sm font-black text-white">Live Game</div>
+              <p className="mt-1 text-xs leading-5 text-white/56">
+                Daily bonus, free spins, Boost Credits, and progression.
+              </p>
+            </div>
 
-                <motion.div
-                  className="max-w-[74ch] rounded-xl border border-cyan-500/20 bg-[#202329]/55 p-4 backdrop-blur-sm"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-                >
-                  <p className="font-poppins font-semibold text-white/95">
-                    What is RROTA coin now?
-                  </p>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/10 text-fuchsia-200">
+                <WalletIcon />
+              </div>
+              <div className="mt-3 text-sm font-black text-white">Wallet Utility</div>
+              <p className="mt-1 text-xs leading-5 text-white/56">
+                Phantom connect, RTA deposit, and eligible reward withdrawal.
+              </p>
+            </div>
 
-                  <p className="mt-2 text-sm leading-[26px] text-white/90">
-                    <span className="font-semibold text-white">RROTA coin</span>{" "}
-                    (also searched as{" "}
-                    <span className="font-semibold text-white">RROTA token</span>{" "}
-                    or{" "}
-                    <span className="font-semibold text-white">RROTA crypto</span>
-                    ) is the{" "}
-                    <span className="font-semibold text-white">RTA token</span>{" "}
-                    on Solana, now powering the official{" "}
-                    <span className="font-semibold text-white">RROTA Spin-to-Win</span>{" "}
-                    launch experience. The{" "}
-                    <span className="font-semibold text-white">official website</span>{" "}
-                    is{" "}
-                    <a
-                      href={OFFICIAL_DOMAIN}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-[#1cc2fc] hover:underline"
-                    >
-                      {OFFICIAL_DOMAIN}
-                    </a>
-                    .
-                  </p>
-                </motion.div>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/18 bg-emerald-400/10 text-emerald-200">
+                <ShieldIcon />
+              </div>
+              <div className="mt-3 text-sm font-black text-white">Verified Links</div>
+              <p className="mt-1 text-xs leading-5 text-white/56">
+                Contract, charts, audit, community, and official game app.
+              </p>
+            </div>
+          </motion.div>
+        </div>
 
-                <motion.div
-                  className="mb-4 flex flex-col gap-4 sm:flex-row"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
-                >
-                  <motion.a
-                    href={LINKS.spinToWin}
-                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc]"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 2v4" />
-                      <path d="M12 18v4" />
-                      <path d="m4.93 4.93 2.83 2.83" />
-                      <path d="m16.24 16.24 2.83 2.83" />
-                      <path d="M2 12h4" />
-                      <path d="M18 12h4" />
-                      <path d="m4.93 19.07 2.83-2.83" />
-                      <path d="m16.24 7.76 2.83-2.83" />
-                    </svg>
-                    Play Spin-to-Win
-                  </motion.a>
+        {/* Right premium visual */}
+        <motion.div variants={itemVariants} className="relative z-10">
+          <div className="relative mx-auto w-full max-w-[520px]">
+            {/* Outer glow rings */}
+            <motion.div
+              className="absolute left-1/2 top-1/2 h-[440px] w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-fuchsia-300/10"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+            />
 
-                  <motion.a
-                    href={LINKS.jupiter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#1cc2fc] !to-[#0ea5e9] hover:!from-[#0ea5e9] hover:!to-[#1cc2fc]"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                      <path d="M2 17l10 5 10-5" />
-                      <path d="M2 12l10 5 10-5" />
-                    </svg>
-                    Buy on Jupiter
-                  </motion.a>
+            <div className="relative overflow-hidden rounded-[38px] border border-cyan-300/16 bg-[linear-gradient(145deg,rgba(8,20,36,0.92),rgba(10,8,22,0.96))] p-5 shadow-[0_0_70px_rgba(34,211,238,0.12),0_0_110px_rgba(217,70,239,0.08)] backdrop-blur-2xl">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,0.18),transparent_35%),radial-gradient(circle_at_100%_100%,rgba(217,70,239,0.14),transparent_36%)]" />
 
-                  <motion.a
-                    href={LINKS.telegram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 rounded-xl px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 !bg-gradient-to-r !from-[#0088cc] !to-[#006699] hover:!from-[#006699] hover:!to-[#0088cc]"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m22 2-7 20-4-9-9-4Z" />
-                      <path d="M22 2 11 13" />
-                    </svg>
-                    Join Telegram
-                  </motion.a>
-                </motion.div>
-
-                <motion.div
-                  className="mb-6 rounded-xl border border-gray-700/50 bg-[#202329]/55 p-4 backdrop-blur-sm"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="font-poppins font-semibold text-white/95">
-                        Project Status
-                      </span>
-                      <span className="text-xs text-white/55">
-                        (Live / In Progress)
-                      </span>
+              <div className="relative">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
+                      RROTA Control Deck
                     </div>
-                    <a
-                      href={LINKS.solscan}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-[#1cc2fc] hover:underline"
-                    >
-                      Verify on Solscan →
-                    </a>
+                    <div className="mt-1 text-xl font-black text-white">
+                      Spin-to-Win Gateway
+                    </div>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <StatusRow dot="green" label="Token live on Solana" />
-                    <StatusRow dot="green" label="Mint revoked / Freeze revoked" />
-                    <StatusRow dot="green" label="Audit verification available" />
-                    <StatusRow dot="green" label="Spin-to-Win live on rrota.xyz" />
-                    <StatusRow dot="green" label="Wallet connect, deposit, withdraw active" />
-                    <StatusRow dot="yellow" label="Telegram growth and launch campaign in progress" />
-                    <StatusRow dot="blue" label="More RROTA utility expansions planned" />
+                  <div className="rounded-full border border-emerald-400/18 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-200">
+                    Live
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.p
-                  className="font-inter text-[14px] leading-[26px] text-white/75"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
-                >
-                  RROTA is now moving from transparent build phase into live utility.
-                  Spin-to-Win is the first major public gameplay release.
-                </motion.p>
+                {/* Emblem chamber */}
+                <div className="relative mt-6 flex min-h-[300px] items-center justify-center overflow-hidden rounded-[32px] border border-white/10 bg-[#070b16]/80">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.18),transparent_28%),radial-gradient(circle_at_50%_65%,rgba(217,70,239,0.12),transparent_40%)]" />
+                  <div className="absolute inset-x-8 top-1/2 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
+                  <div className="absolute inset-y-8 left-1/2 w-px bg-gradient-to-b from-transparent via-fuchsia-300/35 to-transparent" />
 
-                <motion.div
-                  className="mb-6 mt-6"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-                >
-                  <div className="flex flex-col items-center gap-3 rounded-lg border border-gray-700/50 p-4 backdrop-blur-sm !bg-[#202329]/50 lg:flex-row">
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <div className="flex-shrink-0">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="text-[#9945FF]"
-                        >
-                          <path
-                            d="M5.02734 15.1875C5.10938 15.1055 5.22656 15.0586 5.34375 15.0586H21.6562C21.8203 15.0586 21.9023 15.2656 21.7773 15.3906L18.9727 18.1953C18.8906 18.2773 18.7734 18.3242 18.6562 18.3242H2.34375C2.17969 18.3242 2.09766 18.1172 2.22266 17.9922L5.02734 15.1875Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M5.02734 5.80469C5.10938 5.72266 5.22656 5.67578 5.34375 5.67578H21.6562C21.8203 5.67578 21.9023 15.2656 21.7773 6.00781L18.9727 8.8125C18.8906 8.89453 18.7734 8.94141 18.6562 8.94141H2.34375C2.17969 8.94141 2.09766 8.73438 2.22266 8.60938L5.02734 5.80469Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M18.9727 10.5C18.8906 10.4179 18.7734 10.3711 18.6562 10.3711H2.34375C2.17969 10.3711 2.09766 10.5781 2.22266 10.7031L5.02734 13.5078C5.10938 13.5898 5.22656 13.6367 5.34375 13.6367H21.6562C21.8203 13.6367 21.9023 13.4297 21.7773 13.3047L18.9727 10.5Z"
-                            fill="currentColor"
-                          />
-                        </svg>
+                  <motion.div
+                    className="absolute h-[260px] w-[260px] rounded-full border border-cyan-300/15"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="absolute h-[214px] w-[214px] rounded-full border border-fuchsia-300/18"
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="absolute h-[165px] w-[165px] rounded-full border border-amber-300/10"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 11, repeat: Infinity, ease: "linear" }}
+                  />
+
+                  <motion.div
+                    className="relative flex h-[180px] w-[180px] items-center justify-center rounded-full border border-cyan-300/25 bg-[radial-gradient(circle,#112b45_0%,#070b16_62%,#050711_100%)] shadow-[0_0_46px_rgba(34,211,238,0.26),inset_0_0_44px_rgba(217,70,239,0.11)]"
+                    animate={{
+                      y: [-8, 8, -8],
+                      scale: [1, 1.025, 1],
+                    }}
+                    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <motion.div
+                      className="absolute inset-[-14px] rounded-full border border-cyan-300/10"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    />
+                    <Image
+                      src={logo}
+                      alt="RROTA logo"
+                      width={122}
+                      height={122}
+                      className="relative z-10 rounded-full drop-shadow-[0_0_24px_rgba(34,211,238,0.35)]"
+                      priority
+                    />
+                  </motion.div>
+
+                  <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-2xl border border-cyan-400/16 bg-cyan-400/8 px-3 py-2 text-center backdrop-blur-xl">
+                      <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-200/70">
+                        Free
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="mb-1 text-sm text-white/70">Token Address</p>
-                        <p className="break-all font-mono text-sm text-white">
-                          {tokenAddress}
-                        </p>
-                      </div>
+                      <div className="mt-1 text-xs font-black text-white">Spins</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <motion.button
-                        onClick={copyToClipboard}
-                        className="flex items-center gap-2 rounded-lg border border-[#1cc2fc]/30 px-4 py-2 text-[#1cc2fc] transition-all duration-300 hover:text-white !bg-[#1cc2fc]/20 !hover:bg-[#1cc2fc]/30"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.0, duration: 0.6 }}
-                      >
-                        {copied ? (
-                          <>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="text-green-400"
-                            >
-                              <path d="M20 6L9 17l-5-5" />
-                            </svg>
-                            <span className="text-sm font-medium text-green-400">
-                              Copied!
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-                              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                            </svg>
-                            <span className="text-sm font-medium">Copy</span>
-                          </>
-                        )}
-                      </motion.button>
-
-                      <motion.button
-                        onClick={() => window.open(LINKS.solscan, "_blank")}
-                        className="flex items-center gap-2 rounded-lg border border-[#9945FF]/30 px-4 py-2 text-[#9945FF] transition-all duration-300 hover:text-white !bg-[#9945FF]/20 !hover:bg-[#9945FF]/30"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.1, duration: 0.6 }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                          <polyline points="15,3 21,3 21,9" />
-                          <line x1="10" y1="14" x2="21" y2="3" />
-                        </svg>
-                        <span className="text-sm font-medium">Solscan</span>
-                      </motion.button>
+                    <div className="rounded-2xl border border-fuchsia-400/16 bg-fuchsia-400/8 px-3 py-2 text-center backdrop-blur-xl">
+                      <div className="text-[9px] font-black uppercase tracking-[0.16em] text-fuchsia-200/70">
+                        Boost
+                      </div>
+                      <div className="mt-1 text-xs font-black text-white">Credits</div>
+                    </div>
+                    <div className="rounded-2xl border border-amber-400/16 bg-amber-400/8 px-3 py-2 text-center backdrop-blur-xl">
+                      <div className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/70">
+                        RTA
+                      </div>
+                      <div className="mt-1 text-xs font-black text-white">Rewards</div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  className="flex flex-wrap justify-start gap-4"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.35 }}
-                >
-                  {[
-                    { name: "Jupiter", href: LINKS.jupiter },
-                    { name: "DexScreener", href: LINKS.dexscreener },
-                    { name: "BirdEye", href: LINKS.birdeye },
-                    { name: "GeckoTerminal", href: LINKS.geckoterminal },
-                  ].map((item, idx) => (
-                    <motion.a
-                      key={item.name}
-                      href={item.href}
+                {/* Metrics */}
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <MetricCard label="Price" value={priceText} />
+                  <MetricCard
+                    label="24h"
+                    value={priceChangeText}
+                    tone={priceChangePositive ? "green" : "fuchsia"}
+                  />
+                  <MetricCard label="Market Cap" value={marketCapText} tone="fuchsia" />
+                  <MetricCard label="Liquidity" value={liquidityText} tone="amber" />
+                </div>
+
+                {/* System status */}
+                <div className="mt-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
+                        Token Safety
+                      </div>
+                      <div className="mt-1 text-sm font-black text-white">
+                        Mint revoked • Freeze revoked
+                      </div>
+                    </div>
+
+                    <a
+                      href={LINKS.audit}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 rounded-xl border border-gray-700 px-6 py-4 text-white shadow-lg transition-all duration-300 hover:border-gray-600 hover:shadow-xl hover:!bg-[#202329]"
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 1.15 + idx * 0.1, duration: 0.6 }}
+                      className="inline-flex h-10 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:bg-cyan-400/14"
                     >
-                      <span className="font-poppins font-medium">{item.name}</span>
-                    </motion.a>
-                  ))}
-                </motion.div>
+                      Audit
+                    </a>
+                  </div>
+                </div>
 
-                <motion.div
-                  className="mt-6 flex flex-wrap items-center gap-3"
-                  variants={itemVariants}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+                <a
+                  href={LINKS.spinToWin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-cyan-300/28 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-6 py-4 text-sm font-black uppercase tracking-[0.14em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.01] hover:brightness-110"
                 >
-                  <motion.a
-                    href={LINKS.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full bg-[#202329] p-3 text-white transition hover:opacity-80"
-                    aria-label="Twitter (X)"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.55, duration: 0.6 }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="h-5 w-5"
-                      fill="currentColor"
-                    >
-                      <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z" />
-                    </svg>
-                  </motion.a>
+                  Enter the Game
+                  <ExternalIcon />
+                </a>
 
-                  <motion.a
-                    href={LINKS.telegram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full bg-[#202329] p-3 transition hover:opacity-80"
-                    aria-label="Telegram"
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.65, duration: 0.6 }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5 text-white"
-                    >
-                      <path d="m22 2-7 20-4-9-9-4Z" />
-                      <path d="M22 2 11 13" />
-                    </svg>
-                  </motion.a>
-
-                  <motion.a
-                    href={LINKS.audit}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-0 rounded-full border border-gray-700/50 bg-[#202329] px-4 py-2 text-sm text-white/80 transition hover:border-gray-600 hover:text-white sm:ml-2"
-                    whileTap={{ scale: 0.98 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.75, duration: 0.6 }}
-                  >
-                    Audit verification →
-                  </motion.a>
-                </motion.div>
+                <p className="mt-4 text-center text-[11px] leading-5 text-white/45">
+                  Mobile wallet users: open inside Phantom browser if wallet detection is needed.
+                </p>
               </div>
             </div>
 
-            {/* RIGHT */}
+            {/* Floating badges */}
             <motion.div
-              className="flex min-h-[400px] items-center justify-center md:justify-end"
-              variants={itemVariants}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.25 }}
+              className="absolute -left-3 top-10 hidden rounded-2xl border border-cyan-300/18 bg-[#08111f]/90 px-4 py-3 shadow-[0_0_34px_rgba(34,211,238,0.14)] backdrop-blur-xl sm:block"
+              animate={{ y: [-6, 8, -6] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="relative">
-                <motion.div
-                  className="min-w-[320px] w-full max-w-[380px] rounded-2xl border border-[#1cc2fc]/30 p-10 shadow-2xl backdrop-blur-sm !bg-gradient-to-br !from-[#353558] !via-[#16213e] !to-[#035ece]"
-                  animate={{
-                    y: [-12, 12, -12],
-                    rotate: [0, 2, -2, 0],
-                    scale: [1, 1.02, 1],
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  whileHover={{
-                    scale: 1.05,
-                    rotate: 0,
-                    y: 0,
-                    transition: { duration: 0.3 },
-                  }}
-                >
-                  <div className="mb-6 text-center">
-                    <motion.div
-                      className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#1cc2fc] to-[#0ea5e9]"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Image src={logo} alt="logo" width={64} height={64} />
-                    </motion.div>
-
-                    <h3 className="mb-2 font-poppins text-xl font-bold text-white">
-                      RROTA ($RTA)
-                    </h3>
-                    <p className="text-sm text-white/70">Spin-to-Win live on rrota.xyz</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/70">Price</span>
-                      <motion.span
-                        className="font-bold text-[#1cc2fc]"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        {loading ? (
-                          <span className="text-white/50">Loading...</span>
-                        ) : error ? (
-                          <span className="text-red-400">Error</span>
-                        ) : (
-                          formatPrice(tokenData?.price || 0)
-                        )}
-                      </motion.span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/70">24h Change</span>
-                      <motion.span
-                        className={`font-bold ${
-                          (tokenData?.priceChange24h || 0) >= 0
-                            ? "text-green-400"
-                            : "text-red-400"
-                        }`}
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                      >
-                        {loading ? (
-                          <span className="text-white/50">Loading...</span>
-                        ) : error ? (
-                          <span className="text-red-400">Error</span>
-                        ) : (
-                          formatPriceChange(tokenData?.priceChange24h || 0)
-                        )}
-                      </motion.span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/70">Market Cap</span>
-                      <motion.span
-                        className="font-bold text-white"
-                        animate={{ opacity: [0.7, 1, 0.7] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                      >
-                        {loading ? (
-                          <span className="text-white/50">Loading...</span>
-                        ) : error ? (
-                          <span className="text-red-400">Error</span>
-                        ) : (
-                          formatMarketCap(tokenData?.marketCap || 0)
-                        )}
-                      </motion.span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/70">Mint</span>
-                      <span className="font-bold text-green-400">Revoked</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-white/70">Freeze</span>
-                      <span className="font-bold text-green-400">Revoked</span>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-sm text-white/70">Audit verification</span>
-                      <Link
-                        href={LINKS.audit}
-                        target="_blank"
-                        className="font-semibold text-[#1cc2fc] hover:underline"
-                      >
-                        View →
-                      </Link>
-                    </div>
-                  </div>
-
-                  <a
-                    href={LINKS.spinToWin}
-                    className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-fuchsia-500 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.18)] transition-all duration-300 hover:scale-[1.02] hover:brightness-110"
-                  >
-                    Launch the Game
-                  </a>
-
-                  <div className="mt-4 text-center text-xs text-white/50">
-                    Official game live • Wallet connect, rewards, and withdrawals active
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="absolute -right-4 -top-4 h-3 w-3 rounded-full bg-[#1cc2fc] shadow-lg"
-                  animate={{
-                    y: [0, -30, 0],
-                    x: [0, 5, 0],
-                    opacity: [0.4, 1, 0.4],
-                    scale: [0.8, 1.2, 0.8],
-                  }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <motion.div
-                  className="absolute -bottom-4 -left-4 h-2 w-2 rounded-full bg-[#0ea5e9] shadow-lg"
-                  animate={{
-                    y: [0, 25, 0],
-                    x: [0, -8, 0],
-                    opacity: [0.4, 1, 0.4],
-                    scale: [0.7, 1.3, 0.7],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1,
-                  }}
-                />
-                <motion.div
-                  className="absolute -left-6 top-1/2 h-1.5 w-1.5 rounded-full bg-white shadow-lg"
-                  animate={{
-                    x: [0, 15, 0],
-                    y: [0, -10, 0],
-                    opacity: [0.3, 0.9, 0.3],
-                    scale: [0.6, 1.4, 0.6],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 2,
-                  }}
-                />
-                <motion.div
-                  className="absolute -right-8 top-1/4 h-2 w-2 rounded-full bg-[#1cc2fc]/60 shadow-lg"
-                  animate={{
-                    y: [0, -20, 0],
-                    x: [0, -5, 0],
-                    opacity: [0.2, 0.8, 0.2],
-                    scale: [0.5, 1.5, 0.5],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5,
-                  }}
-                />
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-300/70">
+                Contract
+              </div>
+              <div className="mt-1 font-mono text-xs font-black text-white">
+                {shortAddress(TOKEN_ADDRESS)}
               </div>
             </motion.div>
-          </div>
-        </div>
-      </motion.section>
-    </div>
-  );
-};
 
-export default Hero;
+            <motion.div
+              className="absolute -right-3 bottom-16 hidden rounded-2xl border border-fuchsia-300/18 bg-[#10091c]/90 px-4 py-3 shadow-[0_0_34px_rgba(217,70,239,0.14)] backdrop-blur-xl sm:block"
+              animate={{ y: [8, -6, 8] }}
+              transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-300/70">
+                Game
+              </div>
+              <div className="mt-1 text-xs font-black text-white">spin.rrota.xyz</div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Bottom trust rail */}
+      <motion.div
+        className="mx-auto mt-12 grid max-w-7xl gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, delay: 0.65 }}
+      >
+        {[
+          {
+            title: "Official Website",
+            value: OFFICIAL_DOMAIN.replace("https://", ""),
+            href: OFFICIAL_DOMAIN,
+          },
+          {
+            title: "Official Game",
+            value: "spin.rrota.xyz",
+            href: SPIN_TO_WIN_URL,
+          },
+          {
+            title: "Official Telegram",
+            value: "t.me/rrotaOfficial",
+            href: LINKS.telegram,
+          },
+          {
+            title: "Official X",
+            value: "@rrotacoin",
+            href: LINKS.twitter,
+          },
+        ].map((item) => (
+          <a
+            key={item.title}
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl transition-all hover:border-cyan-300/22 hover:bg-cyan-400/7"
+          >
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
+              {item.title}
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <span className="truncate text-sm font-black text-white/82 group-hover:text-white">
+                {item.value}
+              </span>
+              <ExternalIcon className="h-4 w-4 shrink-0 text-cyan-300/70" />
+            </div>
+          </a>
+        ))}
+      </motion.div>
+    </section>
+  );
+}
