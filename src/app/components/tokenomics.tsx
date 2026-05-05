@@ -17,20 +17,82 @@ interface PieChartData {
   value: number;
   amount: string;
   color: string;
-  [key: string]: string | number;
+}
+
+const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
+const LINKS = {
+  solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
+  jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
+  dextools: "https://www.dextools.io/app/token/rrota",
+  gecko:
+    "https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF",
+  audit: "https://freshcoins.io/audit/rrota",
+};
+
+function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+function CopyIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+    </svg>
+  );
+}
+
+function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
 }
 
 const Tokenomics = () => {
   const [tokenData, setTokenData] = useState<TokenDataResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
 
-  const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-
-  // Set this only when you want to show a confirmed on-chain burn amount.
   const BURNED_TOKENS = 0;
 
   useEffect(() => {
@@ -41,11 +103,11 @@ const Tokenomics = () => {
         setTokenData(data);
 
         if (data.price === 0 && data.holders === 0 && data.liquidity === 0) {
-          setError("Live token data is temporarily unavailable");
+          setError("Live market data is temporarily unavailable");
         }
       } catch (err) {
         console.error("Failed to fetch token data:", err);
-        setError("Failed to load live token data");
+        setError("Live market data is temporarily unavailable");
         setTokenData({
           price: 0,
           liquidity: 0,
@@ -61,11 +123,16 @@ const Tokenomics = () => {
     };
 
     fetchTokenData();
+    const interval = setInterval(fetchTokenData, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const supply = tokenData?.tokenSupply ?? 17446373786;
   const liquidityUsd = tokenData?.liquidity ?? 0;
   const marketCap = tokenData?.marketCap ?? 0;
+  const holders = tokenData?.holders ?? 0;
+  const price = tokenData?.price ?? 0;
 
   const safeSlices = [
     {
@@ -80,388 +147,272 @@ const Tokenomics = () => {
             name: "Burned Tokens",
             value: BURNED_TOKENS,
             amount: `${BURNED_TOKENS.toLocaleString()} tokens`,
-            color: "#F59E0B",
+            color: "#f59e0b",
           },
         ]
       : []),
   ];
 
-  const totalForChart = safeSlices.reduce((a, b) => a + (b.value as number), 0);
+  const totalForChart = safeSlices.reduce((total, item) => total + item.value, 0);
 
   const pieChartData: PieChartData[] = safeSlices.map((slice) => ({
-    ...slice,
+    name: slice.name,
+    amount: slice.amount,
+    color: slice.color,
     value:
       totalForChart > 0
         ? Number(((slice.value / totalForChart) * 100).toFixed(2))
         : 0,
   }));
 
+  const formatPrice = (value: number) => {
+    if (!value || value <= 0) return "Live chart";
+    if (value < 0.000001) return `$${value.toExponential(2)}`;
+    return `$${value.toFixed(9)}`;
+  };
+
+  const formatMoney = (value: number) => {
+    if (!value || value <= 0) return "Live chart";
+    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+    if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+    return `$${value.toFixed(2)}`;
+  };
+
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(TOKEN_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
   const CustomTooltip = ({
     active,
     payload,
   }: {
     active?: boolean;
-    payload?: { payload: { name: string; value: number; amount: string } }[];
+    payload?: { payload: PieChartData }[];
   }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-lg border border-gray-600 bg-[#1a1a1a] p-3 shadow-lg">
-          <p className="font-semibold text-white">{data.name}</p>
-          <p className="text-sm text-gray-300">{data.value}%</p>
-          <p className="text-sm text-gray-300">{data.amount}</p>
+        <div className="rounded-2xl border border-cyan-400/20 bg-[#07101d] p-4 shadow-xl">
+          <p className="font-black text-white">{data.name}</p>
+          <p className="mt-1 text-sm text-cyan-200">{data.value}%</p>
+          <p className="text-sm text-white/60">{data.amount}</p>
         </div>
       );
     }
+
     return null;
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.3, delayChildren: 0.2 },
+  const marketCards = [
+    {
+      label: "Current Price",
+      value: loading ? "Loading..." : formatPrice(price),
+      tone: "border-cyan-400/16 bg-cyan-400/7",
     },
-  };
-
-  const titleVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.6 },
+    {
+      label: "Market Cap",
+      value: loading ? "Loading..." : formatMoney(marketCap),
+      tone: "border-fuchsia-400/16 bg-fuchsia-400/7",
     },
-  };
-
-  const cardVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.8 },
+    {
+      label: "Liquidity",
+      value: loading ? "Loading..." : formatMoney(liquidityUsd),
+      tone: "border-emerald-400/16 bg-emerald-400/7",
     },
-  };
-
-  const formatPrice = (price: number) => {
-    if (!price || price <= 0) return "—";
-    if (price < 0.000001) return `$${price.toExponential(2)}`;
-    return `$${price.toFixed(9)}`;
-  };
-
-  const formatMoney = (value: number) => {
-    if (!value || value <= 0) return "—";
-    return `$${value.toLocaleString()}`;
-  };
+    {
+      label: "Holders",
+      value: loading ? "Loading..." : holders ? holders.toLocaleString() : "Live chart",
+      tone: "border-amber-400/16 bg-amber-400/7",
+    },
+  ];
 
   return (
-    <section id="Tokenomics" className="mx-auto max-w-7xl px-4 text-white">
+    <section id="Tokenomics" className="mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8">
       <motion.div
         ref={ref}
-        className="mt-10 space-y-6"
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        variants={containerVariants}
+        className="relative overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10"
+        initial={{ opacity: 0, y: 28 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+        transition={{ duration: 0.65 }}
       >
-        <motion.div
-          className="mb-16 space-y-6 text-center"
-          variants={titleVariants}
-        >
-          <div className="relative inline-block">
-            <img
-              src="/rrota-logo2.png"
-              alt="RROTA Token"
-              className="mx-auto h-32 w-32"
-            />
-            <div className="absolute inset-0 -z-10 rounded-full bg-purple-500 opacity-10 blur-xl" />
-          </div>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.15),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.13),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
 
-          <h2 className="text-5xl font-bold">Tokenomics</h2>
+        <div className="relative">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+              Tokenomics
+            </div>
 
-          <p className="mx-auto max-w-3xl text-lg leading-relaxed text-[#aaa]">
-            A clean overview of the RROTA token using live market data and
-            verifiable on-chain references.
-          </p>
+            <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+              RROTA market and
+              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                token overview.
+              </span>
+            </h2>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-3">
-            <span className="rounded-full border border-[#1cc2fc]/30 bg-[#1cc2fc]/20 px-3 py-1 text-sm text-[#1cc2fc]">
-              Solana SPL Token
-            </span>
-            <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-white/70">
-              Live Market Data
-            </span>
-            <span className="rounded-full border border-emerald-800/50 bg-emerald-900/30 px-3 py-1 text-sm text-emerald-300">
-              On-Chain References
-            </span>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <a
-              href={`https://solscan.io/token/${TOKEN_ADDRESS}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
-            >
-              Solscan
-            </a>
-            <a
-              href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
-            >
-              Jupiter
-            </a>
-            <a
-              href="https://www.dextools.io/app/token/rrota"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
-            >
-              DEXTools
-            </a>
-            <a
-              href="https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-[#2b3139] bg-[#202329] px-4 py-2 text-sm transition hover:border-[#1cc2fc]"
-            >
-              GeckoTerminal
-            </a>
-          </div>
-        </motion.div>
-
-        {error && (
-          <motion.div
-            className="mb-6 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <p className="text-center text-yellow-400">
-              ⚠️ {error}. Fallback values are shown where needed.
+            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
+              A clear snapshot of the RROTA token, supply reference, market data, and official
+              verification links.
             </p>
-          </motion.div>
-        )}
+          </div>
 
-        <motion.h3
-          className="mb-8 text-center text-3xl font-bold"
-          variants={titleVariants}
-        >
-          <span className="relative mt-10 inline-block">
-            <span className="relative z-10">Supply Overview</span>
-            <motion.span
-              className="absolute bottom-0 left-0 -z-0 h-2 w-full bg-[#1cc2fc]"
-              initial={{ width: 0 }}
-              animate={isInView ? { width: "100%" } : { width: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            />
-          </span>
-        </motion.h3>
+          {error && (
+            <div className="mx-auto mt-7 max-w-4xl rounded-2xl border border-amber-400/18 bg-amber-400/8 p-4 text-center text-sm text-amber-100/85">
+              {error}. Use the official chart links below for current market details.
+            </div>
+          )}
 
-        <motion.div
-          className="grid grid-cols-1 items-start gap-10 md:grid-cols-3"
-          variants={cardVariants}
-        >
-          <ul className="space-y-4">
-            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
-              <span className="rounded bg-[#1cc2fc] px-3 py-1 text-sm font-bold text-white">
-                Info
-              </span>
-              <div>
-                <div className="leading-tight font-semibold text-white">
-                  Supply summary
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {marketCards.map((card) => (
+              <div
+                key={card.label}
+                className={`rounded-3xl border p-5 backdrop-blur-xl ${card.tone}`}
+              >
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
+                  {card.label}
                 </div>
-                <div className="text-sm text-gray-300">
-                  The chart focuses on confirmed token supply information.
+                <div className="mt-2 text-xl font-black text-white">{card.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div className="rounded-[34px] border border-white/10 bg-white/[0.035] p-5">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
+                    Supply Reference
+                  </div>
+                  <div className="mt-1 text-xl font-black text-white">
+                    Circulating supply view
+                  </div>
                 </div>
               </div>
-            </li>
 
-            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
-              <span className="rounded bg-[#F59E0B] px-3 py-1 text-sm font-bold text-white">
-                Note
-              </span>
-              <div>
-                <div className="leading-tight font-semibold text-white">
-                  Burn data
-                </div>
-                <div className="text-sm text-gray-300">
-                  Burned supply can be added here once you want to display the
-                  exact confirmed amount.
-                </div>
+              <div className="h-[320px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={120}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend
+                      verticalAlign="bottom"
+                      height={42}
+                      formatter={(value) => (
+                        <span style={{ color: "#ffffff", fontSize: "12px" }}>
+                          {value}
+                        </span>
+                      )}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            </li>
 
-            <li className="flex w-full items-center gap-3 rounded-[24px] border border-[#2b3139] bg-[#20232934] px-4 py-3 text-sm text-white transition-all duration-200 hover:bg-[#202329]">
-              <span className="rounded bg-emerald-500 px-3 py-1 text-sm font-bold text-white">
-                Links
-              </span>
-              <div>
-                <div className="leading-tight font-semibold text-white">
-                  Market and on-chain references
-                </div>
-                <div className="text-sm text-gray-300">
-                  Official token and chart links are provided above.
-                </div>
+              <div className="mt-4 rounded-2xl border border-amber-400/14 bg-amber-400/7 p-4 text-sm leading-6 text-amber-100/75">
+                Burned supply should only be shown after confirming the exact on-chain amount.
+                This view avoids unsupported burn claims.
               </div>
-            </li>
-          </ul>
+            </div>
 
-          <div className="flex h-full items-center justify-center">
-            <div className="h-[400px] w-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={140}
-                    paddingAngle={2}
-                    dataKey="value"
+            <div className="space-y-4">
+              <div className="rounded-[30px] border border-cyan-400/14 bg-cyan-400/7 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
+                  Official Contract
+                </div>
+                <div className="mt-3 break-all font-mono text-sm font-semibold leading-6 text-white/82">
+                  {TOKEN_ADDRESS}
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <button
+                    onClick={copyAddress}
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100 transition hover:bg-cyan-400/15"
+                    type="button"
                   >
-                    {pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={44}
-                    formatter={(value, entry: { color?: string }) => (
-                      <span style={{ color: entry.color, fontSize: "12px" }}>
-                        {value}
-                      </span>
+                    {copied ? (
+                      <>
+                        <CheckIcon className="text-emerald-300" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <CopyIcon />
+                        Copy Address
+                      </>
                     )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+                  </button>
+
+                  <a
+                    href={LINKS.solscan}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-sm font-bold text-fuchsia-100 transition hover:bg-fuchsia-400/14"
+                  >
+                    Solscan
+                    <ExternalIcon />
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  ["Network", "Solana SPL"],
+                  ["Mint Authority", "Revoked"],
+                  ["Freeze Authority", "Revoked"],
+                  ["Utility", "Spin-to-Win live"],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="rounded-3xl border border-white/10 bg-white/[0.035] p-5"
+                  >
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
+                      {label}
+                    </div>
+                    <div className="mt-2 text-lg font-black text-white">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  ["Jupiter", LINKS.jupiter],
+                  ["DEXTools", LINKS.dextools],
+                  ["GeckoTerminal", LINKS.gecko],
+                  ["Audit", LINKS.audit],
+                ].map(([label, href]) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-12 items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] px-4 text-sm font-bold text-white/78 transition hover:border-cyan-300/22 hover:bg-cyan-400/7 hover:text-white"
+                  >
+                    {label}
+                    <ExternalIcon />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
-
-          <ul className="space-y-4">
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
-                <span className="font-bold text-white">S</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Total Supply</div>
-                <div className="text-sm text-gray-300">
-                  {loading ? "Loading supply..." : `${supply.toLocaleString()} tokens`}
-                </div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500">
-                <span className="font-bold text-white">N</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Network</div>
-                <div className="text-sm text-gray-300">Solana (SPL)</div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500">
-                <span className="font-bold text-white">$</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Current Price</div>
-                <div className="text-sm text-gray-300">
-                  {loading ? "Loading price..." : formatPrice(tokenData?.price ?? 0)}
-                </div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500">
-                <span className="font-bold text-white">M</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Market Cap</div>
-                <div className="text-sm text-gray-300">
-                  {loading ? "Loading market cap..." : formatMoney(marketCap)}
-                </div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
-                <span className="font-bold text-white">L</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Liquidity (USD)</div>
-                <div className="text-sm text-gray-300">
-                  {loading ? "Loading liquidity..." : formatMoney(liquidityUsd)}
-                </div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500">
-                <span className="font-bold text-white">H</span>
-              </div>
-              <div>
-                <div className="font-semibold text-white">Holders</div>
-                <div className="text-sm text-gray-300">
-                  {loading
-                    ? "Loading holders..."
-                    : tokenData?.holders
-                    ? tokenData.holders.toLocaleString()
-                    : "—"}
-                </div>
-              </div>
-            </li>
-
-            <li className="relative z-10 flex items-center gap-4 rounded-[24px] border border-[#2b3139] bg-[#202329] p-3 transition-all duration-300 hover:shadow-lg">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500">
-                <span className="font-bold text-white">CA</span>
-              </div>
-
-              <div className="flex-1">
-                <div className="font-semibold text-white">Token Address</div>
-                <div className="font-mono text-sm text-gray-300">
-                  3yeWY...xL1a
-                </div>
-              </div>
-
-              <div className="relative">
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(TOKEN_ADDRESS);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                  className="group rounded-full bg-gray-700 p-3 transition-colors duration-200 hover:bg-gray-600"
-                  title="Copy full address"
-                  type="button"
-                >
-                  <svg
-                    className="h-4 w-4 text-gray-300 transition-colors group-hover:text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                </button>
-
-                {copied && (
-                  <div className="absolute -left-3 top-1 z-20 -translate-x-1/2 transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1 text-sm font-medium text-white">
-                    Copied!
-                    <div className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 transform border-l-4 border-r-4 border-t-4 border-transparent border-t-green-500" />
-                  </div>
-                )}
-              </div>
-            </li>
-          </ul>
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   );
