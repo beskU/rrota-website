@@ -73,8 +73,8 @@ const Navbar = () => {
       const element = document.getElementById(sectionId);
       if (element) {
         const elementPosition = element.offsetTop;
-        const isMobile = window.innerWidth < 1024;
-        const offsetPosition = elementPosition - (isMobile ? 110 : 82);
+        const isMobile = window.innerWidth < 1280;
+        const offsetPosition = elementPosition - (isMobile ? 110 : 88);
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
       }
     }
@@ -87,9 +87,15 @@ const Navbar = () => {
     setIsLinksOpen(false);
   };
 
+  const tabClass =
+    "inline-flex h-10 items-center justify-center whitespace-nowrap rounded-2xl border border-white/10 bg-white/[0.045] px-3.5 text-[13px] font-black text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-all hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-white";
+
+  const mobileItemClass =
+    "rounded-2xl border border-white/8 bg-white/[0.035] px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:border-cyan-300/20 hover:bg-cyan-400/8 hover:text-white";
+
   return (
-    <header className="fixed left-0 top-0 z-50 w-full border-b border-cyan-400/10 bg-[#070A12]/88 shadow-[0_0_30px_rgba(28,194,252,0.08)] backdrop-blur-xl transition-all duration-300">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:py-4">
+    <header className="fixed left-0 top-0 z-50 w-full border-b border-cyan-400/10 bg-[#070A12]/90 shadow-[0_0_30px_rgba(28,194,252,0.08)] backdrop-blur-xl transition-all duration-300">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 xl:py-4">
         {/* Brand */}
         <motion.div
           initial={{ opacity: 0, x: -18 }}
@@ -101,6 +107,7 @@ const Navbar = () => {
             onClick={() => scrollToSection("top")}
             className="group relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 shadow-[0_0_24px_rgba(34,211,238,0.12)] transition-all hover:border-cyan-300/40 hover:bg-cyan-400/15"
             aria-label="Go to top"
+            type="button"
           >
             <Image
               src={logo}
@@ -116,6 +123,7 @@ const Navbar = () => {
             onClick={() => scrollToSection("top")}
             className="min-w-0 text-left"
             aria-label="RROTA home"
+            type="button"
           >
             <div className="text-lg font-black leading-none tracking-[0.22em] text-white sm:text-xl">
               RROTA
@@ -127,12 +135,12 @@ const Navbar = () => {
         </motion.div>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 text-sm font-semibold text-white/82 lg:flex">
+        <nav className="hidden items-center gap-2 rounded-[24px] border border-white/10 bg-white/[0.025] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl xl:flex">
           <a
             href={SPIN_TO_WIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/8 px-3.5 py-2 text-emerald-200 transition-all hover:border-emerald-300/35 hover:bg-emerald-400/14 hover:text-white"
+            className="group inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-3.5 text-[13px] font-black text-emerald-200 shadow-[0_0_18px_rgba(16,185,129,0.08)] transition-all hover:border-emerald-300/38 hover:bg-emerald-400/15 hover:text-white"
           >
             <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
             Spin-to-Win
@@ -140,45 +148,50 @@ const Navbar = () => {
 
           <button
             onClick={() => scrollToSection("how-to-play")}
-            className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
+            className={tabClass}
+            type="button"
           >
             How to Play
           </button>
 
           <button
             onClick={() => scrollToSection("Tokenomics")}
-            className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
+            className={tabClass}
+            type="button"
           >
             Tokenomics
           </button>
 
           <button
             onClick={() => scrollToSection("Roadmap")}
-            className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
+            className={tabClass}
+            type="button"
           >
             Roadmap
           </button>
 
           <button
             onClick={() => scrollToSection("AboutUs")}
-            className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
+            className={tabClass}
+            type="button"
           >
             About
           </button>
 
-          <Link
-            href="/blog"
-            className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
-          >
+          <Link href="/blog" className={tabClass}>
             Blog
           </Link>
 
           <div className="relative">
             <button
               onClick={() => setIsLinksOpen((v) => !v)}
-              className="rounded-full px-3.5 py-2 transition-all hover:bg-white/8 hover:text-cyan-300"
+              className={`${tabClass} gap-2`}
+              type="button"
             >
-              Official Links
+              Links
+              <span className="text-[10px] text-cyan-300/80">
+                {isLinksOpen ? "▲" : "▼"}
+              </span>
             </button>
 
             <AnimatePresence>
@@ -188,7 +201,7 @@ const Navbar = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.98 }}
                   transition={{ duration: 0.16 }}
-                  className="absolute right-0 mt-3 w-[300px] overflow-hidden rounded-3xl border border-cyan-400/12 bg-[#0B1020]/98 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_35px_rgba(34,211,238,0.10)] backdrop-blur-xl"
+                  className="absolute right-0 mt-3 w-[310px] overflow-hidden rounded-3xl border border-cyan-400/12 bg-[#0B1020]/98 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_35px_rgba(34,211,238,0.10)] backdrop-blur-xl"
                 >
                   <div className="border-b border-white/8 px-3 py-2">
                     <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/75">
@@ -223,12 +236,12 @@ const Navbar = () => {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <a
             href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-white/[0.04] px-5 text-sm font-black text-white/85 transition-all hover:border-cyan-300/35 hover:bg-cyan-400/10 hover:text-white"
+            className="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-2xl border border-cyan-400/18 bg-white/[0.04] px-5 text-sm font-black text-white/85 transition-all hover:border-cyan-300/35 hover:bg-cyan-400/10 hover:text-white"
           >
             Buy $RTA
           </a>
@@ -237,7 +250,7 @@ const Navbar = () => {
             href={SPIN_TO_WIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
+            className="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
           >
             Play Game
           </a>
@@ -246,10 +259,13 @@ const Navbar = () => {
         {/* Mobile menu button */}
         <button
           onClick={() => setIsMobileMenuOpen((v) => !v)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-white transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 lg:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-white transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 xl:hidden"
           aria-label="Open menu"
+          type="button"
         >
-          <span className="text-2xl leading-none">{isMobileMenuOpen ? "×" : "☰"}</span>
+          <span className="text-2xl leading-none">
+            {isMobileMenuOpen ? "×" : "☰"}
+          </span>
         </button>
       </div>
 
@@ -261,7 +277,7 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-cyan-400/10 bg-[#070A12]/98 backdrop-blur-xl lg:hidden"
+            className="overflow-hidden border-t border-cyan-400/10 bg-[#070A12]/98 backdrop-blur-xl xl:hidden"
           >
             <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
               <div className="rounded-3xl border border-cyan-400/12 bg-white/[0.035] p-3">
@@ -271,14 +287,16 @@ const Navbar = () => {
                     Spin-to-Win is live
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/58">
-                    Open the official game, verify the token, and use the official RROTA links below.
+                    Open the official game, verify the token, and use the official
+                    RROTA links below.
                   </p>
                 </div>
 
                 <div className="grid gap-2">
                   <button
                     onClick={() => scrollToSection("top")}
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
+                    type="button"
                   >
                     Home
                   </button>
@@ -295,28 +313,32 @@ const Navbar = () => {
 
                   <button
                     onClick={() => scrollToSection("how-to-play")}
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
+                    type="button"
                   >
                     How to Play
                   </button>
 
                   <button
                     onClick={() => scrollToSection("Tokenomics")}
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
+                    type="button"
                   >
                     Tokenomics
                   </button>
 
                   <button
                     onClick={() => scrollToSection("Roadmap")}
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
+                    type="button"
                   >
                     Roadmap
                   </button>
 
                   <button
                     onClick={() => scrollToSection("AboutUs")}
-                    className="rounded-2xl px-4 py-3 text-left text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
+                    type="button"
                   >
                     About
                   </button>
@@ -324,7 +346,7 @@ const Navbar = () => {
                   <Link
                     href="/blog"
                     onClick={closeMenus}
-                    className="rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all hover:bg-white/8 hover:text-white"
+                    className={mobileItemClass}
                   >
                     Blog
                   </Link>
