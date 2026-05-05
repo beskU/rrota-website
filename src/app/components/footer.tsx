@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
@@ -195,7 +197,6 @@ const Footer = () => {
       </div>
 
       <div className="relative mx-auto max-w-7xl">
-        {/* Top CTA */}
         <motion.div
           className="overflow-hidden rounded-[40px] border border-cyan-400/16 bg-white/[0.035] p-6 shadow-[0_0_70px_rgba(34,211,238,0.10),0_0_120px_rgba(217,70,239,0.06)] backdrop-blur-xl sm:p-8 lg:p-10"
           initial={{ opacity: 0, y: 28 }}
@@ -211,11 +212,14 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <img
-                  className="h-12 w-12 rounded-full drop-shadow-[0_0_20px_rgba(34,211,238,0.26)]"
+                <Image
                   src="/rrota-logo2.png"
                   alt="RROTA"
+                  width={48}
+                  height={48}
+                  className="rounded-full drop-shadow-[0_0_20px_rgba(34,211,238,0.26)]"
                 />
+
                 <div>
                   <h2 className="text-3xl font-black tracking-[-0.04em] text-white sm:text-4xl">
                     RROTA
@@ -234,9 +238,9 @@ const Footer = () => {
               </h3>
 
               <p className="mt-5 max-w-2xl text-sm leading-7 text-white/68 sm:text-base">
-                RROTA is moving from build phase into active utility. Play the official
-                Spin-to-Win app, verify the token contract, follow the roadmap, and use only
-                official RROTA links.
+                RROTA is moving from build phase into active utility. Play the
+                official Spin-to-Win app, verify the token contract, follow the
+                roadmap, and use only official RROTA links.
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -244,7 +248,7 @@ const Footer = () => {
                   href={LINKS.spin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:brightness-110"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:brightness-110"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -256,7 +260,7 @@ const Footer = () => {
                   href={LINKS.jupiter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 hover:text-white"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 hover:text-white"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -268,7 +272,7 @@ const Footer = () => {
                   href={LINKS.solscan}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-emerald-400/16 bg-emerald-400/8 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-emerald-100 transition-all hover:border-emerald-300/28 hover:bg-emerald-400/12 hover:text-white"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-emerald-400/16 bg-emerald-400/8 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-emerald-100 transition-all hover:border-emerald-300/28 hover:bg-emerald-400/12 hover:text-white"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -278,7 +282,6 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Contract card */}
             <div className="rounded-[34px] border border-white/10 bg-[#070A12]/78 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
                 Official Contract
@@ -292,6 +295,7 @@ const Footer = () => {
                 <button
                   onClick={copyContract}
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100 transition-all hover:bg-cyan-400/15"
+                  type="button"
                 >
                   {copied ? (
                     <>
@@ -337,7 +341,6 @@ const Footer = () => {
           </div>
         </motion.div>
 
-        {/* Official links */}
         <motion.div
           className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4"
           initial={{ opacity: 0, y: 26 }}
@@ -355,8 +358,12 @@ const Footer = () => {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-sm font-black text-white">{link.label}</div>
-                  <div className="mt-1 text-xs leading-5 text-white/46">{link.detail}</div>
+                  <div className="text-sm font-black text-white">
+                    {link.label}
+                  </div>
+                  <div className="mt-1 text-xs leading-5 text-white/46">
+                    {link.detail}
+                  </div>
                 </div>
 
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-cyan-400/14 bg-cyan-400/8 text-cyan-200 transition-all group-hover:scale-105">
@@ -367,7 +374,6 @@ const Footer = () => {
           ))}
         </motion.div>
 
-        {/* Lower footer */}
         <div className="mt-12 grid gap-8 border-t border-white/10 pt-8 lg:grid-cols-[1fr_1fr] lg:items-start">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -380,11 +386,12 @@ const Footer = () => {
             </div>
 
             <p className="mt-3 max-w-3xl text-xs leading-6 text-white/50 sm:text-sm">
-              RROTA is a crypto token. Nothing on this website is financial, investment,
-              legal, or tax advice. Digital assets are risky and volatile. Always verify
-              official links, review transactions before signing, and do your own research.
-              Game rewards, withdrawals, and features may depend on eligibility, treasury
-              availability, network conditions, security checks, and project rules.
+              RROTA is a crypto token. Nothing on this website is financial,
+              investment, legal, or tax advice. Digital assets are risky and
+              volatile. Always verify official links, review transactions before
+              signing, and do your own research. Game rewards, withdrawals, and
+              features may depend on eligibility, treasury availability, network
+              conditions, security checks, and project rules.
             </p>
           </motion.div>
 
@@ -400,16 +407,37 @@ const Footer = () => {
                 Project
               </div>
               <div className="space-y-2 text-sm">
-                <a href={LINKS.spin} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+                <a
+                  href={LINKS.spin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Spin-to-Win
                 </a>
-                <a href="/blog" className="block text-white/62 hover:text-cyan-300">
+
+                <Link
+                  href="/blog"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Blog
-                </a>
-                <a href={LINKS.whitepaper} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+                </Link>
+
+                <a
+                  href={LINKS.whitepaper}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Whitepaper
                 </a>
-                <a href={LINKS.audit} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+
+                <a
+                  href={LINKS.audit}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Audit
                 </a>
               </div>
@@ -420,13 +448,28 @@ const Footer = () => {
                 Community
               </div>
               <div className="space-y-2 text-sm">
-                <a href={LINKS.telegram} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+                <a
+                  href={LINKS.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Telegram
                 </a>
-                <a href={LINKS.x} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+
+                <a
+                  href={LINKS.x}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   X / Twitter
                 </a>
-                <a href="mailto:info@rrota.xyz" className="block text-white/62 hover:text-cyan-300">
+
+                <a
+                  href="mailto:info@rrota.xyz"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   info@rrota.xyz
                 </a>
               </div>
@@ -437,13 +480,26 @@ const Footer = () => {
                 Legal
               </div>
               <div className="space-y-2 text-sm">
-                <a href="/privacy" className="block text-white/62 hover:text-cyan-300">
+                <Link
+                  href="/privacy"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Privacy Policy
-                </a>
-                <a href="/terms" className="block text-white/62 hover:text-cyan-300">
+                </Link>
+
+                <Link
+                  href="/terms"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Terms of Service
-                </a>
-                <a href={LINKS.solscan} target="_blank" rel="noopener noreferrer" className="block text-white/62 hover:text-cyan-300">
+                </Link>
+
+                <a
+                  href={LINKS.solscan}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Token Verification
                 </a>
               </div>
@@ -451,7 +507,6 @@ const Footer = () => {
           </motion.div>
         </div>
 
-        {/* Copyright */}
         <motion.div
           className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/38 sm:flex-row sm:items-center sm:justify-between"
           initial={{ opacity: 0 }}
@@ -460,7 +515,9 @@ const Footer = () => {
           viewport={{ once: true }}
         >
           <div>© {new Date().getFullYear()} RROTA. Built on Solana.</div>
-          <div className="font-mono text-xs">Official: rrota.xyz • Game: spin.rrota.xyz</div>
+          <div className="font-mono text-xs">
+            Official: rrota.xyz • Game: spin.rrota.xyz
+          </div>
         </motion.div>
       </div>
     </footer>
