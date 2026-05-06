@@ -85,11 +85,11 @@ function SpinToWinLiveSection() {
               </div>
 
               <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-                Spin-to-Win is the first live
-                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                  RROTA utility experience.
-                </span>
-              </h2>
+  Spin-to-Win is the first live
+  <span className="rrota-safe-title-accent block">
+    RROTA utility experience.
+  </span>
+</h2>
 
               <p className="mt-5 max-w-2xl text-sm leading-7 text-white/72 sm:text-base">
                 RROTA is moving from a transparent build phase into active utility. The official
