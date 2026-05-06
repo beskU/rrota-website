@@ -1,9 +1,8 @@
+import RrotaMarketTerminal from "@/app/components/rrota-market-terminal";
 import BlogPreview from "./components/blog-preview";
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";
 import Why from "./components/why";
-import Graph from "./components/graph";
-import Tokenomics from "./components/tokenomics";
 import Footer from "./components/footer";
 import HowTo from "./components/howTo";
 import Roadmap from "./components/roadmap";
@@ -371,13 +370,7 @@ export default function Home() {
           <Why />
         </section>
 
-        <section className="mb-20 w-full">
-          <Graph />
-        </section>
-
-        <section className="mb-20 w-full">
-          <Tokenomics />
-        </section>
+        <RrotaMarketTerminal />
 
         <OfficialLinksSection />
 
