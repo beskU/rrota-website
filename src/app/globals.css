@@ -15645,3 +15645,42 @@ a.text-lg.font-bold.mb-4.hover\:underline {
   --tw-text-opacity: 1;
   color: rgb(170 170 170 / var(--tw-text-opacity, 1));
 }
+/* RROTA homepage title visibility fix
+   Prevents gradient / transparent heading text from rendering black or invisible
+   on dark backgrounds across Hero, HowTo, Why, BlogPreview, Roadmap, etc. */
+
+.bg-clip-text.text-transparent {
+  color: #e0faff !important;
+  -webkit-text-fill-color: unset !important;
+  background: none !important;
+  background-image: none !important;
+  text-shadow:
+    0 0 18px rgba(34, 211, 238, 0.28),
+    0 0 34px rgba(217, 70, 239, 0.14);
+}
+
+h1 .bg-clip-text.text-transparent,
+h2 .bg-clip-text.text-transparent,
+h3 .bg-clip-text.text-transparent {
+  color: #e0faff !important;
+  -webkit-text-fill-color: unset !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+.rrota-safe-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: unset !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+.rrota-safe-title-accent {
+  color: #a5f3fc !important;
+  -webkit-text-fill-color: unset !important;
+  background: none !important;
+  background-image: none !important;
+  text-shadow:
+    0 0 18px rgba(34, 211, 238, 0.35),
+    0 0 34px rgba(217, 70, 239, 0.18);
+}
