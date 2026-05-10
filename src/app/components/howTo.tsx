@@ -12,6 +12,8 @@ const LINKS = {
   dextools: "https://www.dextools.io/app/token/rrota",
   gecko:
     "https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF",
+  telegram: "https://t.me/rrotaOfficial",
+  x: "https://x.com/rrotacoin",
 };
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -168,40 +170,40 @@ const HowTo = () => {
     }
   };
 
-  const gameSteps = [
+  const ecosystemSteps = [
     {
-      title: "Open the official game",
-      text: "Use only the official Spin-to-Win app at spin.rrota.xyz. Avoid random links from DMs or unknown groups.",
-      icon: <PlaySvg />,
+      title: "Verify the official contract",
+      text: "Start with the official $RTA mint address. Never trust screenshots, DMs, or random swap links without checking the contract.",
+      icon: <ShieldSvg />,
       tone: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     },
     {
-      title: "Sign in safely",
-      text: "Use email, Google, or wallet login. On Phantom mobile browser, email login is usually the most reliable path.",
-      icon: <ShieldSvg />,
+      title: "Explore RROTA on Solana",
+      text: "Use Solscan, Jupiter, DEXTools, and GeckoTerminal to check the token, liquidity, market activity, and official links.",
+      icon: <SparkSvg />,
       tone: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
     },
     {
-      title: "Claim daily bonuses",
-      text: "Start with free spins and daily bonuses before using Boost Credits or wallet features.",
-      icon: <SparkSvg />,
+      title: "Buy $RTA safely",
+      text: "Install Phantom, keep SOL for fees, open Jupiter from the official website, and verify the mint before swapping.",
+      icon: <WalletSvg />,
       tone: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-200",
     },
     {
-      title: "Connect Phantom",
-      text: "Connect Phantom only when you want to deposit, withdraw, or verify wallet-related actions.",
-      icon: <WalletSvg />,
+      title: "Use the live utility",
+      text: "Spin-to-Win is the first live RROTA product. Play through the official app at spin.rrota.xyz only.",
+      icon: <PlaySvg />,
       tone: "border-amber-400/20 bg-amber-400/10 text-amber-200",
     },
     {
-      title: "Deposit RTA for Boost Credits",
-      text: "Deposited RTA becomes Boost Credits for gameplay. Boost Credits are not the same as withdrawable RTA rewards.",
+      title: "Follow ecosystem updates",
+      text: "Track game updates, Crypto Shooter plans, community rewards, transport utility direction, and safety announcements through official channels.",
       icon: <SparkSvg />,
       tone: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     },
     {
-      title: "Withdraw eligible RTA rewards",
-      text: "Eligible RTA rewards can be withdrawn to your connected Phantom wallet after verification and available game rules.",
+      title: "Protect your wallet",
+      text: "Never approve random wallet prompts. Use official links, check every transaction, and never share seed phrases or private keys.",
       icon: <ShieldSvg />,
       tone: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
     },
@@ -221,19 +223,18 @@ const HowTo = () => {
             </div>
 
             <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
-              Play, verify, buy, and use
+              Verify, buy, explore, and use
               <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
                 RROTA the safe way.
               </span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-              RROTA now has two important user paths: playing the Spin-to-Win utility
-              and buying/verifying $RTA safely on Solana.
+              RROTA has two important user paths: explore the $RTA Solana token safely,
+              then use the ecosystem through live and planned utility products.
             </p>
           </div>
 
-          {/* Contract safety box */}
           <div className="mx-auto mt-8 max-w-5xl rounded-[30px] border border-cyan-400/14 bg-[#07101d]/82 p-5 backdrop-blur-xl">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
@@ -281,15 +282,14 @@ const HowTo = () => {
             </div>
           </div>
 
-          {/* Game steps */}
           <div className="mt-10">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-                  Spin-to-Win Flow
+                  RROTA User Path
                 </div>
                 <h3 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                  How to play the official game
+                  From token verification to live utility.
                 </h3>
               </div>
 
@@ -299,13 +299,13 @@ const HowTo = () => {
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500/25 to-fuchsia-500/25 px-5 text-sm font-black text-white transition hover:brightness-110"
               >
-                Launch Game
+                Launch Spin-to-Win
                 <ExternalIcon />
               </a>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {gameSteps.map((step, index) => (
+              {ecosystemSteps.map((step, index) => (
                 <div
                   key={step.title}
                   className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all hover:border-cyan-300/22 hover:bg-cyan-400/5"
@@ -323,7 +323,6 @@ const HowTo = () => {
             </div>
           </div>
 
-          {/* Buy guide */}
           <div className="mt-12 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
             <div className="rounded-[32px] border border-emerald-400/14 bg-emerald-400/7 p-6">
               <div className="text-[11px] font-black uppercase tracking-[0.24em] text-emerald-300/80">
@@ -386,7 +385,6 @@ const HowTo = () => {
             </div>
           </div>
 
-          {/* Chart links */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <a
               href={LINKS.jupiter}
