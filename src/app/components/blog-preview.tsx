@@ -2,9 +2,9 @@ import Link from "next/link";
 import { getAllArticles } from "@/app/lib/articles";
 
 const focusItems = [
-  "Spin-to-Win updates",
-  "RROTA utility progress",
-  "Solana token education",
+  "RROTA ecosystem updates",
+  "Token verification and safety",
+  "Utility progress and roadmap",
 ];
 
 export default function BlogPreview() {
@@ -30,16 +30,17 @@ export default function BlogPreview() {
             </div>
 
             <h2 className="max-w-4xl text-3xl font-black tracking-tight text-white sm:text-4xl md:text-5xl">
-              Latest updates from the{" "}
+              Official updates from the{" "}
               <span className="bg-gradient-to-r from-cyan-200 via-fuchsia-200 to-yellow-200 bg-clip-text text-transparent">
-                RROTA utility stack.
+                RROTA ecosystem.
               </span>
             </h2>
 
             <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
-              Read official RROTA articles covering Spin-to-Win, token
-              verification, ecosystem progress, and the move from simple token
-              visibility to live utility.
+              Read official RROTA articles covering $RTA on Solana, token
+              verification, ecosystem progress, Spin-to-Win updates, Crypto
+              Shooter planning, public transportation utility direction, and
+              long-term project visibility.
             </p>
           </div>
 
@@ -53,13 +54,11 @@ export default function BlogPreview() {
             </Link>
 
             <Link
-              href="https://spin.rrota.xyz"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/#ecosystem"
               className="inline-flex items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-cyan-100 transition hover:border-cyan-200/40 hover:bg-cyan-300/15"
             >
-              Play Spin-to-Win
-              <span className="ml-2">↗</span>
+              Explore Ecosystem
+              <span className="ml-2">↓</span>
             </Link>
           </div>
         </div>
@@ -179,8 +178,8 @@ export default function BlogPreview() {
         {!articles.length ? (
           <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 text-center shadow-xl shadow-black/20 backdrop-blur-xl">
             <p className="text-sm text-slate-300">
-              No articles are published yet. RROTA updates will appear here once
-              they are added to the blog.
+              No articles are published yet. RROTA ecosystem updates will appear
+              here once they are added to the blog.
             </p>
           </div>
         ) : null}
@@ -194,8 +193,9 @@ export default function BlogPreview() {
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-300">
                 RROTA articles are designed to explain the project clearly:
-                what is live, what is being rolled out, and how users can verify
-                official links before interacting with $RTA.
+                what is live, what is planned, how the ecosystem is expanding,
+                and how users can verify official links before interacting with
+                $RTA.
               </p>
             </div>
 
