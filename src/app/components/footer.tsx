@@ -133,51 +133,51 @@ const Footer = () => {
 
   const officialLinks = [
     {
-      label: "Spin-to-Win Game",
-      href: LINKS.spin,
-      detail: "Official live app",
-      tone: "cyan",
-    },
-    {
       label: "Buy on Jupiter",
       href: LINKS.jupiter,
-      detail: "Trade $RTA",
+      detail: "Trade official $RTA",
       tone: "emerald",
     },
     {
-      label: "Solscan",
+      label: "Verify on Solscan",
       href: LINKS.solscan,
-      detail: "Verify contract",
+      detail: "Official token contract",
       tone: "fuchsia",
     },
     {
       label: "GeckoTerminal",
       href: LINKS.gecko,
-      detail: "Pool chart",
+      detail: "Pool and market data",
       tone: "amber",
     },
     {
       label: "DEXTools",
       href: LINKS.dextools,
-      detail: "Market chart",
+      detail: "RROTA market chart",
+      tone: "cyan",
+    },
+    {
+      label: "Spin-to-Win Game",
+      href: LINKS.spin,
+      detail: "First live RROTA utility",
       tone: "cyan",
     },
     {
       label: "FreshCoins Audit",
       href: LINKS.audit,
-      detail: "Audit verification",
+      detail: "External audit reference",
       tone: "emerald",
     },
     {
       label: "Telegram",
       href: LINKS.telegram,
-      detail: "Community",
+      detail: "Official community",
       tone: "fuchsia",
     },
     {
       label: "X / Twitter",
       href: LINKS.x,
-      detail: "Updates",
+      detail: "Official updates",
       tone: "amber",
     },
   ];
@@ -206,9 +206,9 @@ const Footer = () => {
         >
           <div className="relative grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-emerald-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
-                RROTA utility is live
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                Official RROTA ecosystem hub
               </div>
 
               <div className="flex items-center gap-3">
@@ -231,36 +231,25 @@ const Footer = () => {
               </div>
 
               <h3 className="mt-6 max-w-4xl text-3xl font-black leading-tight tracking-[-0.04em] text-white sm:text-5xl">
-                A Solana token with a real destination:
+                A utility-first Solana ecosystem:
                 <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                  Spin-to-Win is live.
+                  coin, games, rewards, and future tools.
                 </span>
               </h3>
 
               <p className="mt-5 max-w-2xl text-sm leading-7 text-white/68 sm:text-base">
-                RROTA is moving from build phase into active utility. Play the
-                official Spin-to-Win app, verify the token contract, follow the
-                roadmap, and use only official RROTA links.
+                RROTA is built around the $RTA token, official verification,
+                community growth, digital rewards, crypto gaming, and future
+                public transportation utility. Spin-to-Win is the first live
+                product inside the wider RROTA ecosystem.
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <motion.a
-                  href={LINKS.spin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:brightness-110"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <SparkIcon />
-                  Play Spin-to-Win
-                </motion.a>
-
-                <motion.a
                   href={LINKS.jupiter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 hover:text-white"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:brightness-110"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -278,6 +267,18 @@ const Footer = () => {
                 >
                   Verify Contract
                   <ShieldIcon />
+                </motion.a>
+
+                <motion.a
+                  href={LINKS.spin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 hover:text-white"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <SparkIcon />
+                  Play Spin-to-Win
                 </motion.a>
               </div>
             </div>
@@ -323,9 +324,11 @@ const Footer = () => {
 
               <div className="mt-5 grid gap-3">
                 {[
-                  "Token live on Solana",
+                  "RROTA token live on Solana",
                   "Mint revoked / Freeze revoked",
-                  "Spin-to-Win utility live",
+                  "Spin-to-Win first live utility",
+                  "Crypto Shooter planned",
+                  "Public transportation utility planned",
                   "Official links listed below",
                 ].map((item) => (
                   <div
@@ -404,9 +407,17 @@ const Footer = () => {
           >
             <div>
               <div className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-white/40">
-                Project
+                Ecosystem
               </div>
               <div className="space-y-2 text-sm">
+                <Link href="/#ecosystem" className="block text-white/62 hover:text-cyan-300">
+                  RROTA Ecosystem
+                </Link>
+
+                <Link href="/#tokenomics" className="block text-white/62 hover:text-cyan-300">
+                  Tokenomics
+                </Link>
+
                 <a
                   href={LINKS.spin}
                   target="_blank"
@@ -416,30 +427,9 @@ const Footer = () => {
                   Spin-to-Win
                 </a>
 
-                <Link
-                  href="/blog"
-                  className="block text-white/62 hover:text-cyan-300"
-                >
+                <Link href="/blog" className="block text-white/62 hover:text-cyan-300">
                   Blog
                 </Link>
-
-                <a
-                  href={LINKS.whitepaper}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-white/62 hover:text-cyan-300"
-                >
-                  Whitepaper
-                </a>
-
-                <a
-                  href={LINKS.audit}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-white/62 hover:text-cyan-300"
-                >
-                  Audit
-                </a>
               </div>
             </div>
 
@@ -464,6 +454,15 @@ const Footer = () => {
                   className="block text-white/62 hover:text-cyan-300"
                 >
                   X / Twitter
+                </a>
+
+                <a
+                  href={LINKS.whitepaper}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  Whitepaper
                 </a>
 
                 <a
@@ -493,6 +492,15 @@ const Footer = () => {
                 >
                   Terms of Service
                 </Link>
+
+                <a
+                  href={LINKS.audit}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  Audit
+                </a>
 
                 <a
                   href={LINKS.solscan}
