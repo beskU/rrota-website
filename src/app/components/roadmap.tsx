@@ -16,9 +16,9 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const Roadmap = () => {
   const roadmapItems: RoadmapItem[] = [
     {
-      title: "Foundation",
+      title: "RROTA Token Foundation",
       description:
-        "RROTA token deployed on Solana with official website, contract verification links, community channels, and public token references.",
+        "RROTA token deployed on Solana with official website, contract verification, public token links, trading access, and community channels.",
       status: "Shipped",
       proof: {
         label: "Verify token",
@@ -26,9 +26,9 @@ const Roadmap = () => {
       },
     },
     {
-      title: "Trust Layer",
+      title: "Trust & Verification Layer",
       description:
-        "Official links, audit reference, token verification, privacy/terms pages, and clear project messaging prepared for public users.",
+        "Official links, audit reference, token verification, privacy/terms pages, and safer project messaging prepared for users, reviewers, and listing platforms.",
       status: "Shipped",
       proof: {
         label: "View audit",
@@ -36,9 +36,9 @@ const Roadmap = () => {
       },
     },
     {
-      title: "Spin-to-Win Utility",
+      title: "RROTA Spin-to-Win",
       description:
-        "Official RROTA Spin-to-Win app with login, daily bonus, free spins, Boost Credits, Phantom wallet connection, deposit flow, and eligible reward withdrawal system.",
+        "First live RROTA utility product with login, daily bonus, free spins, Boost Credits, Phantom wallet connection, deposits, leaderboard rewards, and eligible withdrawals.",
       status: "Live",
       proof: {
         label: "Play game",
@@ -46,19 +46,19 @@ const Roadmap = () => {
       },
     },
     {
-      title: "Controlled Wallet Economy",
+      title: "Game Economy Protection",
       description:
-        "Deposit/withdraw systems, wallet detection, mobile Phantom handling, and gameplay economy rules continue under controlled rollout and launch testing.",
-      status: "In Progress",
+        "Anti-bot checks, stronger Boost Credit rules, minimum deposit requirements, leaderboard cleanup, and withdrawal protections are being refined during public beta.",
+      status: "Live",
       proof: {
         label: "Open game",
         href: "https://spin.rrota.xyz",
       },
     },
     {
-      title: "Community Growth Layer",
+      title: "Community & Visibility Layer",
       description:
-        "Telegram/X campaigns, content, onboarding guides, player education, and safer link verification are being improved before larger public promotion.",
+        "Telegram/X campaigns, blog content, onboarding guides, weekly reward posts, SEO pages, and safer link verification are being improved for wider exposure.",
       status: "In Progress",
       proof: {
         label: "Join Telegram",
@@ -66,9 +66,27 @@ const Roadmap = () => {
       },
     },
     {
-      title: "Next Utility Expansion",
+      title: "Crypto Shooter Game",
       description:
-        "Crypto Shooter, leaderboard features, referral systems, dashboards, and future tools remain planned after Spin-to-Win launch stability is confirmed.",
+        "A planned gaming expansion that can extend RROTA beyond Spin-to-Win after the first utility product is stable, clean, and proven with real players.",
+      status: "Planned",
+    },
+    {
+      title: "Public Transportation Utility",
+      description:
+        "Long-term real-world direction for route discovery, station/terminal tools, local transport support, and practical user-facing features under the RROTA brand.",
+      status: "Planned",
+    },
+    {
+      title: "Ecosystem Tools",
+      description:
+        "Future dashboards, referral systems, holder/player tracking, utility guides, token safety pages, and community growth tools can be added step by step.",
+      status: "Planned",
+    },
+    {
+      title: "Listings, PR & Partnerships",
+      description:
+        "As RROTA gains organic traction, the project can continue pursuing listings, media coverage, community collaborations, and broader ecosystem visibility.",
       status: "Planned",
     },
   ];
@@ -123,13 +141,13 @@ const Roadmap = () => {
             <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
               RROTA roadmap:
               <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                shipped, live, and next.
+                coin, ecosystem, and utility expansion.
               </span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-              The roadmap is organized by execution status. RROTA only looks strong long-term if
-              shipped features, live utility, and planned work are clearly separated.
+              The roadmap is organized by execution status. RROTA is built around the $RTA token,
+              the live Spin-to-Win product, planned games, community tools, and future public transportation utility.
             </p>
           </div>
 
