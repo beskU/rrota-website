@@ -28,14 +28,14 @@ const AboutUs = () => {
         <div className="text-center mb-10">
           <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-6 max-w-4xl mx-auto">
             <span className="text-[#20befa] font-bold">RROTA ($RTA)</span> is a
-            Solana token focused on <span className="text-[#20befa] font-bold">utility-first</span>{" "}
-            growth — combining gamified rewards with real-world direction (Spin-to-Win,
-            P2E experiences, and future transit tools).
+            utility-first Solana ecosystem focused on <span className="text-[#20befa] font-bold">digital rewards</span>,
+            crypto gaming, community growth, and future public transportation utility.
           </p>
 
           <p className="text-white/70 max-w-4xl mx-auto text-base md:text-lg leading-relaxed">
-            We keep it simple: real on-chain token, real liquidity, audited contract,
-            and a build-first approach. Hype can come later — structure comes first.
+            Spin-to-Win is the first live product inside the RROTA ecosystem — not the whole story.
+            The long-term direction is to keep expanding $RTA into more user-facing utilities,
+            games, tools, and practical integrations.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ const AboutUs = () => {
             <div className="space-y-2">
               <p className="text-white font-semibold text-lg">✅ Verify the mint address</p>
               <p className="text-white/70 text-sm">
-                Always verify the token address before swapping. Fake clones exist.
+                Always verify the token address before swapping. Fake clones and random links can appear.
               </p>
               <p className="font-mono text-xs md:text-sm break-all text-white/90">
                 {TOKEN_ADDRESS}
@@ -82,7 +82,7 @@ const AboutUs = () => {
           </div>
 
           <div className="mt-4 text-xs text-white/60">
-            Tip: If an app doesn’t show $RTA, paste the mint address above.
+            Tip: if a wallet or chart app does not show $RTA, paste the official mint address above.
           </div>
         </div>
 
@@ -107,8 +107,8 @@ const AboutUs = () => {
                 <path d="M3 5h18v6H3V5z" />
               </svg>
             </div>
-            <h3 className="font-bold text-lg text-white mb-2">Audited</h3>
-            <p className="text-green-400 text-sm font-medium">FreshCoins Verified</p>
+            <h3 className="font-bold text-lg text-white mb-2">Verified</h3>
+            <p className="text-green-400 text-sm font-medium">Contract + audit references</p>
           </div>
 
           <div className="flex flex-col items-center p-6 rounded-xl border border-blue-500/30 !bg-gradient-to-br !from-blue-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
@@ -133,7 +133,7 @@ const AboutUs = () => {
               </svg>
             </div>
             <h3 className="font-bold text-lg text-white mb-2">Utility-first</h3>
-            <p className="text-blue-400 text-sm font-medium">Games + future tools</p>
+            <p className="text-blue-400 text-sm font-medium">Games, rewards, future tools</p>
           </div>
 
           <div className="flex flex-col items-center p-6 rounded-xl border border-orange-500/30 !bg-gradient-to-br !from-orange-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
@@ -157,8 +157,8 @@ const AboutUs = () => {
                 <path d="M7 21l-3-3 3-3" />
               </svg>
             </div>
-            <h3 className="font-bold text-lg text-white mb-2">Deflationary</h3>
-            <p className="text-orange-400 text-sm font-medium">Supply burns tracked on-chain</p>
+            <h3 className="font-bold text-lg text-white mb-2">Ecosystem</h3>
+            <p className="text-orange-400 text-sm font-medium">Coin, games, transport vision</p>
           </div>
         </div>
 
@@ -169,33 +169,33 @@ const AboutUs = () => {
             <ul className="space-y-2 text-white/80 text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>Live token on Solana with visible on-chain data</span>
+                <span>Live $RTA token on Solana with public contract verification</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>Audit report available (FreshCoins)</span>
+                <span>Official website, official links, audit reference, charts, and token pages</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>Community channels active: Telegram + X</span>
+                <span>Spin-to-Win live as the first RROTA utility product</span>
               </li>
             </ul>
           </div>
 
           <div className="rounded-2xl border border-[#2b3139] bg-[#1c1f24] p-6">
-            <h3 className="text-[#20befa] font-bold text-lg mb-3">What’s in development</h3>
+            <h3 className="text-[#20befa] font-bold text-lg mb-3">What comes next</h3>
             <ul className="space-y-2 text-white/80 text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>Spin-to-Win access & reward logic (anti-farm focus)</span>
+                <span>Crypto Shooter concept and additional game utility expansion</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>P2E experiences (Crypto Shooter concept + expansion)</span>
+                <span>Community rewards, referral systems, dashboards, and player tools</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#20befa] mt-1">•</span>
-                <span>Utility integrations (website + WebApp + future tools)</span>
+                <span>Future public transportation utility direction and practical user features</span>
               </li>
             </ul>
           </div>
@@ -206,7 +206,7 @@ const AboutUs = () => {
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="relative w-full h-[300px] sm:h-[400px] md:h-full">
               <Image
-                alt="RROTA Visual"
+                alt="RROTA Solana ecosystem visual"
                 src={RrotaImage2}
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ objectPosition: "center top" }}
@@ -219,13 +219,13 @@ const AboutUs = () => {
               <p>
                 <span className="text-[#20befa]">RROTA</span> is community-built
                 on Solana’s high-performance infrastructure — focused on speed,
-                low fees, and a clean on-chain footprint.
+                low fees, transparency, and a clean on-chain footprint.
               </p>
 
               <p>
-                Our goal is to grow an ecosystem where holding and using $RTA
-                makes sense: rewards, games, and practical integrations — shipped
-                step-by-step, not promised overnight.
+                The goal is to grow an ecosystem where holding and using $RTA makes sense:
+                digital rewards, crypto games, community systems, and future practical tools —
+                shipped step by step, not promised overnight.
               </p>
 
               <div className="space-y-3">
@@ -235,21 +235,21 @@ const AboutUs = () => {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>Transparency: link everything on-chain</span>
+                    <span>Transparency: link everything important through official sources</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>Utility-first: ship working features before marketing</span>
+                    <span>Utility-first: ship working products before heavy promotion</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[#20befa] mt-1">•</span>
-                    <span>Community: rewards that prioritize real holders</span>
+                    <span>Ecosystem growth: coin, games, tools, rewards, and future transport direction</span>
                   </li>
                 </ul>
               </div>
 
               <p className="text-[#20befa] font-medium">
-                If you’re here early — you’re here for the build phase.
+                RROTA is building from token visibility toward real ecosystem utility.
               </p>
 
               <div className="flex gap-5 pt-2 flex-wrap">
@@ -303,14 +303,23 @@ const AboutUs = () => {
                 </a>
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap gap-3">
                 <a
-                  href="https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a"
+                  href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold bg-gradient-to-r from-[#1cc2fc] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#1cc2fc] transition-all duration-300 shadow-lg hover:shadow-[#1cc2fc]/30"
                 >
                   Buy on Jupiter ↗
+                </a>
+
+                <a
+                  href="https://spin.rrota.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
+                >
+                  Open Spin-to-Win ↗
                 </a>
               </div>
             </div>
