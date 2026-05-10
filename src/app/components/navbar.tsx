@@ -16,11 +16,6 @@ const Navbar = () => {
   const officialLinks = useMemo(
     () => [
       {
-        label: "Play Spin-to-Win",
-        href: SPIN_TO_WIN_URL,
-        badge: "Live",
-      },
-      {
         label: "Buy on Jupiter",
         href: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
         badge: "Trade",
@@ -29,6 +24,11 @@ const Navbar = () => {
         label: "Verify on Solscan",
         href: `https://solscan.io/token/${TOKEN_ADDRESS}`,
         badge: "Verify",
+      },
+      {
+        label: "Play Spin-to-Win",
+        href: SPIN_TO_WIN_URL,
+        badge: "Live Utility",
       },
       {
         label: "DEXTools",
@@ -129,29 +129,28 @@ const Navbar = () => {
               RROTA
             </div>
             <div className="mt-1 hidden text-[9px] font-black uppercase tracking-[0.28em] text-cyan-300/80 sm:block">
-              Utility on Solana
+              Utility Ecosystem on Solana
             </div>
           </button>
         </motion.div>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-2 rounded-[28px] border border-cyan-400/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_22px_rgba(34,211,238,0.05)] backdrop-blur-xl lg:flex">
-          <a
-            href={SPIN_TO_WIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-emerald-400/22 bg-emerald-400/12 px-4 text-[14px] font-black text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.08)] transition-all duration-200 hover:border-emerald-300/40 hover:bg-emerald-400/18 hover:text-white"
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
-            Spin-to-Win
-          </a>
-
           <button
-            onClick={() => scrollToSection("how-to-play")}
+            onClick={() => scrollToSection("top")}
             className={tabClass}
             type="button"
           >
-            How to Play
+            Home
+          </button>
+
+          <button
+            onClick={() => scrollToSection("ecosystem-overview")}
+            className="group inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-emerald-400/22 bg-emerald-400/12 px-4 text-[14px] font-black text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.08)] transition-all duration-200 hover:border-emerald-300/40 hover:bg-emerald-400/18 hover:text-white"
+            type="button"
+          >
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
+            Ecosystem
           </button>
 
           <button
@@ -159,7 +158,7 @@ const Navbar = () => {
             className={tabClass}
             type="button"
           >
-            Tokenomics
+            Token
           </button>
 
           <button
@@ -208,7 +207,7 @@ const Navbar = () => {
                       Verified RROTA Links
                     </div>
                     <div className="mt-1 text-xs text-white/45">
-                      Use only official project links.
+                      Official links for the RROTA coin, ecosystem, charts, audit, and live utility.
                     </div>
                   </div>
 
@@ -252,7 +251,7 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
           >
-            Play Game
+            Live Utility
           </a>
         </div>
 
@@ -284,11 +283,10 @@ const Navbar = () => {
                 <div className="mb-3 rounded-2xl border border-emerald-400/15 bg-emerald-400/8 px-4 py-3">
                   <div className="flex items-center gap-2 text-sm font-black text-emerald-200">
                     <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
-                    Spin-to-Win is live
+                    RROTA ecosystem is live
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/58">
-                    Open the official game, verify the token, and use the official
-                    RROTA links below.
+                    Explore the official RROTA coin hub, verify the contract, and access Spin-to-Win as the first live utility.
                   </p>
                 </div>
 
@@ -301,22 +299,12 @@ const Navbar = () => {
                     Home
                   </button>
 
-                  <a
-                    href={SPIN_TO_WIN_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={closeMenus}
-                    className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm font-black text-cyan-100 transition-all hover:bg-cyan-400/15"
-                  >
-                    Play Spin-to-Win
-                  </a>
-
                   <button
-                    onClick={() => scrollToSection("how-to-play")}
+                    onClick={() => scrollToSection("ecosystem-overview")}
                     className={mobileItemClass}
                     type="button"
                   >
-                    How to Play
+                    Ecosystem
                   </button>
 
                   <button
@@ -350,6 +338,16 @@ const Navbar = () => {
                   >
                     Blog
                   </Link>
+
+                  <a
+                    href={SPIN_TO_WIN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeMenus}
+                    className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm font-black text-cyan-100 transition-all hover:bg-cyan-400/15"
+                  >
+                    Play Spin-to-Win
+                  </a>
                 </div>
 
                 <div className="my-4 h-px bg-white/10" />
@@ -396,7 +394,7 @@ const Navbar = () => {
                     onClick={closeMenus}
                     className="inline-flex h-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_24px_rgba(34,211,238,0.20)] transition-all hover:brightness-110"
                   >
-                    Play Game
+                    Live Utility
                   </a>
                 </div>
               </div>
