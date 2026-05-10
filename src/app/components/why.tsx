@@ -10,6 +10,7 @@ const LINKS = {
   audit: "https://freshcoins.io/audit/rrota",
   telegram: "https://t.me/rrotaOfficial",
   x: "https://x.com/rrotacoin",
+  jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
 };
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -122,26 +123,26 @@ function CommunitySvg() {
 const Why = () => {
   const principleCards = [
     {
-      title: "Live utility first",
-      text: "RROTA is now centered around a real user destination: the official Spin-to-Win game.",
-      icon: <GameSvg />,
+      title: "RROTA coin first",
+      text: "The website now positions $RTA as the core Solana ecosystem token, with Spin-to-Win as the first shipped product inside the wider roadmap.",
+      icon: <BoltSvg />,
       tone: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     },
     {
       title: "Verification over hype",
-      text: "Official contract, Solscan, audit reference, charts, and project links are shown clearly.",
+      text: "Official contract, Solscan, audit reference, charts, and community links are kept visible so users can verify before trading or connecting wallets.",
       icon: <ShieldSvg />,
       tone: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
     },
     {
-      title: "Solana speed",
-      text: "Low fees and fast confirmations make RROTA suitable for wallet-connected gameplay flows.",
-      icon: <BoltSvg />,
+      title: "Live utility shipped",
+      text: "Spin-to-Win proves the first RROTA utility layer is live: account access, rewards, Boost Credits, leaderboard competition, and wallet flows.",
+      icon: <GameSvg />,
       tone: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-200",
     },
     {
       title: "Community expansion",
-      text: "RROTA grows through Telegram, X, game updates, launch content, and transparent progress.",
+      text: "RROTA grows through Telegram, X, blog updates, player education, reward campaigns, and transparent ecosystem progress.",
       icon: <CommunitySvg />,
       tone: "border-amber-400/20 bg-amber-400/10 text-amber-200",
     },
@@ -149,22 +150,40 @@ const Why = () => {
 
   const utilityCards = [
     {
+      title: "RROTA Coin",
+      status: "Core",
+      text: "$RTA is the Solana token powering the RROTA ecosystem, official links, trading access, utility products, and community campaigns.",
+      href: LINKS.jupiter,
+    },
+    {
       title: "Spin-to-Win",
       status: "Live",
-      text: "Official utility game with login, daily bonus, free spins, Boost Credits, Phantom wallet connection, deposit, and eligible reward withdrawal.",
+      text: "The first live RROTA utility: daily bonuses, Boost Credits, leaderboard competition, Phantom support, and eligible RTA reward withdrawals.",
       href: LINKS.spin,
     },
     {
       title: "Crypto Shooter",
       status: "Planned",
-      text: "Future game concept after Spin-to-Win launch stability, economy rules, and anti-abuse checks are stronger.",
+      text: "A future gaming expansion planned after Spin-to-Win stability, economy controls, and anti-abuse protections are fully battle-tested.",
       href: LINKS.telegram,
     },
     {
-      title: "Ecosystem Tools",
-      status: "Planned",
-      text: "Dashboards, tracking tools, community onboarding, player guides, and utility extensions can be added after launch.",
+      title: "Transport Utility",
+      status: "Vision",
+      text: "A long-term public transportation direction: local route tools, station discovery, and practical user-facing utility around the RROTA brand.",
       href: LINKS.telegram,
+    },
+    {
+      title: "Community Rewards",
+      status: "Active",
+      text: "Leaderboard competitions, weekly rewards, Telegram events, X posts, and real-player engagement campaigns help grow the ecosystem.",
+      href: LINKS.telegram,
+    },
+    {
+      title: "Future Tools",
+      status: "Planned",
+      text: "Dashboards, tracking tools, referral systems, safety guides, and utility extensions can be added as the project matures.",
+      href: LINKS.x,
     },
   ];
 
@@ -181,15 +200,16 @@ const Why = () => {
             </div>
 
             <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
-              RROTA is building around
+              RROTA is building a
               <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                usable crypto utility.
+                utility-first Solana ecosystem.
               </span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-              RROTA is a Solana project focused on transparent execution, verified links,
-              community growth, and live gameplay utility through Spin-to-Win.
+              RROTA is more than a single game page. It is a Solana-based ecosystem
+              focused on digital rewards, crypto gaming, community tools, future transport
+              utility, and transparent execution around the $RTA token.
             </p>
           </div>
 
@@ -218,8 +238,8 @@ const Why = () => {
 
               <p className="mt-3 text-sm leading-7 text-white/62">
                 RROTA should be checked through official links: Solscan for token verification,
-                Jupiter for trading, official charts for market data, and official community links
-                for announcements.
+                Jupiter for trading, official charts for market data, audit references, and
+                official community channels for announcements.
               </p>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -245,12 +265,12 @@ const Why = () => {
 
             <div className="grid gap-4">
               {[
-                "Token live on Solana",
+                "RROTA token live on Solana",
+                "Official $RTA contract published",
                 "Mint authority revoked",
                 "Freeze authority revoked",
-                "Spin-to-Win live utility",
-                "Official game: spin.rrota.xyz",
-                "Official website: rrota.xyz",
+                "Spin-to-Win utility live",
+                "Crypto Shooter and transport utility planned",
               ].map((item) => (
                 <div
                   key={item}
@@ -267,10 +287,10 @@ const Why = () => {
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-                  Utility Stack
+                  RROTA Utility Stack
                 </div>
                 <h3 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                  Live now and next.
+                  Coin, games, rewards, and future real-world direction.
                 </h3>
               </div>
 
@@ -280,12 +300,12 @@ const Why = () => {
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500/25 to-fuchsia-500/25 px-5 text-sm font-black text-white transition hover:brightness-110"
               >
-                Play Spin-to-Win
+                Explore Live Utility
                 <ExternalIcon />
               </a>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {utilityCards.map((card) => (
                 <a
                   key={card.title}
@@ -314,7 +334,7 @@ const Why = () => {
 
           <div className="mt-10 rounded-2xl border border-amber-400/16 bg-amber-400/7 px-5 py-4 text-sm leading-7 text-amber-100/80">
             RROTA should be judged by what it ships: working utility, transparent updates,
-            clear verification, and sustainable community growth — not empty hype.
+            clear verification, sustainable community growth, and practical long-term ecosystem expansion.
           </div>
         </div>
       </div>
