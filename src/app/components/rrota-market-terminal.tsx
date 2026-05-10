@@ -12,6 +12,7 @@ const JUPITER_URL = `https://jup.ag/tokens/${RROTA_MINT}`;
 const SOLSCAN_URL = `https://solscan.io/token/${RROTA_MINT}`;
 const GECKO_URL = `https://www.geckoterminal.com/solana/tokens/${RROTA_MINT}`;
 const DEXTOOLS_URL = "https://www.dextools.io/app/token/rrota";
+const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 
 type MarketData = {
   ok: boolean;
@@ -163,17 +164,19 @@ export default function RrotaMarketTerminal() {
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-cyan-200">
-              Live Market Terminal
+              RROTA Token Terminal
             </div>
 
             <h2 className="mt-5 text-3xl font-black tracking-tight md:text-5xl">
-              Track RROTA live while the Spin-to-Win utility layer is active.
+              Track $RTA market data while the RROTA ecosystem expands.
             </h2>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-              Follow the RROTA market chart, verify the official Solana contract,
-              and use the correct trading and game links before interacting with
-              the ecosystem.
+              Follow the RROTA chart, verify the official Solana mint, and use
+              the correct trading links before interacting with the ecosystem.
+              Spin-to-Win is the first live utility, while Crypto Shooter,
+              community tools, and public transportation utility remain part of
+              the wider roadmap.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -188,30 +191,22 @@ export default function RrotaMarketTerminal() {
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                 <div className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                  Utility
+                  Ecosystem Direction
                 </div>
                 <div className="mt-2 text-lg font-black text-white">
-                  Spin-to-Win Live
+                  Utility-first on Solana
                 </div>
                 <div className="text-xs text-slate-400">
-                  $RTA used inside the game economy
+                  Games, rewards, community tools, and future transport utility
                 </div>
               </div>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="https://spin.rrota.xyz"
-                target="_blank"
-                className="rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition hover:scale-[1.02]"
-              >
-                Play Game ↗
-              </Link>
-
-              <Link
                 href={JUPITER_URL}
                 target="_blank"
-                className="rounded-full border border-violet-300/30 bg-violet-400/10 px-5 py-3 text-sm font-black text-violet-100 transition hover:bg-violet-400/20"
+                className="rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition hover:scale-[1.02]"
               >
                 Buy $RTA ↗
               </Link>
@@ -219,9 +214,17 @@ export default function RrotaMarketTerminal() {
               <Link
                 href={SOLSCAN_URL}
                 target="_blank"
-                className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                className="rounded-full border border-violet-300/30 bg-violet-400/10 px-5 py-3 text-sm font-black text-violet-100 transition hover:bg-violet-400/20"
               >
                 Verify Contract ↗
+              </Link>
+
+              <Link
+                href={SPIN_TO_WIN_URL}
+                target="_blank"
+                className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-black text-white transition hover:bg-white/10"
+              >
+                Play Spin-to-Win ↗
               </Link>
             </div>
           </div>
@@ -282,7 +285,7 @@ export default function RrotaMarketTerminal() {
             <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-3">
               <div>◆ Verify the token mint before trading.</div>
               <div>◆ Use only official RROTA links.</div>
-              <div>◆ Rewards depend on eligible game activity.</div>
+              <div>◆ Game rewards depend on eligible activity and project rules.</div>
             </div>
           </div>
         </div>
@@ -295,16 +298,17 @@ export default function RrotaMarketTerminal() {
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
             <div className="inline-flex rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-violet-200">
-              Tokenomics
+              RROTA Tokenomics
             </div>
 
             <h2 className="mt-5 text-3xl font-black tracking-tight md:text-5xl">
-              RROTA market and token overview.
+              RROTA market, token, and verification overview.
             </h2>
 
             <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-              A clean snapshot of the RROTA token, live market references, supply
-              information, and official verification links.
+              A clean snapshot of the $RTA Solana token, live market references,
+              supply verification, official trading links, and ecosystem utility
+              context.
             </p>
           </div>
 
@@ -345,14 +349,14 @@ export default function RrotaMarketTerminal() {
               </div>
 
               <h3 className="mt-3 text-2xl font-black text-white">
-                On-chain supply view
+                Verify supply and holder data on-chain.
               </h3>
 
               <p className="mt-3 text-sm leading-7 text-slate-300">
-                Burned supply and holder counts should only be shown after
-                confirming the exact on-chain amount. This section avoids
-                unsupported claims and sends users to official explorers for
-                verification.
+                Burned supply, circulating supply, and holder counts should be
+                confirmed through on-chain explorers and official market pages.
+                This section keeps the website reviewer-friendly by avoiding
+                unsupported claims and pointing users to verification sources.
               </p>
 
               <div className="mt-5 break-all rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4 font-mono text-sm text-cyan-100">
@@ -412,7 +416,7 @@ export default function RrotaMarketTerminal() {
           <p className="mt-6 text-xs leading-6 text-slate-500">
             Market data is loaded from external public sources and may be delayed,
             unavailable, or different across trackers. Always verify the official
-            mint before trading.
+            mint before trading. Nothing on this page is financial advice.
           </p>
         </div>
       </section>
