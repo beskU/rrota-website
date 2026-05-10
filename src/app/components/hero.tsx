@@ -167,6 +167,28 @@ function WalletIcon({ className = "h-5 w-5" }: { className?: string }) {
   );
 }
 
+function RouteIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="6" cy="19" r="3" />
+      <circle cx="18" cy="5" r="3" />
+      <path d="M12 19h3a3 3 0 0 0 3-3v-1" />
+      <path d="M12 5H9a3 3 0 0 0-3 3v1" />
+      <path d="M6 9v7" />
+      <path d="M18 8v7" />
+    </svg>
+  );
+}
+
 function MetricCard({
   label,
   value,
@@ -337,27 +359,27 @@ export default function Hero() {
             variants={itemVariants}
             className="flex flex-wrap items-center gap-2"
           >
-            <StatusPill label="Spin-to-Win Live" />
-            <StatusPill label="Solana SPL" tone="cyan" />
+            <StatusPill label="RROTA Ecosystem" />
+            <StatusPill label="Solana SPL Token" tone="cyan" />
             <StatusPill label="Mint / Freeze Revoked" tone="fuchsia" />
           </motion.div>
 
           <motion.div variants={itemVariants} className="mt-7">
             <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-white/64 backdrop-blur-xl">
-              Official RROTA ecosystem hub
+              Official RROTA coin and ecosystem hub
             </div>
 
             <h1 className="mt-5 max-w-5xl text-[42px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[64px] lg:text-[78px]">
-              RROTA is no longer just a token.
+              RROTA ($RTA) is a utility-first
               <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                It has live utility.
+                Solana ecosystem.
               </span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg">
-              RROTA ($RTA) is a utility-first Solana project now connected to the
-              official Spin-to-Win game. Play, claim daily bonuses, use Boost Credits,
-              connect Phantom, and verify everything through official links.
+              RROTA is building a Solana-based ecosystem around digital rewards,
+              crypto gaming, community tools, and future public transportation utility.
+              Spin-to-Win is the first live product inside a wider $RTA utility stack.
             </p>
           </motion.div>
 
@@ -366,33 +388,41 @@ export default function Hero() {
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
           >
             <a
-              href={LINKS.spinToWin}
+              href={LINKS.jupiter}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/35 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_38px_rgba(34,211,238,0.23),0_0_70px_rgba(217,70,239,0.12)] transition-all hover:scale-[1.02] hover:brightness-110"
             >
-              <SparkIcon className="h-5 w-5 transition-transform group-hover:rotate-90" />
-              Play Spin-to-Win
-            </a>
-
-            <a
-              href={LINKS.jupiter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-white"
-            >
+              <WalletIcon className="h-5 w-5" />
               Buy $RTA
-              <ExternalIcon />
             </a>
 
             <a
               href={LINKS.solscan}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.035] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/78 backdrop-blur-xl transition-all hover:border-emerald-300/25 hover:bg-emerald-400/8 hover:text-white"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/88 backdrop-blur-xl transition-all hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-white"
             >
               Verify Contract
               <ShieldIcon className="h-5 w-5" />
+            </a>
+
+            <a
+              href="#ecosystem-overview"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.035] px-7 text-sm font-black uppercase tracking-[0.12em] text-white/78 backdrop-blur-xl transition-all hover:border-emerald-300/25 hover:bg-emerald-400/8 hover:text-white"
+            >
+              Explore Ecosystem
+              <RouteIcon className="h-5 w-5" />
+            </a>
+
+            <a
+              href={LINKS.spinToWin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-7 text-sm font-black uppercase tracking-[0.12em] text-fuchsia-100 backdrop-blur-xl transition-all hover:border-fuchsia-300/28 hover:bg-fuchsia-400/12 hover:text-white"
+            >
+              Play Spin-to-Win
+              <SparkIcon className="h-5 w-5" />
             </a>
           </motion.div>
 
@@ -443,38 +473,39 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Feature strip */}
+          {/* Ecosystem strip */}
           <motion.div
+            id="ecosystem-overview"
             variants={itemVariants}
-            className="mt-6 grid max-w-3xl gap-3 sm:grid-cols-3"
+            className="mt-6 grid max-w-3xl scroll-mt-28 gap-3 sm:grid-cols-3"
           >
             <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/10 text-cyan-200">
-                <SparkIcon />
+                <ShieldIcon />
               </div>
-              <div className="mt-3 text-sm font-black text-white">Live Game</div>
+              <div className="mt-3 text-sm font-black text-white">RROTA Coin</div>
               <p className="mt-1 text-xs leading-5 text-white/56">
-                Daily bonus, free spins, Boost Credits, and progression.
+                $RTA is the Solana SPL token powering the RROTA ecosystem.
               </p>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/10 text-fuchsia-200">
-                <WalletIcon />
+                <SparkIcon />
               </div>
-              <div className="mt-3 text-sm font-black text-white">Wallet Utility</div>
+              <div className="mt-3 text-sm font-black text-white">Live Utility</div>
               <p className="mt-1 text-xs leading-5 text-white/56">
-                Phantom connect, RTA deposit, and eligible reward withdrawal.
+                Spin-to-Win is the first live product connected to $RTA.
               </p>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/18 bg-emerald-400/10 text-emerald-200">
-                <ShieldIcon />
+                <RouteIcon />
               </div>
-              <div className="mt-3 text-sm font-black text-white">Verified Links</div>
+              <div className="mt-3 text-sm font-black text-white">Ecosystem Roadmap</div>
               <p className="mt-1 text-xs leading-5 text-white/56">
-                Contract, charts, audit, community, and official game app.
+                Crypto Shooter, community rewards, and future transport tools.
               </p>
             </div>
           </motion.div>
@@ -505,7 +536,7 @@ export default function Hero() {
                       RROTA Control Deck
                     </div>
                     <div className="mt-1 text-xl font-black text-white">
-                      Spin-to-Win Gateway
+                      Ecosystem Gateway
                     </div>
                   </div>
 
@@ -562,21 +593,21 @@ export default function Hero() {
                   <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2">
                     <div className="rounded-2xl border border-cyan-400/16 bg-cyan-400/8 px-3 py-2 text-center backdrop-blur-xl">
                       <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-200/70">
-                        Free
+                        Token
                       </div>
-                      <div className="mt-1 text-xs font-black text-white">Spins</div>
+                      <div className="mt-1 text-xs font-black text-white">$RTA</div>
                     </div>
                     <div className="rounded-2xl border border-fuchsia-400/16 bg-fuchsia-400/8 px-3 py-2 text-center backdrop-blur-xl">
                       <div className="text-[9px] font-black uppercase tracking-[0.16em] text-fuchsia-200/70">
-                        Boost
+                        Games
                       </div>
-                      <div className="mt-1 text-xs font-black text-white">Credits</div>
+                      <div className="mt-1 text-xs font-black text-white">Utility</div>
                     </div>
                     <div className="rounded-2xl border border-amber-400/16 bg-amber-400/8 px-3 py-2 text-center backdrop-blur-xl">
                       <div className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/70">
-                        RTA
+                        Transit
                       </div>
-                      <div className="mt-1 text-xs font-black text-white">Rewards</div>
+                      <div className="mt-1 text-xs font-black text-white">Vision</div>
                     </div>
                   </div>
                 </div>
@@ -622,12 +653,12 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   className="mt-4 inline-flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-cyan-300/28 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-6 py-4 text-sm font-black uppercase tracking-[0.14em] text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.01] hover:brightness-110"
                 >
-                  Enter the Game
+                  Explore Live Utility
                   <ExternalIcon />
                 </a>
 
                 <p className="mt-4 text-center text-[11px] leading-5 text-white/45">
-                  Mobile wallet users: open inside Phantom browser if wallet detection is needed.
+                  RROTA is a token-first ecosystem. Spin-to-Win is the first live product, not the whole vision.
                 </p>
               </div>
             </div>
@@ -652,7 +683,7 @@ export default function Hero() {
               transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
             >
               <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-300/70">
-                Game
+                First Utility
               </div>
               <div className="mt-1 text-xs font-black text-white">spin.rrota.xyz</div>
             </motion.div>
@@ -674,7 +705,7 @@ export default function Hero() {
             href: OFFICIAL_DOMAIN,
           },
           {
-            title: "Official Game",
+            title: "First Live Utility",
             value: "spin.rrota.xyz",
             href: SPIN_TO_WIN_URL,
           },
