@@ -1,71 +1,53 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { getArticleSlugs, getArticleBySlug } from "./lib/articles";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://rrota.xyz";
+const BASE_URL = "https://rrota.xyz";
 
-  // Use build time once (not regenerated per entry)
+function safeDate(value?: string) {
+  if (!value) return new Date();
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const buildDate = new Date();
 
-  // 🔹 Core static pages
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: BASE_URL,
       lastModified: buildDate,
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: `${baseUrl}/verify`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
-    {
-      url: `${baseUrl}/claim`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/roadmap`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tokenomics`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/links`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.75,
-    },
-    {
-      url: `${baseUrl}/blog`,
+      url: `${BASE_URL}/blog`,
       lastModified: buildDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
+
+    // Keep these only if the pages really exist.
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified: buildDate,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/terms`,
+      lastModified: buildDate,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
   ];
 
-  // 🔹 Blog articles (real date from frontmatter)
   const blogRoutes: MetadataRoute.Sitemap = getArticleSlugs().map((slug) => {
     const article = getArticleBySlug(slug);
 
     return {
-      url: `${baseUrl}/blog/${slug}`,
-      lastModified: new Date(article.meta.date),
+      url: `${BASE_URL}/blog/${slug}`,
+      lastModified: safeDate(article.meta.date),
       changeFrequency: "weekly",
       priority: 0.8,
     };
