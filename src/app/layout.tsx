@@ -51,15 +51,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(OFFICIAL_DOMAIN),
 
   title: {
-    default:
-      "RROTA ($RTA) — Utility-First Solana Token with Spin-to-Win Game",
+    default: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     template: "%s | RROTA ($RTA)",
   },
 
   description:
-    `RROTA ($RTA) is a utility-first Solana token with live Spin-to-Win gameplay, ` +
-    `Phantom wallet support, on-chain verification, transparent development, and official ecosystem links. ` +
-    `Official contract: ${TOKEN_ADDRESS}. Play at ${SPIN_TO_WIN_URL}.`,
+    `RROTA ($RTA) is a utility-first Solana ecosystem building crypto gaming, ` +
+    `digital rewards, community tools, and future public transportation utility. ` +
+    `Spin-to-Win is the first live RROTA product. Official contract: ${TOKEN_ADDRESS}.`,
 
   applicationName: "RROTA",
   category: "cryptocurrency",
@@ -97,11 +96,11 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title:
-      "RROTA ($RTA) — Utility-First Solana Token with Spin-to-Win Game",
+    title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
-      `Official RROTA website. Explore the $RTA Solana token, live Spin-to-Win utility, ` +
-      `tokenomics, roadmap, official links, and contract verification. Contract: ${TOKEN_ADDRESS}.`,
+      `Official RROTA website. Explore the $RTA Solana token, ecosystem roadmap, ` +
+      `Spin-to-Win live utility, crypto gaming direction, public transportation utility vision, ` +
+      `tokenomics, official links, and contract verification. Contract: ${TOKEN_ADDRESS}.`,
     url: OFFICIAL_DOMAIN,
     siteName: "RROTA",
     type: "website",
@@ -110,18 +109,17 @@ export const metadata: Metadata = {
         url: "/rrota-og.jpg",
         width: 1200,
         height: 630,
-        alt: "RROTA ($RTA) — Utility-First Solana Token with Spin-to-Win Game",
+        alt: "RROTA ($RTA) — Utility-First Solana Ecosystem",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title:
-      "RROTA ($RTA) — Utility-First Solana Token with Spin-to-Win Game",
+    title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
-      `RROTA is a Solana-based utility token with live Spin-to-Win gameplay, ` +
-      `official verification links, Phantom wallet support, and transparent ecosystem development.`,
+      `RROTA is a Solana-based utility ecosystem with live Spin-to-Win gameplay, ` +
+      `digital rewards, official verification links, Phantom wallet support, and future ecosystem tools.`,
     images: ["/rrota-og.jpg"],
     site: "@rrotacoin",
     creator: "@rrotacoin",
@@ -134,12 +132,19 @@ export const metadata: Metadata = {
     "$RTA",
     "RTA token",
     "RROTA crypto",
+    "RROTA ecosystem",
+    "RROTA Solana ecosystem",
     "Solana token",
     "SPL token",
+    "utility token Solana",
+    "Solana utility ecosystem",
     "RROTA Spin-to-Win",
     "Spin-to-Win crypto game",
     "Solana game token",
-    "utility token Solana",
+    "crypto gaming Solana",
+    "RROTA Crypto Shooter",
+    "RROTA public transportation utility",
+    "RROTA digital rewards",
     TOKEN_ADDRESS,
   ],
 };
@@ -149,6 +154,7 @@ const ORG_JSON_LD = {
   "@type": "Organization",
   "@id": ORG_ID,
   name: "RROTA",
+  alternateName: ["RROTA Coin", "RROTA Token", "$RTA", "RTA Token"],
   url: OFFICIAL_DOMAIN,
   logo: {
     "@type": "ImageObject",
@@ -170,6 +176,7 @@ const WEBSITE_JSON_LD = {
   "@type": "WebSite",
   "@id": WEBSITE_ID,
   name: "RROTA",
+  alternateName: "RROTA ($RTA) Solana Ecosystem",
   url: OFFICIAL_DOMAIN,
   publisher: { "@id": ORG_ID },
   potentialAction: {
@@ -184,10 +191,11 @@ const HOMEPAGE_JSON_LD = {
   "@type": "WebPage",
   "@id": HOMEPAGE_ID,
   url: `${OFFICIAL_DOMAIN}/`,
-  name: "RROTA ($RTA) — Utility-First Solana Token with Spin-to-Win Game",
+  name: "RROTA ($RTA) — Utility-First Solana Ecosystem",
   description:
-    `Official RROTA website for the $RTA Solana token, live Spin-to-Win utility, ` +
-    `tokenomics, roadmap, official links, and contract verification.`,
+    `Official RROTA website for the $RTA Solana token, ecosystem roadmap, ` +
+    `Spin-to-Win live utility, crypto gaming products, future public transportation utility, ` +
+    `tokenomics, official links, and contract verification.`,
   isPartOf: { "@id": WEBSITE_ID },
   about: [
     { "@type": "Thing", name: "RROTA", sameAs: OFFICIAL_DOMAIN },
@@ -198,8 +206,24 @@ const HOMEPAGE_JSON_LD = {
     },
     {
       "@type": "Thing",
+      name: "RROTA ecosystem",
+      description:
+        "A Solana-based ecosystem focused on digital rewards, crypto gaming, community tools, and future public transportation utility.",
+    },
+    {
+      "@type": "Thing",
       name: "RROTA Spin-to-Win",
       sameAs: SPIN_TO_WIN_URL,
+    },
+    {
+      "@type": "Thing",
+      name: "RROTA Crypto Shooter",
+      description: "Planned RROTA gaming utility expansion.",
+    },
+    {
+      "@type": "Thing",
+      name: "RROTA public transportation utility",
+      description: "Future RROTA direction for real-world transport-related tools and user-facing utility.",
     },
   ],
 };
@@ -211,13 +235,15 @@ const TOKEN_JSON_LD = {
   alternateName: ["RROTA coin", "RROTA token", "RTA token", "$RTA"],
   url: OFFICIAL_DOMAIN,
   description:
-    `RROTA ($RTA) is a Solana SPL token connected to live utility development, ` +
-    `including the official RROTA Spin-to-Win game. Official contract: ${TOKEN_ADDRESS}.`,
+    `RROTA ($RTA) is a Solana SPL token connected to a growing utility ecosystem, ` +
+    `including digital rewards, crypto gaming, community tools, future transport utility, and the official RROTA Spin-to-Win product. ` +
+    `Official contract: ${TOKEN_ADDRESS}.`,
   additionalProperty: [
     { "@type": "PropertyValue", name: "Blockchain", value: "Solana" },
     { "@type": "PropertyValue", name: "Ticker", value: "RTA" },
     { "@type": "PropertyValue", name: "Contract Address", value: TOKEN_ADDRESS },
     { "@type": "PropertyValue", name: "Official Game", value: SPIN_TO_WIN_URL },
+    { "@type": "PropertyValue", name: "Ecosystem Focus", value: "Crypto gaming, digital rewards, community tools, and future public transportation utility" },
   ],
 };
 
@@ -231,7 +257,7 @@ const GAME_JSON_LD = {
   url: SPIN_TO_WIN_URL,
   publisher: { "@id": ORG_ID },
   description:
-    "RROTA Spin-to-Win is the official RROTA utility game with account login, daily bonuses, free spins, Boost Credits, Phantom wallet support, and RTA reward features.",
+    "RROTA Spin-to-Win is the first live RROTA utility product with account login, daily bonuses, free spins, Boost Credits, Phantom wallet support, and eligible RTA reward features.",
   offers: {
     "@type": "Offer",
     price: "0",
@@ -255,11 +281,20 @@ const FAQ_JSON_LD = {
     },
     {
       "@type": "Question",
+      name: "What is the RROTA ecosystem?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "The RROTA ecosystem is planned around the $RTA Solana token, digital rewards, crypto gaming, community tools, Spin-to-Win, Crypto Shooter development, and future public transportation utility.",
+      },
+    },
+    {
+      "@type": "Question",
       name: "What is RROTA Spin-to-Win?",
       acceptedAnswer: {
         "@type": "Answer",
         text:
-          `RROTA Spin-to-Win is the official RROTA utility game. It includes login, free spins, daily bonuses, Boost Credits, ` +
+          `RROTA Spin-to-Win is the first live RROTA utility product. It includes login, free spins, daily bonuses, Boost Credits, ` +
           `Phantom wallet connection, deposit features, and eligible RTA reward withdrawals.`,
       },
     },
