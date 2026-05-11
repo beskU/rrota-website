@@ -15,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: BASE_URL,
+      url: `${BASE_URL}/`,
       lastModified: buildDate,
       changeFrequency: "daily",
       priority: 1,
@@ -26,8 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.9,
     },
-
-    // Keep these only if the pages really exist.
     {
       url: `${BASE_URL}/privacy`,
       lastModified: buildDate,
