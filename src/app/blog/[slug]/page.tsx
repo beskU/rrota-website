@@ -13,8 +13,8 @@ const SITE_URL = "https://rrota.xyz";
 const SITE_NAME = "RROTA";
 const BLOG_URL = `${SITE_URL}/blog`;
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg`;
-const PUBLISHER_LOGO = `${SITE_URL}/favicon.ico`;
+const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg";
+const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
 
 function JsonLd({ data }: { data: object }) {
   return (
@@ -35,23 +35,49 @@ function escapeHtml(str: string) {
     .replaceAll("'", "&#039;");
 }
 
+function normalizeText(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[^\w\s$-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function stripDuplicateLeadingH1(md: string, title: string) {
+  const lines = md.split("\n");
+
+  while (lines.length && !lines[0].trim()) {
+    lines.shift();
+  }
+
+  const firstLine = lines[0]?.trim();
+
+  if (!firstLine?.startsWith("# ")) {
+    return md;
+  }
+
+  const markdownTitle = firstLine.replace(/^#\s+/, "").trim();
+
+  if (normalizeText(markdownTitle) === normalizeText(title)) {
+    return lines.slice(1).join("\n").trimStart();
+  }
+
+  return md;
+}
+
 function formatInline(text: string) {
   let out = escapeHtml(text);
 
-  // links
   out = out.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
     (_m, label, url) =>
-      `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`
+      `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(
+        label
+      )}</a>`
   );
 
-  // bold
   out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-
-  // italic
   out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
-
-  // inline code
   out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
 
   return out;
@@ -72,6 +98,7 @@ function markdownToHtml(md: string) {
       html += "</ul>";
       inUl = false;
     }
+
     if (inOl) {
       html += "</ol>";
       inOl = false;
@@ -90,7 +117,6 @@ function markdownToHtml(md: string) {
     const rawLine = lines[i].replace(/\r$/, "");
     const l = rawLine.trim();
 
-    // Code fences
     if (l.startsWith("```")) {
       closeLists();
       closeTable();
@@ -102,6 +128,7 @@ function markdownToHtml(md: string) {
         inCode = false;
         html += "</code></pre>";
       }
+
       continue;
     }
 
@@ -110,18 +137,21 @@ function markdownToHtml(md: string) {
       continue;
     }
 
-    // Blank line
     if (!l) {
       closeLists();
       closeTable();
       continue;
     }
 
-    // Headings
+    /*
+      Important SEO fix:
+      BlogShell already renders the article title.
+      Markdown # headings are converted to h2 to avoid duplicate h1 tags.
+    */
     if (l.startsWith("# ")) {
       closeLists();
       closeTable();
-      html += `<h1>${formatInline(l.slice(2))}</h1>`;
+      html += `<h2>${formatInline(l.slice(2))}</h2>`;
       continue;
     }
 
@@ -139,7 +169,6 @@ function markdownToHtml(md: string) {
       continue;
     }
 
-    // Markdown tables
     if (l.startsWith("|") && l.endsWith("|")) {
       closeLists();
 
@@ -158,12 +187,14 @@ function markdownToHtml(md: string) {
 
       if (!tableHeaderParsed && isDivider) {
         html += "<table><thead><tr>";
+
         for (const cell of cells) {
           html += `<th>${formatInline(cell)}</th>`;
         }
+
         html += "</tr></thead><tbody>";
         tableHeaderParsed = true;
-        i++; // skip divider line
+        i++;
       } else {
         if (!tableHeaderParsed) {
           html += "<table><tbody>";
@@ -171,40 +202,45 @@ function markdownToHtml(md: string) {
         }
 
         html += "<tr>";
+
         for (const cell of cells) {
           html += `<td>${formatInline(cell)}</td>`;
         }
+
         html += "</tr>";
       }
+
       continue;
     } else {
       closeTable();
     }
 
-    // Unordered list
     if (l.startsWith("- ") || l.startsWith("• ")) {
       if (inOl) {
         html += "</ol>";
         inOl = false;
       }
+
       if (!inUl) {
         html += "<ul>";
         inUl = true;
       }
+
       html += `<li>${formatInline(l.slice(2))}</li>`;
       continue;
     }
 
-    // Ordered list
     if (/^\d+\.\s+/.test(l)) {
       if (inUl) {
         html += "</ul>";
         inUl = false;
       }
+
       if (!inOl) {
         html += "<ol>";
         inOl = true;
       }
+
       html += `<li>${formatInline(l.replace(/^\d+\.\s+/, ""))}</li>`;
       continue;
     }
@@ -226,12 +262,17 @@ function markdownToHtml(md: string) {
 function readingTimeMinutes(text: string) {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
+
   return { words, minutes };
 }
 
 function toISODate(dateStr: string) {
   const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return new Date().toISOString();
+
+  if (Number.isNaN(d.getTime())) {
+    return new Date().toISOString();
+  }
+
   return d.toISOString();
 }
 
@@ -252,6 +293,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         : `${SITE_URL}${a.meta.coverImage}`
       : DEFAULT_OG;
 
+    const tags = a.meta.tags ?? [];
+
     return {
       metadataBase: new URL(SITE_URL),
       title: `${a.meta.title} | RROTA Blog`,
@@ -263,6 +306,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         url: canonical,
         type: "article",
         siteName: SITE_NAME,
+        publishedTime: toISODate(a.meta.date),
+        modifiedTime: toISODate(a.meta.date),
+        authors: [a.meta.author ?? "RROTA Team"],
+        tags,
         images: [
           {
             url: ogImage,
@@ -290,14 +337,20 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
 
   let article;
+
   try {
     article = getArticleBySlug(slug);
   } catch {
     return notFound();
   }
 
-  const html = markdownToHtml(article.content);
-  const rt = readingTimeMinutes(article.content);
+  const cleanContent = stripDuplicateLeadingH1(
+    article.content,
+    article.meta.title
+  );
+
+  const html = markdownToHtml(cleanContent);
+  const rt = readingTimeMinutes(cleanContent);
 
   const canonicalUrl = `${SITE_URL}/blog/${article.slug}`;
 
@@ -357,7 +410,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       url: BLOG_URL,
     },
     about: [
-      { "@type": "Thing", name: "RROTA coin", sameAs: SITE_URL },
+      {
+        "@type": "Thing",
+        name: "RROTA coin",
+        sameAs: SITE_URL,
+      },
       {
         "@type": "Thing",
         name: "RROTA token / RTA token",
