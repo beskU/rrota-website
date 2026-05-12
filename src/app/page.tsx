@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import RrotaMarketTerminal from "@/app/components/rrota-market-terminal";
 import BlogPreview from "./components/blog-preview";
 import Navbar from "./components/navbar";
@@ -7,6 +8,11 @@ import Footer from "./components/footer";
 import HowTo from "./components/howTo";
 import Roadmap from "./components/roadmap";
 import AboutUs from "./components/aboutus";
+
+const SITE_URL = "https://rrota.xyz";
+const SITE_NAME = "RROTA";
+const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg`;
+const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
@@ -19,6 +25,63 @@ const DEXTOOLS_URL = "https://www.dextools.io/app/token/rrota";
 const GECKO_URL =
   "https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
 const AUDIT_URL = "https://freshcoins.io/audit/rrota";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+  description:
+    "RROTA ($RTA) is a utility-first Solana ecosystem building digital rewards, crypto gaming, Spin-to-Win, community tools, and future public transportation utility.",
+  keywords: [
+    "RROTA",
+    "RROTA coin",
+    "RROTA token",
+    "RTA token",
+    "RROTA Solana",
+    "RROTA Spin-to-Win",
+    "RROTA crypto gaming",
+    "RROTA tokenomics",
+    "RROTA roadmap",
+    "RROTA utility ecosystem",
+  ],
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+    description:
+      "Official RROTA website. Explore $RTA on Solana, Spin-to-Win public beta, crypto gaming, community tools, tokenomics, roadmap, and official verification links.",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    type: "website",
+    images: [
+      {
+        url: DEFAULT_OG,
+        width: 1200,
+        height: 630,
+        alt: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+    description:
+      "Official RROTA website for $RTA on Solana: Spin-to-Win, crypto gaming, community tools, roadmap, tokenomics, and verification links.",
+    images: [DEFAULT_OG],
+    site: "@rrotacoin",
+    creator: "@rrotacoin",
+  },
+};
+
+function JsonLd({ data }: { data: object }) {
+  return (
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
 
 function ExternalIcon() {
   return (
@@ -513,41 +576,148 @@ function OfficialLinksSection() {
 }
 
 export default function Home() {
+  const homeJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}#organization`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: {
+          "@type": "ImageObject",
+          url: PUBLISHER_LOGO,
+        },
+        sameAs: [
+          TELEGRAM_URL,
+          X_URL,
+          JUPITER_URL,
+          SOLSCAN_URL,
+          DEXTOOLS_URL,
+          GECKO_URL,
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${SITE_URL}#website`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        publisher: {
+          "@id": `${SITE_URL}#organization`,
+        },
+        inLanguage: "en",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${SITE_URL}#webpage`,
+        url: SITE_URL,
+        name: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+        description:
+          "Official RROTA website for $RTA on Solana. RROTA is building digital rewards, crypto gaming, Spin-to-Win, community tools, and future public transportation utility.",
+        isPartOf: {
+          "@id": `${SITE_URL}#website`,
+        },
+        about: [
+          {
+            "@type": "Thing",
+            name: "RROTA coin",
+            description: "RROTA ($RTA), a utility-first Solana ecosystem token.",
+          },
+          {
+            "@type": "Thing",
+            name: "RROTA Spin-to-Win",
+            description: "The first live RROTA ecosystem utility experience.",
+          },
+          {
+            "@type": "Thing",
+            name: "RROTA official Solana mint",
+            description: TOKEN_ADDRESS,
+          },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${SITE_URL}#faq`,
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What is RROTA coin?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text:
+                "RROTA coin, also known as $RTA, is a utility-first Solana ecosystem token focused on digital rewards, crypto gaming, community tools, Spin-to-Win, and future public transportation utility.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is RROTA Spin-to-Win?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text:
+                "RROTA Spin-to-Win is the first live utility experience in the RROTA ecosystem. It gives users a public beta game experience connected to $RTA activity, rewards, Boost Credits, and leaderboard engagement.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is the official RROTA mint address?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: TOKEN_ADDRESS,
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Is RROTA only a game token?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text:
+                "No. Spin-to-Win is the first live RROTA product, but RROTA is positioned as a wider Solana utility ecosystem with crypto gaming, community rewards, future tools, and long-term public transportation utility ideas.",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
   return (
-    <div className="relative mx-auto w-full overflow-hidden bg-[#050711] font-inter text-white">
-      <Navbar />
+    <>
+      <JsonLd data={homeJsonLd} />
 
-      <main className="relative w-full">
-        <Hero />
+      <div className="relative mx-auto w-full overflow-hidden bg-[#050711] font-inter text-white">
+        <Navbar />
 
-        <RrotaEcosystemSection />
+        <main className="relative w-full">
+          <Hero />
 
-        <SpinToWinLiveSection />
+          <RrotaEcosystemSection />
 
-        <section id="how-to-play" className="mb-20 w-full">
-          <HowTo />
-        </section>
+          <SpinToWinLiveSection />
 
-        <section className="mb-20 w-full">
-          <Why />
-        </section>
+          <section id="how-to-play" className="mb-20 w-full">
+            <HowTo />
+          </section>
 
-        <RrotaMarketTerminal />
+          <section className="mb-20 w-full">
+            <Why />
+          </section>
 
-        <OfficialLinksSection />
+          <RrotaMarketTerminal />
 
-        <BlogPreview />
+          <OfficialLinksSection />
 
-        <section className="mb-20 w-full">
-          <Roadmap />
-        </section>
+          <BlogPreview />
 
-        <section className="my-20 w-full">
-          <AboutUs />
-        </section>
-      </main>
+          <section className="mb-20 w-full">
+            <Roadmap />
+          </section>
 
-      <Footer />
-    </div>
+          <section className="my-20 w-full">
+            <AboutUs />
+          </section>
+        </main>
+
+        <Footer />
+      </div>
+    </>
   );
 }
