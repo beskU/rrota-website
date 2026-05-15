@@ -13,7 +13,7 @@ const AUDIT_URL = "https://freshcoins.io/audit/rrota";
 const TELEGRAM_URL = "https://t.me/rrotaOfficial";
 const X_URL = "https://x.com/rrotacoin";
 const PDF_WHITEPAPER_URL =
-  "https://github.com/beskU/rrota/blob/d094f58cfde725493bd2eba708d438ad2a6f76a2/RROTA%20%24RTA%20WHITEPAPER.pdf";
+  "https://github.com/beskU/rrota/blob/main/RROTA_RTA_Whitepaper_Official.pdf";
 
 export const metadata: Metadata = {
   title: "RROTA ($RTA) Whitepaper — Solana Utility Ecosystem",
