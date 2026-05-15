@@ -9,9 +9,11 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
   spin: "https://spin.rrota.xyz",
-  website: "https://rrota.xyz",
   linksPage: "https://rrota.xyz/links",
   whitepaper: "https://rrota.xyz/whitepaper",
+  riskDisclaimer: "https://rrota.xyz/risk-disclaimer",
+  contact: "https://rrota.xyz/contact",
+  contactEmail: "mailto:info@rrota.xyz",
   cmcVerification: "https://x.com/rrotacoin/status/2054219354422510035",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
@@ -21,7 +23,6 @@ const LINKS = {
   audit: "https://freshcoins.io/audit/rrota",
   telegram: "https://t.me/rrotaOfficial",
   x: "https://x.com/rrotacoin",
-  contact: "mailto:info@rrota.xyz",
 };
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -189,6 +190,12 @@ const Footer = () => {
       tone: "fuchsia",
     },
     {
+      label: "Risk Disclaimer",
+      href: LINKS.riskDisclaimer,
+      detail: "Crypto, wallet, game and reward risk notice",
+      tone: "amber",
+    },
+    {
       label: "Telegram",
       href: LINKS.telegram,
       detail: "Official community",
@@ -203,7 +210,7 @@ const Footer = () => {
     {
       label: "Contact",
       href: LINKS.contact,
-      detail: "info@rrota.xyz",
+      detail: "Official RROTA contact page",
       tone: "cyan",
     },
   ];
@@ -381,10 +388,8 @@ const Footer = () => {
             <a
               key={link.label}
               href={link.href}
-              target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-              rel={
-                link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"
-              }
+              target="_blank"
+              rel="noopener noreferrer"
               className={`group rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all ${toneClasses[link.tone]}`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -424,6 +429,13 @@ const Footer = () => {
               features may depend on eligibility, treasury availability, network
               conditions, security checks, and project rules.
             </p>
+
+            <Link
+              href="/risk-disclaimer"
+              className="mt-4 inline-flex text-sm font-bold text-cyan-300 hover:text-cyan-200"
+            >
+              Read full risk disclaimer →
+            </Link>
           </motion.div>
 
           <motion.div
@@ -528,6 +540,20 @@ const Footer = () => {
                   Terms of Service
                 </Link>
 
+                <Link
+                  href="/risk-disclaimer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  Risk Disclaimer
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  Contact
+                </Link>
+
                 <a
                   href={LINKS.audit}
                   target="_blank"
@@ -538,7 +564,7 @@ const Footer = () => {
                 </a>
 
                 <a
-                  href={LINKS.contact}
+                  href={LINKS.contactEmail}
                   className="block text-white/62 hover:text-cyan-300"
                 >
                   info@rrota.xyz
