@@ -6,15 +6,25 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../../public/rrota-logo2.png";
 
+const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLinksOpen, setIsLinksOpen] = useState(false);
 
   const officialLinks = useMemo(
     () => [
+      {
+        label: "Official Links Page",
+        href: `${OFFICIAL_DOMAIN}/links`,
+        badge: "Verify",
+      },
+      {
+        label: "Whitepaper",
+        href: `${OFFICIAL_DOMAIN}/whitepaper`,
+        badge: "Page",
+      },
       {
         label: "Buy on Jupiter",
         href: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
@@ -46,9 +56,9 @@ const Navbar = () => {
         badge: "Audit",
       },
       {
-        label: "Whitepaper",
-        href: "https://github.com/beskU/rrota/blob/d094f58cfde725493bd2eba708d438ad2a6f76a2/RROTA%20%24RTA%20WHITEPAPER.pdf",
-        badge: "PDF",
+        label: "CMC Verification Post",
+        href: "https://x.com/rrotacoin/status/2054219354422510035",
+        badge: "CMC",
       },
       {
         label: "Telegram",
@@ -65,8 +75,6 @@ const Navbar = () => {
   );
 
   const scrollToSection = (sectionId: string) => {
-    setIsLinksOpen(false);
-
     if (sectionId === "top") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
@@ -84,7 +92,6 @@ const Navbar = () => {
 
   const closeMenus = () => {
     setIsMobileMenuOpen(false);
-    setIsLinksOpen(false);
   };
 
   const tabClass =
@@ -154,14 +161,6 @@ const Navbar = () => {
           </button>
 
           <button
-            onClick={() => scrollToSection("Tokenomics")}
-            className={tabClass}
-            type="button"
-          >
-            Token
-          </button>
-
-          <button
             onClick={() => scrollToSection("Roadmap")}
             className={tabClass}
             type="button"
@@ -181,57 +180,9 @@ const Navbar = () => {
             Blog
           </Link>
 
-          <div className="relative">
-            <button
-              onClick={() => setIsLinksOpen((v) => !v)}
-              className={`${tabClass} gap-2`}
-              type="button"
-            >
-              Links
-              <span className="text-xs text-cyan-300/85">
-                {isLinksOpen ? "▲" : "▼"}
-              </span>
-            </button>
-
-            <AnimatePresence>
-              {isLinksOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                  transition={{ duration: 0.16 }}
-                  className="absolute right-0 mt-3 w-[310px] overflow-hidden rounded-3xl border border-cyan-400/12 bg-[#0B1020]/98 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_35px_rgba(34,211,238,0.10)] backdrop-blur-xl"
-                >
-                  <div className="border-b border-white/8 px-3 py-2">
-                    <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/75">
-                      Verified RROTA Links
-                    </div>
-                    <div className="mt-1 text-xs text-white/45">
-                      Official links for the RROTA coin, ecosystem, charts, audit, and live utility.
-                    </div>
-                  </div>
-
-                  <div className="py-2">
-                    {officialLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setIsLinksOpen(false)}
-                        className="group flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-sm text-white/78 transition-all hover:bg-white/8 hover:text-white"
-                      >
-                        <span>{link.label}</span>
-                        <span className="rounded-full border border-cyan-400/15 bg-cyan-400/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-200/85 group-hover:border-cyan-300/35">
-                          {link.badge}
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <Link href="/links" className={tabClass}>
+            Links
+          </Link>
         </nav>
 
         {/* Desktop CTA */}
@@ -286,7 +237,8 @@ const Navbar = () => {
                     RROTA ecosystem is live
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/58">
-                    Explore the official RROTA coin hub, verify the contract, and access Spin-to-Win as the first live utility.
+                    Explore the official RROTA coin hub, verify the contract,
+                    and access Spin-to-Win as the first live utility.
                   </p>
                 </div>
 
@@ -305,14 +257,6 @@ const Navbar = () => {
                     type="button"
                   >
                     Ecosystem
-                  </button>
-
-                  <button
-                    onClick={() => scrollToSection("Tokenomics")}
-                    className={mobileItemClass}
-                    type="button"
-                  >
-                    Tokenomics
                   </button>
 
                   <button
@@ -337,6 +281,14 @@ const Navbar = () => {
                     className={mobileItemClass}
                   >
                     Blog
+                  </Link>
+
+                  <Link
+                    href="/links"
+                    onClick={closeMenus}
+                    className={mobileItemClass}
+                  >
+                    Links
                   </Link>
 
                   <a
