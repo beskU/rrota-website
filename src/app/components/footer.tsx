@@ -10,6 +10,9 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const LINKS = {
   spin: "https://spin.rrota.xyz",
   website: "https://rrota.xyz",
+  linksPage: "https://rrota.xyz/links",
+  whitepaper: "https://rrota.xyz/whitepaper",
+  cmcVerification: "https://x.com/rrotacoin/status/2054219354422510035",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   dextools: "https://www.dextools.io/app/token/rrota",
@@ -18,8 +21,7 @@ const LINKS = {
   audit: "https://freshcoins.io/audit/rrota",
   telegram: "https://t.me/rrotaOfficial",
   x: "https://x.com/rrotacoin",
-  whitepaper:
-    "https://github.com/beskU/rrota/blob/d094f58cfde725493bd2eba708d438ad2a6f76a2/RROTA%20%24RTA%20WHITEPAPER.pdf",
+  contact: "mailto:info@rrota.xyz",
 };
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -36,7 +38,7 @@ function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
     >
       <path d="M15 3h6v6" />
       <path d="M10 14 21 3" />
-      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h5" />
     </svg>
   );
 }
@@ -133,6 +135,18 @@ const Footer = () => {
 
   const officialLinks = [
     {
+      label: "Official Links",
+      href: LINKS.linksPage,
+      detail: "Verified RROTA resources",
+      tone: "cyan",
+    },
+    {
+      label: "Whitepaper",
+      href: LINKS.whitepaper,
+      detail: "Official whitepaper page",
+      tone: "emerald",
+    },
+    {
       label: "Buy on Jupiter",
       href: LINKS.jupiter,
       detail: "Trade official $RTA",
@@ -169,6 +183,12 @@ const Footer = () => {
       tone: "emerald",
     },
     {
+      label: "CMC Verification Post",
+      href: LINKS.cmcVerification,
+      detail: "Official X confirmation",
+      tone: "fuchsia",
+    },
+    {
       label: "Telegram",
       href: LINKS.telegram,
       detail: "Official community",
@@ -179,6 +199,12 @@ const Footer = () => {
       href: LINKS.x,
       detail: "Official updates",
       tone: "amber",
+    },
+    {
+      label: "Contact",
+      href: LINKS.contact,
+      detail: "info@rrota.xyz",
+      tone: "cyan",
     },
   ];
 
@@ -355,8 +381,10 @@ const Footer = () => {
             <a
               key={link.label}
               href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+              rel={
+                link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"
+              }
               className={`group rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all ${toneClasses[link.tone]}`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -385,7 +413,7 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-              Disclaimer
+              Risk Disclaimer
             </div>
 
             <p className="mt-3 max-w-3xl text-xs leading-6 text-white/50 sm:text-sm">
@@ -410,11 +438,17 @@ const Footer = () => {
                 Ecosystem
               </div>
               <div className="space-y-2 text-sm">
-                <Link href="/#ecosystem" className="block text-white/62 hover:text-cyan-300">
+                <Link
+                  href="/#ecosystem"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   RROTA Ecosystem
                 </Link>
 
-                <Link href="/#tokenomics" className="block text-white/62 hover:text-cyan-300">
+                <Link
+                  href="/#tokenomics"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Tokenomics
                 </Link>
 
@@ -427,7 +461,10 @@ const Footer = () => {
                   Spin-to-Win
                 </a>
 
-                <Link href="/blog" className="block text-white/62 hover:text-cyan-300">
+                <Link
+                  href="/blog"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
                   Blog
                 </Link>
               </div>
@@ -435,48 +472,46 @@ const Footer = () => {
 
             <div>
               <div className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-white/40">
-                Community
+                Verification
               </div>
               <div className="space-y-2 text-sm">
-                <a
-                  href={LINKS.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/links"
                   className="block text-white/62 hover:text-cyan-300"
                 >
-                  Telegram
-                </a>
+                  Official Links
+                </Link>
 
-                <a
-                  href={LINKS.x}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-white/62 hover:text-cyan-300"
-                >
-                  X / Twitter
-                </a>
-
-                <a
-                  href={LINKS.whitepaper}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/whitepaper"
                   className="block text-white/62 hover:text-cyan-300"
                 >
                   Whitepaper
+                </Link>
+
+                <a
+                  href={LINKS.cmcVerification}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  CMC Verification Post
                 </a>
 
                 <a
-                  href="mailto:info@rrota.xyz"
+                  href={LINKS.solscan}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="block text-white/62 hover:text-cyan-300"
                 >
-                  info@rrota.xyz
+                  Token Verification
                 </a>
               </div>
             </div>
 
             <div>
               <div className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-white/40">
-                Legal
+                Legal & Contact
               </div>
               <div className="space-y-2 text-sm">
                 <Link
@@ -503,12 +538,10 @@ const Footer = () => {
                 </a>
 
                 <a
-                  href={LINKS.solscan}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={LINKS.contact}
                   className="block text-white/62 hover:text-cyan-300"
                 >
-                  Token Verification
+                  info@rrota.xyz
                 </a>
               </div>
             </div>
