@@ -26,22 +26,94 @@ export const metadata: Metadata = {
 };
 
 export default function LinksPage() {
-  const items = [
-    { name: "Official Website", href: OFFICIAL_DOMAIN, note: "Main RROTA ecosystem website" },
-    { name: "Whitepaper", href: `${OFFICIAL_DOMAIN}/whitepaper`, note: "RROTA project overview and ecosystem documentation" },
-    { name: "RROTA Spin-to-Win", href: LINKS.spin, note: "Live RROTA utility experience" },
-    { name: "CMC Verification Post", href: LINKS.cmcVerification, note: "Official X confirmation for CoinMarketCap review" },
-    { name: "Token Contract (Solscan)", href: LINKS.solscan, note: "Official Solana token verification" },
-    { name: "Buy on Jupiter", href: LINKS.jupiter, note: "Official Jupiter trading link" },
-    { name: "Telegram", href: LINKS.telegram, note: "Official RROTA Telegram community" },
-    { name: "Twitter / X", href: LINKS.twitter, note: "Official RROTA X account" },
-    { name: "DexScreener", href: LINKS.dexscreener, note: "Live DEX chart and market data" },
-    { name: "BirdEye", href: LINKS.birdeye, note: "Solana token market tracker" },
-    { name: "GeckoTerminal", href: LINKS.geckoterminal, note: "Pool and market tracker" },
-    { name: "Audit (FreshCoins)", href: LINKS.audit, note: "Public audit reference" },
-    { name: "Privacy Policy", href: `${OFFICIAL_DOMAIN}/privacy`, note: "Privacy and data handling information" },
-    { name: "Terms of Service", href: `${OFFICIAL_DOMAIN}/terms`, note: "Website and platform terms" },
-    { name: "Contact Email", href: LINKS.contactEmail, note: "Official contact: info@rrota.xyz" },
+  const externalItems = [
+    {
+      name: "Official Website",
+      href: OFFICIAL_DOMAIN,
+      note: "Main RROTA ecosystem website",
+    },
+    {
+      name: "RROTA Spin-to-Win",
+      href: LINKS.spin,
+      note: "Live RROTA utility experience",
+    },
+    {
+      name: "CMC Verification Post",
+      href: LINKS.cmcVerification,
+      note: "Official X confirmation for CoinMarketCap review",
+    },
+    {
+      name: "Token Contract Verification",
+      href: LINKS.solscan,
+      note: "Official Solana token verification on Solscan",
+    },
+    {
+      name: "Buy on Jupiter",
+      href: LINKS.jupiter,
+      note: "Official Jupiter trading link for $RTA",
+    },
+    {
+      name: "Telegram",
+      href: LINKS.telegram,
+      note: "Official RROTA Telegram community",
+    },
+    {
+      name: "Twitter / X",
+      href: LINKS.twitter,
+      note: "Official RROTA X account",
+    },
+    {
+      name: "DexScreener",
+      href: LINKS.dexscreener,
+      note: "Live DEX chart and market data",
+    },
+    {
+      name: "BirdEye",
+      href: LINKS.birdeye,
+      note: "Solana token market tracker",
+    },
+    {
+      name: "GeckoTerminal",
+      href: LINKS.geckoterminal,
+      note: "Pool and market tracker",
+    },
+    {
+      name: "Audit Reference",
+      href: LINKS.audit,
+      note: "Public FreshCoins audit reference",
+    },
+    {
+      name: "Contact Email",
+      href: LINKS.contactEmail,
+      note: "Official contact: info@rrota.xyz",
+    },
+  ];
+
+  const internalItems = [
+    {
+      name: "Whitepaper",
+      href: "/whitepaper",
+      displayHref: `${OFFICIAL_DOMAIN}/whitepaper`,
+      note: "Official RROTA whitepaper page",
+    },
+    {
+      name: "Privacy Policy",
+      href: "/privacy",
+      displayHref: `${OFFICIAL_DOMAIN}/privacy`,
+      note: "Privacy and data handling information",
+    },
+    {
+      name: "Terms of Service",
+      href: "/terms",
+      displayHref: `${OFFICIAL_DOMAIN}/terms`,
+      note: "Website and platform terms",
+    },
+    {
+      name: "Official Links",
+      href: "/links",
+      displayHref: `${OFFICIAL_DOMAIN}/links`,
+      note: "Verified official RROTA resources",
+    },
   ];
 
   return (
@@ -57,9 +129,10 @@ export default function LinksPage() {
           </h1>
 
           <p className="mt-4 text-white/75 leading-7 max-w-[80ch]">
-            Use this page to verify you’re on the real RROTA site and to access
-            the official website, contract, trading links, utility products,
-            community channels, audit reference and contact information.
+            Use this page to verify you are on the real RROTA website and to
+            access the official website, whitepaper, contract, trading links,
+            utility products, community channels, audit reference and contact
+            information.
           </p>
 
           <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
@@ -70,7 +143,8 @@ export default function LinksPage() {
               confirm the official contract before connecting a wallet or trading.
             </p>
             <p className="mt-3 text-sm text-amber-50/90 break-all">
-              Official $RTA mint: <span className="font-mono">{TOKEN_ADDRESS}</span>
+              Official $RTA mint:{" "}
+              <span className="font-mono">{TOKEN_ADDRESS}</span>
             </p>
           </div>
 
@@ -78,7 +152,8 @@ export default function LinksPage() {
             <p className="text-white font-semibold">Official Contact</p>
             <p className="mt-2 text-white/70 text-sm leading-6">
               For listing reviews, exchange communication, partnership requests,
-              security reports or official verification, contact RROTA only through:
+              security reports or official verification, contact RROTA only
+              through:
             </p>
             <a
               href={LINKS.contactEmail}
@@ -89,7 +164,26 @@ export default function LinksPage() {
           </div>
 
           <div className="mt-8 grid md:grid-cols-2 gap-3">
-            {items.map((i) => (
+            {internalItems.map((i) => (
+              <Link
+                key={i.name}
+                href={i.href}
+                className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:bg-black/30 transition"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold">{i.name}</span>
+                  <span className="text-[#7dd9ff]">Open →</span>
+                </div>
+                <div className="mt-2 text-sm text-white/60 leading-6">
+                  {i.note}
+                </div>
+                <div className="mt-2 text-xs text-white/40 break-all">
+                  {i.displayHref}
+                </div>
+              </Link>
+            ))}
+
+            {externalItems.map((i) => (
               <a
                 key={i.name}
                 href={i.href}
@@ -103,8 +197,12 @@ export default function LinksPage() {
                     {i.href.startsWith("mailto:") ? "Email →" : "Open →"}
                   </span>
                 </div>
-                <div className="mt-2 text-sm text-white/60 leading-6">{i.note}</div>
-                <div className="mt-2 text-xs text-white/40 break-all">{i.href}</div>
+                <div className="mt-2 text-sm text-white/60 leading-6">
+                  {i.note}
+                </div>
+                <div className="mt-2 text-xs text-white/40 break-all">
+                  {i.href}
+                </div>
               </a>
             ))}
           </div>
@@ -112,10 +210,10 @@ export default function LinksPage() {
           <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-4">
             <p className="font-semibold text-white">Risk Disclaimer</p>
             <p className="mt-2 text-sm leading-6 text-white/65">
-              RROTA ($RTA) is a crypto asset on Solana. Crypto assets are volatile
-              and involve risk. Nothing on this website or official pages should be
-              considered financial advice. Always verify official links and make your
-              own decisions.
+              RROTA ($RTA) is a crypto asset on Solana. Crypto assets are
+              volatile and involve risk. Nothing on this website or official
+              pages should be considered financial advice. Always verify official
+              links and make your own decisions.
             </p>
           </div>
 
@@ -126,18 +224,21 @@ export default function LinksPage() {
             >
               Back to Home
             </Link>
+
             <Link
               className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
               href="/whitepaper"
             >
               Whitepaper →
             </Link>
+
             <Link
               className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
               href="/privacy"
             >
               Privacy Policy →
             </Link>
+
             <Link
               className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
               href="/terms"
