@@ -90,9 +90,15 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
     shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 
   openGraph: {
@@ -158,7 +164,9 @@ const ORG_JSON_LD = {
   url: OFFICIAL_DOMAIN,
   logo: {
     "@type": "ImageObject",
-    url: `${OFFICIAL_DOMAIN}/favicon.ico`,
+    url: `${OFFICIAL_DOMAIN}/apple-touch-icon.png`,
+    width: 180,
+    height: 180,
   },
   sameAs: [
     "https://t.me/rrotaOfficial",
@@ -223,7 +231,8 @@ const HOMEPAGE_JSON_LD = {
     {
       "@type": "Thing",
       name: "RROTA public transportation utility",
-      description: "Future RROTA direction for real-world transport-related tools and user-facing utility.",
+      description:
+        "Future RROTA direction for real-world transport-related tools and user-facing utility.",
     },
   ],
 };
@@ -241,9 +250,18 @@ const TOKEN_JSON_LD = {
   additionalProperty: [
     { "@type": "PropertyValue", name: "Blockchain", value: "Solana" },
     { "@type": "PropertyValue", name: "Ticker", value: "RTA" },
-    { "@type": "PropertyValue", name: "Contract Address", value: TOKEN_ADDRESS },
+    {
+      "@type": "PropertyValue",
+      name: "Contract Address",
+      value: TOKEN_ADDRESS,
+    },
     { "@type": "PropertyValue", name: "Official Game", value: SPIN_TO_WIN_URL },
-    { "@type": "PropertyValue", name: "Ecosystem Focus", value: "Crypto gaming, digital rewards, community tools, and future public transportation utility" },
+    {
+      "@type": "PropertyValue",
+      name: "Ecosystem Focus",
+      value:
+        "Crypto gaming, digital rewards, community tools, and future public transportation utility",
+    },
   ],
 };
 
@@ -337,6 +355,26 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href={`${OFFICIAL_DOMAIN}/`} />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <meta name="theme-color" content="#070A12" />
 
         <script
           type="application/ld+json"
