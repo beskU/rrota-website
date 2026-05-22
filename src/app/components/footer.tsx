@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
+  ai: "/ai",
   spin: "https://spin.rrota.xyz",
   linksPage: "https://rrota.xyz/links",
   whitepaper: "https://rrota.xyz/whitepaper",
@@ -139,6 +140,12 @@ const Footer = () => {
       label: "Official Links",
       href: LINKS.linksPage,
       detail: "Verified RROTA resources",
+      tone: "cyan",
+    },
+    {
+      label: "RROTA AI Assistant",
+      href: LINKS.ai,
+      detail: "Official AI guide and onboarding assistant",
       tone: "cyan",
     },
     {
@@ -290,6 +297,20 @@ const Footer = () => {
                   <ExternalIcon />
                 </motion.a>
 
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    href={LINKS.ai}
+                    className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(45,255,231,0.20),rgba(168,85,247,0.14),rgba(0,0,0,0.18))] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_0_48px_rgba(34,211,238,0.20)] transition-all hover:border-cyan-200/60 hover:shadow-[0_0_78px_rgba(34,211,238,0.30)]"
+                  >
+                    <span className="absolute inset-0 translate-x-[-130%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.26),transparent)] transition duration-700 group-hover:translate-x-[130%]" />
+                    <span className="relative mr-3 inline-flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,1)]" />
+                    </span>
+                    <span className="relative">Ask RROTA AI</span>
+                  </Link>
+                </motion.div>
+
                 <motion.a
                   href={LINKS.solscan}
                   target="_blank"
@@ -388,8 +409,8 @@ const Footer = () => {
             <a
               key={link.label}
               href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={link.href.startsWith("/") ? undefined : "_blank"}
+              rel={link.href.startsWith("/") ? undefined : "noopener noreferrer"}
               className={`group rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all ${toneClasses[link.tone]}`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -455,6 +476,13 @@ const Footer = () => {
                   className="block text-white/62 hover:text-cyan-300"
                 >
                   RROTA Ecosystem
+                </Link>
+
+                <Link
+                  href={LINKS.ai}
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  RROTA AI Assistant
                 </Link>
 
                 <Link
