@@ -47,7 +47,8 @@ const officialLinks = [
 ];
 
 export default function RrotaAiPage() {
-  const gptLink = "YOUR_RROTA_GPT_LINK_HERE";
+  const gptLink =
+  "https://chatgpt.com/g/g-6a10b37f0bc48191a130acf6d3f24390-rrota-assistant";
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#05030b] text-white">
