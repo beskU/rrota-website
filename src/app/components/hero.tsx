@@ -17,6 +17,7 @@ interface TokenData {
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
+const AI_ASSISTANT_URL = "/ai";
 
 const LINKS = {
   spinToWin: SPIN_TO_WIN_URL,
@@ -395,6 +396,18 @@ export default function Hero() {
             >
               <WalletIcon className="h-5 w-5" />
               Buy $RTA
+            </a>
+
+            <a
+              href={AI_ASSISTANT_URL}
+              className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/40 bg-[linear-gradient(135deg,rgba(45,255,231,0.22),rgba(168,85,247,0.14),rgba(0,0,0,0.20))] px-7 text-sm font-black uppercase tracking-[0.12em] text-cyan-50 shadow-[0_0_55px_rgba(34,211,238,0.24)] backdrop-blur-xl transition-all hover:scale-[1.02] hover:border-cyan-200/70 hover:shadow-[0_0_85px_rgba(34,211,238,0.34)]"
+            >
+              <span className="absolute inset-0 translate-x-[-130%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.30),transparent)] transition duration-700 group-hover:translate-x-[130%]" />
+              <span className="relative mr-3 inline-flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_20px_rgba(103,232,249,1)]" />
+              </span>
+              <span className="relative">Ask RROTA AI</span>
             </a>
 
             <a
