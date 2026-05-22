@@ -9,6 +9,7 @@ import logo from "../../../public/rrota-logo2.png";
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
+const RROTA_AI_URL = "/ai";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,6 +20,11 @@ const Navbar = () => {
         label: "Official Links Page",
         href: `${OFFICIAL_DOMAIN}/links`,
         badge: "Verify",
+      },
+      {
+        label: "Ask RROTA AI",
+        href: `${OFFICIAL_DOMAIN}/ai`,
+        badge: "AI",
       },
       {
         label: "Whitepaper",
@@ -187,6 +193,18 @@ const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-2 lg:flex">
+          <Link
+            href={RROTA_AI_URL}
+            className="group relative inline-flex h-11 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(45,255,231,0.20),rgba(168,85,247,0.14),rgba(0,0,0,0.18))] px-5 text-sm font-black text-cyan-50 shadow-[0_0_42px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:border-cyan-200/60 hover:shadow-[0_0_70px_rgba(34,211,238,0.30)]"
+          >
+            <span className="absolute inset-0 translate-x-[-130%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.26),transparent)] transition duration-700 group-hover:translate-x-[130%]" />
+            <span className="relative mr-2 inline-flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-200 shadow-[0_0_16px_rgba(103,232,249,1)]" />
+            </span>
+            <span className="relative whitespace-nowrap">Ask AI</span>
+          </Link>
+
           <a
             href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
             target="_blank"
@@ -291,6 +309,21 @@ const Navbar = () => {
                     Links
                   </Link>
 
+                  <Link
+                    href={RROTA_AI_URL}
+                    onClick={closeMenus}
+                    className="group relative overflow-hidden rounded-2xl border border-cyan-300/30 bg-[linear-gradient(135deg,rgba(45,255,231,0.18),rgba(168,85,247,0.12),rgba(0,0,0,0.18))] px-4 py-3 text-sm font-black text-cyan-50 shadow-[0_0_36px_rgba(34,211,238,0.16)] transition-all hover:border-cyan-200/50 hover:shadow-[0_0_58px_rgba(34,211,238,0.24)]"
+                  >
+                    <span className="absolute inset-0 translate-x-[-130%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.24),transparent)] transition duration-700 group-hover:translate-x-[130%]" />
+                    <span className="relative inline-flex items-center gap-2">
+                      <span className="relative inline-flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(103,232,249,1)]" />
+                      </span>
+                      Ask RROTA AI
+                    </span>
+                  </Link>
+
                   <a
                     href={SPIN_TO_WIN_URL}
                     target="_blank"
@@ -329,6 +362,15 @@ const Navbar = () => {
                 </div>
 
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <Link
+                    href={RROTA_AI_URL}
+                    onClick={closeMenus}
+                    className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(45,255,231,0.20),rgba(168,85,247,0.14),rgba(0,0,0,0.18))] px-5 text-sm font-black text-cyan-50 shadow-[0_0_36px_rgba(34,211,238,0.18)] transition-all hover:brightness-110"
+                  >
+                    <span className="absolute inset-0 translate-x-[-130%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.26),transparent)] transition duration-700 group-hover:translate-x-[130%]" />
+                    <span className="relative">Ask RROTA AI</span>
+                  </Link>
+
                   <a
                     href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
                     target="_blank"
