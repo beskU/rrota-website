@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Space_Grotesk } from "next/font/google";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
@@ -117,67 +124,109 @@ export default function LinksPage() {
   ];
 
   return (
-    <main className="relative w-full text-white pt-[110px] pb-16">
-      <div className="container mx-auto px-4">
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 md:p-10">
-          <div className="inline-flex items-center rounded-full border border-[#7dd9ff]/25 bg-[#7dd9ff]/10 px-4 py-2 text-sm font-semibold text-[#7dd9ff]">
+    <main
+      className={`${spaceGrotesk.className} relative min-h-screen w-full overflow-hidden bg-[#02030a] pt-[110px] pb-16 text-white`}
+    >
+      {/* Alien-tech background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(0,255,214,0.12),transparent_24%),radial-gradient(circle_at_82%_12%,rgba(168,85,247,0.18),transparent_26%),radial-gradient(circle_at_45%_92%,rgba(14,165,233,0.13),transparent_32%)]" />
+        <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(rgba(103,232,249,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(circle,rgba(255,255,255,0.40)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,3,10,0.12),rgba(2,3,10,0.82),#02030a)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
+      </div>
+
+      <div className="pointer-events-none absolute left-[-160px] top-[160px] h-[520px] w-[520px] rounded-full bg-cyan-400/10 blur-[150px]" />
+      <div className="pointer-events-none absolute right-[-180px] top-[120px] h-[520px] w-[520px] rounded-full bg-fuchsia-500/12 blur-[160px]" />
+      <div className="pointer-events-none absolute bottom-[-160px] left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[160px]" />
+
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="overflow-hidden rounded-[2.35rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.025))] p-6 shadow-[0_0_90px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-10">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/[0.055] px-4 py-2 text-[11px] font-black uppercase tracking-[0.32em] text-cyan-100 shadow-[0_0_42px_rgba(34,211,238,0.14)] backdrop-blur">
+            <span className="relative inline-flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_20px_rgba(103,232,249,1)]" />
+            </span>
             Verified RROTA Resources
           </div>
 
-          <h1 className="mt-5 text-4xl md:text-5xl font-bold tracking-tight">
-            Official RROTA Links
+          <h1 className="mt-6 max-w-5xl text-4xl font-black leading-[0.92] tracking-[-0.055em] text-white md:text-6xl">
+            Official{" "}
+            <span className="bg-[linear-gradient(90deg,#ffffff_0%,#9ff7ff_18%,#5df8d2_42%,#b78cff_72%,#ffffff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(34,211,238,0.18)]">
+              RROTA Links
+            </span>
           </h1>
 
-          <p className="mt-4 text-white/75 leading-7 max-w-[80ch]">
+          <p className="mt-5 max-w-[82ch] text-sm leading-8 text-slate-300 md:text-base">
             Use this page to verify you are on the real RROTA website and to
             access the official website, whitepaper, contract, trading links,
             utility products, community channels, audit reference and contact
             information.
           </p>
 
-          <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-            <p className="text-amber-50 font-semibold">Anti-phishing Notice</p>
-            <p className="mt-2 text-amber-50/90 text-sm leading-6">
-              Only trust <strong>{OFFICIAL_DOMAIN}</strong>. Beware{" "}
-              <strong>rr0ta.xyz</strong> and other look-alike domains. Always
-              confirm the official contract before connecting a wallet or trading.
-            </p>
-            <p className="mt-3 text-sm text-amber-50/90 break-all">
-              Official $RTA mint:{" "}
-              <span className="font-mono">{TOKEN_ADDRESS}</span>
+          {/* Anti-phishing Notice */}
+          <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-amber-300/25 bg-[linear-gradient(135deg,rgba(251,191,36,0.13),rgba(0,0,0,0.20))] p-5 shadow-[0_0_45px_rgba(251,191,36,0.08)] backdrop-blur">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.22em] text-amber-100">
+                  Anti-phishing Notice
+                </p>
+                <p className="mt-3 text-sm leading-7 text-amber-50/88">
+                  Only trust <strong>{OFFICIAL_DOMAIN}</strong>. Beware{" "}
+                  <strong>rr0ta.xyz</strong> and other look-alike domains.
+                  Always confirm the official contract before connecting a wallet
+                  or trading.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-amber-300/20 bg-black/25 px-4 py-3 text-xs text-amber-50/80">
+                Official domain only
+              </div>
+            </div>
+
+            <p className="mt-4 break-all rounded-2xl border border-amber-300/15 bg-black/20 px-4 py-3 font-mono text-xs text-amber-50/90">
+              Official $RTA mint: {TOKEN_ADDRESS}
             </p>
           </div>
 
-          <div className="mt-6 rounded-xl border border-white/10 bg-black/20 p-4">
-            <p className="text-white font-semibold">Official Contact</p>
-            <p className="mt-2 text-white/70 text-sm leading-6">
+          {/* Official Contact */}
+          <div className="mt-6 rounded-[1.75rem] border border-white/10 bg-black/25 p-5 shadow-[0_0_50px_rgba(0,0,0,0.22)] backdrop-blur">
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-white">
+              Official Contact
+            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-400">
               For listing reviews, exchange communication, partnership requests,
               security reports or official verification, contact RROTA only
               through:
             </p>
             <a
               href={LINKS.contactEmail}
-              className="mt-2 inline-block text-[#7dd9ff] font-semibold hover:underline"
+              className="mt-3 inline-flex rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 text-sm font-black text-cyan-100 transition hover:border-cyan-200/50 hover:bg-cyan-300/[0.14]"
             >
               info@rrota.xyz
             </a>
           </div>
 
-          <div className="mt-8 grid md:grid-cols-2 gap-3">
+          {/* Link Grid */}
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
             {internalItems.map((i) => (
               <Link
                 key={i.name}
                 href={i.href}
-                className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:bg-black/30 transition"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.065] hover:shadow-[0_0_45px_rgba(34,211,238,0.12)]"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="font-semibold">{i.name}</span>
-                  <span className="text-[#7dd9ff]">Open →</span>
+                <span className="absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-300/[0.055] blur-2xl transition group-hover:bg-cyan-300/[0.16]" />
+                <div className="relative flex items-center justify-between gap-3">
+                  <span className="text-base font-black text-white">
+                    {i.name}
+                  </span>
+                  <span className="text-sm font-black uppercase tracking-[0.16em] text-cyan-200">
+                    Open →
+                  </span>
                 </div>
-                <div className="mt-2 text-sm text-white/60 leading-6">
+                <div className="relative mt-3 text-sm leading-6 text-slate-400">
                   {i.note}
                 </div>
-                <div className="mt-2 text-xs text-white/40 break-all">
+                <div className="relative mt-3 break-all text-xs text-slate-500">
                   {i.displayHref}
                 </div>
               </Link>
@@ -189,27 +238,33 @@ export default function LinksPage() {
                 href={i.href}
                 target={i.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel={i.href.startsWith("mailto:") ? undefined : "noreferrer"}
-                className="block rounded-xl border border-white/10 bg-black/20 p-4 hover:bg-black/30 transition"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.065] hover:shadow-[0_0_45px_rgba(34,211,238,0.12)]"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="font-semibold">{i.name}</span>
-                  <span className="text-[#7dd9ff]">
+                <span className="absolute right-0 top-0 h-24 w-24 rounded-full bg-fuchsia-300/[0.045] blur-2xl transition group-hover:bg-cyan-300/[0.14]" />
+                <div className="relative flex items-center justify-between gap-3">
+                  <span className="text-base font-black text-white">
+                    {i.name}
+                  </span>
+                  <span className="text-sm font-black uppercase tracking-[0.16em] text-cyan-200">
                     {i.href.startsWith("mailto:") ? "Email →" : "Open →"}
                   </span>
                 </div>
-                <div className="mt-2 text-sm text-white/60 leading-6">
+                <div className="relative mt-3 text-sm leading-6 text-slate-400">
                   {i.note}
                 </div>
-                <div className="mt-2 text-xs text-white/40 break-all">
+                <div className="relative mt-3 break-all text-xs text-slate-500">
                   {i.href}
                 </div>
               </a>
             ))}
           </div>
 
-          <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="font-semibold text-white">Risk Disclaimer</p>
-            <p className="mt-2 text-sm leading-6 text-white/65">
+          {/* Risk Disclaimer */}
+          <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur">
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-white">
+              Risk Disclaimer
+            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-400">
               RROTA ($RTA) is a crypto asset on Solana. Crypto assets are
               volatile and involve risk. Nothing on this website or official
               pages should be considered financial advice. Always verify official
@@ -217,30 +272,31 @@ export default function LinksPage() {
             </p>
           </div>
 
-          <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
+          {/* Bottom CTA Buttons */}
+          <div className="mt-10 flex flex-col flex-wrap gap-3 sm:flex-row">
             <Link
-              className="px-5 py-3 rounded-xl bg-white/10 border border-white/10 font-semibold hover:bg-white/15 transition"
+              className="rounded-2xl border border-cyan-300/30 bg-cyan-300/[0.09] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-200/55 hover:bg-cyan-300/[0.15]"
               href="/"
             >
               Back to Home
             </Link>
 
             <Link
-              className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
+              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
               href="/whitepaper"
             >
               Whitepaper →
             </Link>
 
             <Link
-              className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
+              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
               href="/privacy"
             >
               Privacy Policy →
             </Link>
 
             <Link
-              className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 font-semibold hover:bg-white/10 transition"
+              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
               href="/terms"
             >
               Terms →
