@@ -81,7 +81,7 @@ export default function RrotaAiPage() {
               rel="noopener noreferrer"
               className="rounded-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.22em] text-slate-950 shadow-[0_0_45px_rgba(34,211,238,0.28)] transition hover:scale-[1.02]"
             >
-              Ask RROTA AI
+              Open RROTA Assistant on ChatGPT
             </a>
 
             <Link
