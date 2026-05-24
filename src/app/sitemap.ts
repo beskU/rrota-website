@@ -11,28 +11,30 @@ function safeDate(value?: string) {
 }
 
 function getSafeBlogRoutes(): MetadataRoute.Sitemap {
-  try {
-    return getArticleSlugs()
-      .map((slug) => {
-        try {
-          const article = getArticleBySlug(slug);
+  const routes: MetadataRoute.Sitemap = [];
 
-          return {
-            url: `${BASE_URL}/blog/${slug}`,
-            lastModified: safeDate(article?.meta?.date),
-            changeFrequency: "weekly" as const,
-            priority: 0.8,
-          };
-        } catch (error) {
-          console.error(`Failed to add blog article to sitemap: ${slug}`, error);
-          return null;
-        }
-      })
-      .filter((route): route is MetadataRoute.Sitemap[number] => route !== null);
+  try {
+    const slugs = getArticleSlugs();
+
+    for (const slug of slugs) {
+      try {
+        const article = getArticleBySlug(slug);
+
+        routes.push({
+          url: `${BASE_URL}/blog/${slug}`,
+          lastModified: safeDate(article?.meta?.date),
+          changeFrequency: "weekly",
+          priority: 0.8,
+        });
+      } catch (error) {
+        console.error(`Failed to add blog article to sitemap: ${slug}`, error);
+      }
+    }
   } catch (error) {
     console.error("Failed to load blog routes for sitemap:", error);
-    return [];
   }
+
+  return routes;
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
