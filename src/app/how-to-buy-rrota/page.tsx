@@ -23,8 +23,6 @@ const LINKS = {
   links: "/links",
   tokenomics: "/tokenomics",
   roadmap: "/roadmap",
-  whitepaper: "/whitepaper",
-  riskDisclaimer: "/risk-disclaimer",
 };
 
 export const metadata: Metadata = {
@@ -183,6 +181,8 @@ export default function HowToBuyRROTA() {
         }}
       />
 
+      <PageNav />
+
       <section className="relative isolate overflow-hidden border-b border-white/10 px-5 py-20 sm:px-8 lg:px-12 lg:py-24">
         <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_12%,rgba(34,211,238,0.22),transparent_32%),radial-gradient(circle_at_82%_14%,rgba(217,70,239,0.20),transparent_34%),radial-gradient(circle_at_50%_95%,rgba(250,204,21,0.10),transparent_40%),linear-gradient(180deg,#040511_0%,#080717_55%,#03040a_100%)]" />
         <div className="absolute inset-0 -z-10 opacity-[0.11] [background-image:linear-gradient(rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
@@ -218,7 +218,8 @@ export default function HowToBuyRROTA() {
                 href={LINKS.jupiter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-yellow-200 px-7 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-[0_0_46px_rgba(34,211,238,0.28)] transition hover:scale-[1.02]"
+                className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-yellow-200 px-7 text-sm font-black uppercase tracking-[0.18em] !text-[#03040a] shadow-[0_0_46px_rgba(34,211,238,0.28)] transition hover:scale-[1.02]"
+                style={{ color: "#03040a" }}
               >
                 <span className="absolute inset-0 translate-x-[-140%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.55),transparent)] transition duration-700 group-hover:translate-x-[140%]" />
                 <span className="relative">Buy on Jupiter</span>
@@ -293,7 +294,7 @@ export default function HowToBuyRROTA() {
               >
                 <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-400/8 blur-2xl transition group-hover:bg-fuchsia-400/10" />
 
-                <div className="mb-6 flex h-13 w-13 items-center justify-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-sm font-black text-cyan-100 [font-family:var(--font-orbitron)]">
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-sm font-black text-cyan-100 [font-family:var(--font-orbitron)]">
                   {step.number}
                 </div>
 
@@ -408,7 +409,8 @@ export default function HowToBuyRROTA() {
               href={LINKS.jupiter}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-2xl bg-white px-7 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 transition hover:scale-[1.02]"
+              className="rounded-2xl bg-white px-7 py-4 text-sm font-black uppercase tracking-[0.18em] !text-[#03040a] transition hover:scale-[1.02]"
+              style={{ color: "#03040a" }}
             >
               Buy on Jupiter
             </a>
@@ -424,6 +426,42 @@ export default function HowToBuyRROTA() {
         </div>
       </section>
     </main>
+  );
+}
+
+function PageNav() {
+  return (
+    <div className="relative z-50 border-b border-white/10 bg-[#03040a]/85 px-5 py-4 backdrop-blur-xl sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-white/45">
+          <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.9)]" />
+          RROTA Official Page
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/"
+            className="inline-flex h-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 text-xs font-black uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-300/45 hover:bg-cyan-300/15"
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/links"
+            className="inline-flex h-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-xs font-black uppercase tracking-[0.16em] text-white/85 transition hover:border-fuchsia-300/35 hover:bg-fuchsia-300/10 hover:text-white"
+          >
+            Official Links
+          </Link>
+
+          <Link
+            href="/blog"
+            className="inline-flex h-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-xs font-black uppercase tracking-[0.16em] text-white/85 transition hover:border-cyan-300/35 hover:bg-cyan-300/10 hover:text-white"
+          >
+            Blog
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
 
