@@ -9,6 +9,7 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
   ai: "/ai",
+  howToBuy: "/how-to-buy-rrota",
   spin: "https://spin.rrota.xyz",
   linksPage: "https://rrota.xyz/links",
   whitepaper: "https://rrota.xyz/whitepaper",
@@ -141,6 +142,12 @@ const Footer = () => {
       href: LINKS.linksPage,
       detail: "Verified RROTA resources",
       tone: "cyan",
+    },
+    {
+      label: "How to Buy RROTA",
+      href: LINKS.howToBuy,
+      detail: "Official $RTA buying guide",
+      tone: "emerald",
     },
     {
       label: "RROTA AI Assistant",
@@ -476,6 +483,13 @@ const Footer = () => {
                   className="block text-white/62 hover:text-cyan-300"
                 >
                   RROTA Ecosystem
+                </Link>
+
+                <Link
+                  href={LINKS.howToBuy}
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  How to Buy RROTA
                 </Link>
 
                 <Link
