@@ -10,6 +10,31 @@ function safeDate(value?: string) {
   return Number.isNaN(date.getTime()) ? new Date() : date;
 }
 
+function getSafeBlogRoutes(): MetadataRoute.Sitemap {
+  try {
+    return getArticleSlugs()
+      .map((slug) => {
+        try {
+          const article = getArticleBySlug(slug);
+
+          return {
+            url: `${BASE_URL}/blog/${slug}`,
+            lastModified: safeDate(article?.meta?.date),
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+          };
+        } catch (error) {
+          console.error(`Failed to add blog article to sitemap: ${slug}`, error);
+          return null;
+        }
+      })
+      .filter((route): route is MetadataRoute.Sitemap[number] => route !== null);
+  } catch (error) {
+    console.error("Failed to load blog routes for sitemap:", error);
+    return [];
+  }
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const buildDate = new Date();
 
@@ -100,16 +125,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const blogRoutes: MetadataRoute.Sitemap = getArticleSlugs().map((slug) => {
-    const article = getArticleBySlug(slug);
-
-    return {
-      url: `${BASE_URL}/blog/${slug}`,
-      lastModified: safeDate(article.meta.date),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    };
-  });
-
-  return [...staticRoutes, ...blogRoutes];
+  return [...staticRoutes, ...getSafeBlogRoutes()];
 }
