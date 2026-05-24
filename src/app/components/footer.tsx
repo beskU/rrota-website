@@ -10,6 +10,7 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const LINKS = {
   ai: "/ai",
   howToBuy: "/how-to-buy-rrota",
+  spinGuide: "/rrota-spin-to-win",
   spin: "https://spin.rrota.xyz",
   linksPage: "https://rrota.xyz/links",
   whitepaper: "https://rrota.xyz/whitepaper",
@@ -150,6 +151,12 @@ const Footer = () => {
       tone: "emerald",
     },
     {
+      label: "RROTA Spin-to-Win Guide",
+      href: LINKS.spinGuide,
+      detail: "Official game and utility guide",
+      tone: "cyan",
+    },
+    {
       label: "RROTA AI Assistant",
       href: LINKS.ai,
       detail: "Official AI guide and onboarding assistant",
@@ -188,7 +195,7 @@ const Footer = () => {
     {
       label: "Spin-to-Win Game",
       href: LINKS.spin,
-      detail: "First live RROTA utility",
+      detail: "Play the live RROTA utility",
       tone: "cyan",
     },
     {
@@ -493,6 +500,13 @@ const Footer = () => {
                 </Link>
 
                 <Link
+                  href={LINKS.spinGuide}
+                  className="block text-white/62 hover:text-cyan-300"
+                >
+                  RROTA Spin-to-Win Guide
+                </Link>
+
+                <Link
                   href={LINKS.ai}
                   className="block text-white/62 hover:text-cyan-300"
                 >
@@ -512,7 +526,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="block text-white/62 hover:text-cyan-300"
                 >
-                  Spin-to-Win
+                  Play Spin-to-Win
                 </a>
 
                 <Link
