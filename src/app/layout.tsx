@@ -34,6 +34,7 @@ const poppins = Poppins({
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const OG_IMAGE = "/rrota-og-solidproof.jpg";
 
 const ORG_ID = `${OFFICIAL_DOMAIN}#organization`;
 const WEBSITE_ID = `${OFFICIAL_DOMAIN}#website`;
@@ -105,17 +106,17 @@ export const metadata: Metadata = {
     title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
       `Official RROTA website. Explore the $RTA Solana token, ecosystem roadmap, ` +
-      `Spin-to-Win live utility, crypto gaming direction, public transportation utility vision, ` +
+      `Spin-to-Win live utility, SolidProof audit milestone, crypto gaming direction, public transportation utility vision, ` +
       `tokenomics, official links, and contract verification. Contract: ${TOKEN_ADDRESS}.`,
     url: OFFICIAL_DOMAIN,
     siteName: "RROTA",
     type: "website",
     images: [
       {
-        url: "/rrota-og.jpg",
+        url: OG_IMAGE,
         width: 1200,
-        height: 630,
-        alt: "RROTA ($RTA) — Utility-First Solana Ecosystem",
+        height: 675,
+        alt: "RROTA ($RTA) — Utility-First Solana Ecosystem with SolidProof Audit",
       },
     ],
   },
@@ -125,8 +126,8 @@ export const metadata: Metadata = {
     title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
       `RROTA is a Solana-based utility ecosystem with live Spin-to-Win gameplay, ` +
-      `digital rewards, official verification links, Phantom wallet support, and future ecosystem tools.`,
-    images: ["/rrota-og.jpg"],
+      `digital rewards, SolidProof audit verification, official links, Phantom wallet support, and future ecosystem tools.`,
+    images: [OG_IMAGE],
     site: "@rrotacoin",
     creator: "@rrotacoin",
   },
@@ -176,6 +177,7 @@ const ORG_JSON_LD = {
     `https://solscan.io/token/${TOKEN_ADDRESS}`,
     "https://www.dextools.io/app/token/rrota",
     "https://freshcoins.io/audit/rrota",
+    "https://app.solidproof.io/",
   ],
 };
 
