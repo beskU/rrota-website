@@ -18,6 +18,7 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 const AI_ASSISTANT_URL = "/ai";
+const SOLIDPROOF_LOGO_URL = "/solidproof-logo.png";
 
 const LINKS = {
   spinToWin: SPIN_TO_WIN_URL,
@@ -29,6 +30,7 @@ const LINKS = {
   telegram: "https://t.me/rrotaOfficial",
   twitter: "https://x.com/rrotacoin",
   audit: "https://freshcoins.io/audit/rrota",
+  solidproof: "https://app.solidproof.io/",
 };
 
 function formatPrice(price: number) {
@@ -244,6 +246,67 @@ function StatusPill({
   );
 }
 
+function SolidProofLogo({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="inline-flex items-center gap-3">
+      <div
+        className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/20 bg-white/[0.06] shadow-[0_0_28px_rgba(34,211,238,0.12)] ${
+          compact ? "h-10 w-10" : "h-12 w-12"
+        }`}
+      >
+        <img
+          src={SOLIDPROOF_LOGO_URL}
+          alt="SolidProof logo"
+          className="h-full w-full object-contain p-2"
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
+          }}
+        />
+        <span className="absolute text-[10px] font-black text-cyan-100">SP</span>
+      </div>
+
+      <div>
+        <div
+          className={`font-black tracking-[-0.03em] text-white ${
+            compact ? "text-sm" : "text-lg"
+          }`}
+        >
+          SolidProof
+        </div>
+        <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-200/70">
+          TrustNet Verified
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TrustBadge({
+  label,
+  tone = "cyan",
+}: {
+  label: string;
+  tone?: "cyan" | "green" | "fuchsia" | "amber";
+}) {
+  const toneClass =
+    tone === "green"
+      ? "border-emerald-400/18 bg-emerald-400/8 text-emerald-100"
+      : tone === "fuchsia"
+        ? "border-fuchsia-400/18 bg-fuchsia-400/8 text-fuchsia-100"
+        : tone === "amber"
+          ? "border-amber-400/18 bg-amber-400/8 text-amber-100"
+          : "border-cyan-400/18 bg-cyan-400/8 text-cyan-100";
+
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-2xl border px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${toneClass}`}
+    >
+      <CheckIcon className="h-3.5 w-3.5 shrink-0" />
+      <span>{label}</span>
+    </div>
+  );
+}
+
 export default function Hero() {
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -362,6 +425,7 @@ export default function Hero() {
           >
             <StatusPill label="RROTA Ecosystem" />
             <StatusPill label="Solana SPL Token" tone="cyan" />
+            <StatusPill label="SolidProof Audited" tone="amber" />
             <StatusPill label="Mint / Freeze Revoked" tone="fuchsia" />
           </motion.div>
 
@@ -381,6 +445,55 @@ export default function Hero() {
               RROTA is building a Solana-based ecosystem around digital rewards,
               crypto gaming, community tools, and future public transportation utility.
               Spin-to-Win is the first live product inside a wider $RTA utility stack.
+            </p>
+          </motion.div>
+
+          {/* SolidProof trust milestone */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-7 max-w-3xl overflow-hidden rounded-[30px] border border-cyan-300/18 bg-[linear-gradient(135deg,rgba(6,17,32,0.90),rgba(16,9,28,0.90))] p-4 shadow-[0_0_46px_rgba(34,211,238,0.10),0_0_70px_rgba(217,70,239,0.08)] backdrop-blur-2xl"
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(34,211,238,0.16),transparent_28%),radial-gradient(circle_at_90%_100%,rgba(217,70,239,0.12),transparent_34%)]" />
+
+            <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0">
+                <SolidProofLogo />
+
+                <h2 className="mt-4 text-xl font-black tracking-[-0.03em] text-white sm:text-2xl">
+                  SolidProof Audit Completed Successfully
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/62">
+                  RROTA is visible on SolidProof TrustNet with an{" "}
+                  <span className="font-black text-cyan-200">80/100 Security Score</span>{" "}
+                  and{" "}
+                  <span className="font-black text-emerald-200">Contract Audited</span>{" "}
+                  status, adding another public verification layer to the $RTA ecosystem.
+                </p>
+              </div>
+
+              <a
+                href={LINKS.solidproof}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex shrink-0 items-center justify-center gap-3 rounded-2xl border border-cyan-300/24 bg-cyan-400/10 px-5 py-3 text-xs font-black uppercase tracking-[0.13em] text-cyan-50 transition-all hover:border-cyan-200/55 hover:bg-cyan-400/16"
+              >
+                View SolidProof
+                <ExternalIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </a>
+            </div>
+
+            <div className="relative mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+              <TrustBadge label="SolidProof Audit" tone="cyan" />
+              <TrustBadge label="80/100 Score" tone="green" />
+              <TrustBadge label="Contract Audited" tone="amber" />
+              <TrustBadge label="FreshCoins Audit" tone="fuchsia" />
+              <TrustBadge label="Spin-to-Win Live" tone="cyan" />
+            </div>
+
+            <p className="relative mt-4 text-[11px] leading-5 text-white/42">
+              Audits improve transparency and smart contract review coverage, but they do not remove market,
+              liquidity, or participation risks. Always verify official links and contract details.
             </p>
           </motion.div>
 
@@ -618,9 +731,9 @@ export default function Hero() {
                     </div>
                     <div className="rounded-2xl border border-amber-400/16 bg-amber-400/8 px-3 py-2 text-center backdrop-blur-xl">
                       <div className="text-[9px] font-black uppercase tracking-[0.16em] text-amber-200/70">
-                        Transit
+                        Audit
                       </div>
-                      <div className="mt-1 text-xs font-black text-white">Vision</div>
+                      <div className="mt-1 text-xs font-black text-white">80/100</div>
                     </div>
                   </div>
                 </div>
@@ -639,24 +752,41 @@ export default function Hero() {
 
                 {/* System status */}
                 <div className="mt-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
-                        Token Safety
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
+                          Token Safety & Audits
+                        </div>
+                        <div className="mt-1 text-sm font-black text-white">
+                          Mint revoked • Freeze revoked • SolidProof 80/100
+                        </div>
                       </div>
-                      <div className="mt-1 text-sm font-black text-white">
-                        Mint revoked • Freeze revoked
+
+                      <div className="hidden sm:block">
+                        <SolidProofLogo compact />
                       </div>
                     </div>
 
-                    <a
-                      href={LINKS.audit}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex h-10 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:bg-cyan-400/14"
-                    >
-                      Audit
-                    </a>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <a
+                        href={LINKS.solidproof}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-10 flex-1 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:bg-cyan-400/14"
+                      >
+                        SolidProof
+                      </a>
+
+                      <a
+                        href={LINKS.audit}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-10 flex-1 items-center justify-center rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-fuchsia-100 transition-all hover:bg-fuchsia-400/14"
+                      >
+                        FreshCoins
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -706,7 +836,7 @@ export default function Hero() {
 
       {/* Bottom trust rail */}
       <motion.div
-        className="mx-auto mt-12 grid max-w-7xl gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        className="mx-auto mt-12 grid max-w-7xl gap-3 sm:grid-cols-2 lg:grid-cols-5"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.65, delay: 0.65 }}
@@ -716,6 +846,11 @@ export default function Hero() {
             title: "Official Website",
             value: OFFICIAL_DOMAIN.replace("https://", ""),
             href: OFFICIAL_DOMAIN,
+          },
+          {
+            title: "SolidProof Audit",
+            value: "80/100 Security Score",
+            href: LINKS.solidproof,
           },
           {
             title: "First Live Utility",
