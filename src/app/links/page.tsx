@@ -20,6 +20,7 @@ const LINKS = {
   birdeye: `https://birdeye.so/token/${TOKEN_ADDRESS}?chain=solana`,
   geckoterminal: `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
   audit: "https://freshcoins.io/audit/rrota",
+  solidproof: "https://app.solidproof.io/",
   spin: "https://spin.rrota.xyz",
   cmcVerification: "https://x.com/rrotacoin/status/2054219354422510035",
   contactEmail: "mailto:info@rrota.xyz",
@@ -28,7 +29,7 @@ const LINKS = {
 export const metadata: Metadata = {
   title: "Official RROTA Links | Verified $RTA Resources",
   description:
-    "Official RROTA links: website, whitepaper, contract verification, social channels, audit, Spin-to-Win utility, trackers and contact details. Avoid fake domains and verify only at rrota.xyz.",
+    "Official RROTA links: website, whitepaper, contract verification, social channels, FreshCoins audit, SolidProof TrustNet audit, Spin-to-Win utility, trackers and contact details. Avoid fake domains and verify only at rrota.xyz.",
   alternates: { canonical: `${OFFICIAL_DOMAIN}/links` },
 };
 
@@ -85,9 +86,14 @@ export default function LinksPage() {
       note: "Pool and market tracker",
     },
     {
-      name: "Audit Reference",
+      name: "FreshCoins Audit Reference",
       href: LINKS.audit,
       note: "Public FreshCoins audit reference",
+    },
+    {
+      name: "SolidProof TrustNet Audit",
+      href: LINKS.solidproof,
+      note: "SolidProof audit completed successfully • Security Score 80/100 • Contract Audited",
     },
     {
       name: "Contact Email",
@@ -160,8 +166,8 @@ export default function LinksPage() {
           <p className="mt-5 max-w-[82ch] text-sm leading-8 text-slate-300 md:text-base">
             Use this page to verify you are on the real RROTA website and to
             access the official website, whitepaper, contract, trading links,
-            utility products, community channels, audit reference and contact
-            information.
+            utility products, community channels, FreshCoins audit, SolidProof
+            TrustNet audit status and contact information.
           </p>
 
           {/* Anti-phishing Notice */}
@@ -204,6 +210,69 @@ export default function LinksPage() {
             >
               info@rrota.xyz
             </a>
+          </div>
+
+          {/* Audit & Verification */}
+          <div className="mt-6 overflow-hidden rounded-[1.75rem] border border-cyan-300/18 bg-[linear-gradient(135deg,rgba(34,211,238,0.10),rgba(168,85,247,0.10),rgba(0,0,0,0.22))] p-5 shadow-[0_0_55px_rgba(34,211,238,0.10)] backdrop-blur">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100">
+                  Audit & Verification
+                </p>
+                <p className="mt-3 max-w-[86ch] text-sm leading-7 text-slate-300">
+                  RROTA has completed independent audit reviews through FreshCoins
+                  and SolidProof. SolidProof has officially announced the successful
+                  completion of the RROTA smart contract audit, and RROTA is visible
+                  on SolidProof TrustNet with an{" "}
+                  <strong className="text-cyan-100">80/100 Security Score</strong>{" "}
+                  and{" "}
+                  <strong className="text-emerald-100">Contract Audited</strong>{" "}
+                  status.
+                </p>
+              </div>
+
+              <div className="grid min-w-full gap-3 sm:grid-cols-2 lg:min-w-[360px]">
+                <a
+                  href={LINKS.solidproof}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.075] p-4 transition hover:border-cyan-200/50 hover:bg-cyan-300/[0.12]"
+                >
+                  <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+                    SolidProof
+                  </div>
+                  <div className="mt-2 text-sm font-black text-white">
+                    80/100 Score
+                  </div>
+                  <div className="mt-1 text-xs leading-5 text-slate-400">
+                    Contract Audited • TrustNet visible
+                  </div>
+                </a>
+
+                <a
+                  href={LINKS.audit}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-2xl border border-fuchsia-300/25 bg-fuchsia-300/[0.075] p-4 transition hover:border-fuchsia-200/50 hover:bg-fuchsia-300/[0.12]"
+                >
+                  <div className="text-xs font-black uppercase tracking-[0.18em] text-fuchsia-100">
+                    FreshCoins
+                  </div>
+                  <div className="mt-2 text-sm font-black text-white">
+                    Audit Reference
+                  </div>
+                  <div className="mt-1 text-xs leading-5 text-slate-400">
+                    Public audit review reference
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs leading-6 text-slate-500">
+              Audit reviews improve transparency and help identify smart contract
+              risks, but they do not remove market, liquidity, trading or
+              participation risks. Always verify the official contract and links.
+            </p>
           </div>
 
           {/* Link Grid */}
