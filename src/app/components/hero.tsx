@@ -18,7 +18,6 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 const OFFICIAL_DOMAIN = "https://rrota.xyz";
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 const AI_ASSISTANT_URL = "/ai";
-const SOLIDPROOF_LOGO_URL = "/solidproof-logo.png";
 
 const LINKS = {
   spinToWin: SPIN_TO_WIN_URL,
@@ -246,25 +245,66 @@ function StatusPill({
   );
 }
 
+function AuditLogoMark({
+  fallback,
+  compact = false,
+  tone = "cyan",
+}: {
+  fallback: string;
+  compact?: boolean;
+  tone?: "cyan" | "green" | "fuchsia" | "amber";
+}) {
+  const toneClass =
+    tone === "green"
+      ? "border-emerald-300/22 bg-emerald-400/10 text-emerald-100 shadow-[0_0_28px_rgba(16,185,129,0.12)]"
+      : tone === "fuchsia"
+        ? "border-fuchsia-300/22 bg-fuchsia-400/10 text-fuchsia-100 shadow-[0_0_28px_rgba(217,70,239,0.12)]"
+        : tone === "amber"
+          ? "border-amber-300/22 bg-amber-400/10 text-amber-100 shadow-[0_0_28px_rgba(245,158,11,0.12)]"
+          : "border-cyan-300/22 bg-cyan-400/10 text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.12)]";
+
+  return (
+    <div
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border ${toneClass} ${
+        compact ? "h-10 w-10" : "h-12 w-12"
+      }`}
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.22),transparent_38%)]" />
+      <svg
+        className={compact ? "relative h-7 w-7" : "relative h-8 w-8"}
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 2.4 20 5.4v6.4c0 5.1-3.4 8-8 9.8-4.6-1.8-8-4.7-8-9.8V5.4l8-3Z"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.2 12.2 10.8 15l5.2-5.8"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span
+        className={`absolute font-black tracking-[-0.08em] ${
+          compact ? "text-[9px]" : "text-[10px]"
+        }`}
+      >
+        {fallback}
+      </span>
+    </div>
+  );
+}
+
 function SolidProofLogo({ compact = false }: { compact?: boolean }) {
   return (
     <div className="inline-flex items-center gap-3">
-      <div
-        className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/20 bg-white/[0.06] shadow-[0_0_28px_rgba(34,211,238,0.12)] ${
-          compact ? "h-10 w-10" : "h-12 w-12"
-        }`}
-      >
-        <img
-          src={SOLIDPROOF_LOGO_URL}
-          alt="SolidProof logo"
-          className="h-full w-full object-contain p-2"
-          onError={(event) => {
-            event.currentTarget.style.display = "none";
-          }}
-        />
-        <span className="absolute text-[10px] font-black text-cyan-100">SP</span>
-      </div>
-
+      <AuditLogoMark fallback="SP" compact={compact} tone="cyan" />
       <div>
         <div
           className={`font-black tracking-[-0.03em] text-white ${
@@ -275,6 +315,26 @@ function SolidProofLogo({ compact = false }: { compact?: boolean }) {
         </div>
         <div className="text-[9px] font-black uppercase tracking-[0.2em] text-cyan-200/70">
           TrustNet Verified
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FreshCoinsLogo({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="inline-flex items-center gap-3">
+      <AuditLogoMark fallback="FC" compact={compact} tone="fuchsia" />
+      <div>
+        <div
+          className={`font-black tracking-[-0.03em] text-white ${
+            compact ? "text-sm" : "text-lg"
+          }`}
+        >
+          FreshCoins
+        </div>
+        <div className="text-[9px] font-black uppercase tracking-[0.2em] text-fuchsia-200/70">
+          Audit Verified
         </div>
       </div>
     </div>
@@ -448,16 +508,19 @@ export default function Hero() {
             </p>
           </motion.div>
 
-          {/* SolidProof trust milestone */}
+          {/* Audit trust milestone */}
           <motion.div
             variants={itemVariants}
-            className="mt-7 max-w-3xl overflow-hidden rounded-[30px] border border-cyan-300/18 bg-[linear-gradient(135deg,rgba(6,17,32,0.90),rgba(16,9,28,0.90))] p-4 shadow-[0_0_46px_rgba(34,211,238,0.10),0_0_70px_rgba(217,70,239,0.08)] backdrop-blur-2xl"
+            className="relative mt-7 max-w-3xl overflow-hidden rounded-[30px] border border-cyan-300/18 bg-[linear-gradient(135deg,rgba(6,17,32,0.90),rgba(16,9,28,0.90))] p-4 shadow-[0_0_46px_rgba(34,211,238,0.10),0_0_70px_rgba(217,70,239,0.08)] backdrop-blur-2xl"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(34,211,238,0.16),transparent_28%),radial-gradient(circle_at_90%_100%,rgba(217,70,239,0.12),transparent_34%)]" />
 
             <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
-                <SolidProofLogo />
+                <div className="flex flex-wrap items-center gap-4">
+                  <SolidProofLogo />
+                  <FreshCoinsLogo />
+                </div>
 
                 <h2 className="mt-4 text-xl font-black tracking-[-0.03em] text-white sm:text-2xl">
                   SolidProof Audit Completed Successfully
@@ -763,8 +826,9 @@ export default function Hero() {
                         </div>
                       </div>
 
-                      <div className="hidden sm:block">
+                      <div className="hidden flex-col gap-3 sm:flex">
                         <SolidProofLogo compact />
+                        <FreshCoinsLogo compact />
                       </div>
                     </div>
 
@@ -773,8 +837,9 @@ export default function Hero() {
                         href={LINKS.solidproof}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-10 flex-1 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:bg-cyan-400/14"
+                        className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:bg-cyan-400/14"
                       >
+                        <ShieldIcon className="h-4 w-4" />
                         SolidProof
                       </a>
 
@@ -782,8 +847,9 @@ export default function Hero() {
                         href={LINKS.audit}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-10 flex-1 items-center justify-center rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-fuchsia-100 transition-all hover:bg-fuchsia-400/14"
+                        className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-xs font-black uppercase tracking-[0.12em] text-fuchsia-100 transition-all hover:bg-fuchsia-400/14"
                       >
+                        <ShieldIcon className="h-4 w-4" />
                         FreshCoins
                       </a>
                     </div>
