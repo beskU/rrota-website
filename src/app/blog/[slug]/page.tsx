@@ -13,7 +13,7 @@ const SITE_URL = "https://rrota.xyz";
 const SITE_NAME = "RROTA";
 const BLOG_URL = `${SITE_URL}/blog`;
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg`;
+const DEFAULT_OG = `${SITE_URL}/rrota-og-solidproof.jpg`;
 const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
 
 function JsonLd({ data }: { data: object }) {
