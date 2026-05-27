@@ -11,7 +11,7 @@ import AboutUs from "./components/aboutus";
 
 const SITE_URL = "https://rrota.xyz";
 const SITE_NAME = "RROTA";
-const DEFAULT_OG = `${SITE_URL}/rrota-og.jpg`;
+const DEFAULT_OG = `${SITE_URL}/rrota-og-solidproof.jpg`;
 const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
