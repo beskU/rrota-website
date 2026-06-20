@@ -17,6 +17,7 @@ const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
+const BOOM_WEEK_URL = `${SITE_URL}/rrota-boom-week`;
 const TELEGRAM_URL = "https://t.me/rrotaOfficial";
 const X_URL = "https://x.com/rrotacoin";
 const JUPITER_URL = `https://jup.ag/tokens/${TOKEN_ADDRESS}`;
@@ -38,6 +39,9 @@ export const metadata: Metadata = {
     "RTA token",
     "RROTA Solana",
     "RROTA Spin-to-Win",
+    "RROTA Boom Week",
+    "RROTA 72H Global Spin Race",
+    "RROTA leaderboard",
     "RROTA crypto gaming",
     "RROTA tokenomics",
     "RROTA roadmap",
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
-      "Official RROTA website. Explore $RTA on Solana, Spin-to-Win public beta, crypto gaming, community tools, tokenomics, roadmap, and official verification links.",
+      "Official RROTA website. Explore $RTA on Solana, Spin-to-Win public beta, crypto gaming, community tools, tokenomics, roadmap, Boom Week, and official verification links.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
@@ -66,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RROTA ($RTA) — Utility-First Solana Ecosystem",
     description:
-      "Official RROTA website for $RTA on Solana: Spin-to-Win, crypto gaming, community tools, roadmap, tokenomics, and verification links.",
+      "Official RROTA website for $RTA on Solana: Spin-to-Win, Boom Week, crypto gaming, community tools, roadmap, tokenomics, and verification links.",
     images: [DEFAULT_OG],
     site: "@rrotacoin",
     creator: "@rrotacoin",
@@ -116,6 +120,163 @@ function CheckIcon() {
     >
       <path d="M20 6 9 17l-5-5" />
     </svg>
+  );
+}
+
+function BoomWeekLiveBanner() {
+  return (
+    <section
+      id="BoomWeek"
+      className="relative mb-20 w-full px-4 sm:px-6 lg:px-8"
+      aria-labelledby="boom-week-title"
+    >
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[38px] border border-yellow-300/25 bg-[#050711] shadow-[0_0_80px_rgba(250,204,21,0.12),0_0_120px_rgba(34,211,238,0.08)]">
+        <div className="relative px-5 py-8 sm:px-8 sm:py-10 lg:px-10">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.22),transparent_30%),radial-gradient(circle_at_70%_30%,rgba(34,211,238,0.18),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.16),transparent_34%),linear-gradient(135deg,rgba(10,14,28,0.98),rgba(3,7,18,0.98))]" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.11] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:52px_52px]" />
+
+          <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-red-400/25 bg-red-500/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-red-200">
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-red-300 shadow-[0_0_14px_rgba(248,113,113,0.95)]" />
+                Live Now
+              </div>
+
+              <h2
+                id="boom-week-title"
+                className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl"
+              >
+                🚨 RROTA Boom Week Is Live
+                <span className="block text-yellow-300">
+                  72H Global Spin Race
+                </span>
+              </h2>
+
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-white/74 sm:text-base">
+                Join the official RROTA Boom Week race. Free entry, live
+                leaderboard, 6 SOL reward pool, and RTA holder boost. Every spin
+                can change the ranking before the race ends.
+              </p>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {[
+                  ["🏆", "6 SOL Reward Pool"],
+                  ["🎰", "Free Entry"],
+                  ["📊", "Live Leaderboard"],
+                  ["⚡", "RTA Holder Boost"],
+                ].map(([icon, text]) => (
+                  <div
+                    key={text}
+                    className="rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3"
+                  >
+                    <div className="flex items-center gap-3 text-sm font-black text-white">
+                      <span className="text-xl">{icon}</span>
+                      <span>{text}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a
+                  href={BOOM_WEEK_URL}
+                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-yellow-300/35 bg-gradient-to-r from-yellow-400 via-cyan-400 to-fuchsia-500 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-black shadow-[0_0_38px_rgba(250,204,21,0.18)] transition-all hover:scale-[1.02] hover:brightness-110"
+                >
+                  Join Boom Week
+                  <ExternalIcon />
+                </a>
+
+                <a
+                  href={SPIN_TO_WIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:border-cyan-300/35 hover:bg-cyan-400/15 hover:text-white"
+                >
+                  Play Now
+                  <ExternalIcon />
+                </a>
+
+                <a
+                  href={TELEGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-13 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.055] px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white/86 transition-all hover:border-white/25 hover:bg-white/10 hover:text-white"
+                >
+                  Join Telegram
+                  <ExternalIcon />
+                </a>
+              </div>
+
+              <p className="mt-5 text-sm font-black uppercase tracking-[0.14em] text-yellow-200">
+                ⏳ Ends June 25, 2026 — 18:00 UTC
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="rounded-[34px] border border-yellow-300/18 bg-black/35 p-5 backdrop-blur-xl">
+                <div className="rounded-3xl border border-white/10 bg-white/[0.045] p-5">
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-yellow-200/80">
+                    Reward Breakdown
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {[
+                      ["🥇", "1st Place", "3 SOL"],
+                      ["🥈", "2nd Place", "2 SOL"],
+                      ["🥉", "3rd Place", "1 SOL"],
+                    ].map(([icon, place, reward]) => (
+                      <div
+                        key={place}
+                        className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/32 px-4 py-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{icon}</span>
+                          <span className="text-sm font-black text-white">
+                            {place}
+                          </span>
+                        </div>
+
+                        <span className="text-sm font-black text-yellow-200">
+                          {reward}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-cyan-400/16 bg-cyan-400/8 px-4 py-3">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200/80">
+                      Official Race Page
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-white/68">
+                      Full rules, rewards, fair-play review, holder boost, and
+                      official links are available on the Boom Week page.
+                    </p>
+                  </div>
+
+                  <a
+                    href={BOOM_WEEK_URL}
+                    className="mt-5 inline-flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-yellow-300/25 bg-yellow-300/12 text-sm font-black uppercase tracking-[0.12em] text-yellow-100 transition-all hover:bg-yellow-300/18 hover:text-white"
+                  >
+                    Open Race Details
+                    <ExternalIcon />
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-3xl border border-red-400/16 bg-red-500/8 px-5 py-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-200/80">
+                  Fair-Play Notice
+                </div>
+                <p className="mt-2 text-xs leading-5 text-white/66">
+                  Botting, multi-account abuse, fake referrals, or leaderboard
+                  manipulation may lead to disqualification after review.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -465,6 +626,12 @@ function SpinToWinLiveSection() {
 function OfficialLinksSection() {
   const links = [
     {
+      label: "Boom Week",
+      detail: "72H Global Spin Race",
+      href: BOOM_WEEK_URL,
+      tone: "amber",
+    },
+    {
       label: "Buy on Jupiter",
       detail: "Trade $RTA safely",
       href: JUPITER_URL,
@@ -545,8 +712,8 @@ function OfficialLinksSection() {
             <a
               key={link.label}
               href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={link.href.startsWith(SITE_URL) ? undefined : "_blank"}
+              rel={link.href.startsWith(SITE_URL) ? undefined : "noopener noreferrer"}
               className={`group rounded-3xl border border-white/10 bg-[#070A12]/70 p-4 transition-all ${toneClasses[link.tone]}`}
             >
               <div className="flex items-center justify-between gap-3">
@@ -613,7 +780,7 @@ export default function Home() {
         url: SITE_URL,
         name: "RROTA ($RTA) — Utility-First Solana Ecosystem",
         description:
-          "Official RROTA website for $RTA on Solana. RROTA is building digital rewards, crypto gaming, Spin-to-Win, community tools, and future public transportation utility.",
+          "Official RROTA website for $RTA on Solana. RROTA is building digital rewards, crypto gaming, Spin-to-Win, Boom Week, community tools, and future public transportation utility.",
         isPartOf: {
           "@id": `${SITE_URL}#website`,
         },
@@ -627,6 +794,12 @@ export default function Home() {
             "@type": "Thing",
             name: "RROTA Spin-to-Win",
             description: "The first live RROTA ecosystem utility experience.",
+          },
+          {
+            "@type": "Thing",
+            name: "RROTA Boom Week",
+            description:
+              "A 72-hour Global Spin Race with free entry, live leaderboard, 6 SOL reward pool, and RTA holder boost.",
           },
           {
             "@type": "Thing",
@@ -655,6 +828,15 @@ export default function Home() {
               "@type": "Answer",
               text:
                 "RROTA Spin-to-Win is the first live utility experience in the RROTA ecosystem. It gives users a public beta game experience connected to $RTA activity, rewards, Boost Credits, and leaderboard engagement.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is RROTA Boom Week?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text:
+                "RROTA Boom Week is a 72-hour Global Spin Race connected to the RROTA Spin-to-Win experience, with free entry, live leaderboard, 6 SOL reward pool, and RTA holder boost.",
             },
           },
           {
@@ -688,6 +870,8 @@ export default function Home() {
 
         <main className="relative w-full">
           <Hero />
+
+          <BoomWeekLiveBanner />
 
           <RrotaEcosystemSection />
 
