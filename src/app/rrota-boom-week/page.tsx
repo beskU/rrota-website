@@ -2,9 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rrota.xyz"),
   title: "RROTA Boom Week — 72H Global Spin Race with 6 SOL Rewards",
   description:
     "RROTA Boom Week is a 72-hour global Spin-to-Win race with free entry, a live leaderboard, 6 SOL reward pool, and RTA holder boost.",
+  alternates: {
+    canonical: "https://rrota.xyz/rrota-boom-week",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     title: "RROTA Boom Week Is Live",
     description:
@@ -124,8 +132,8 @@ export default function RrotaBoomWeekPage() {
             <h2 className="text-3xl font-black">⚡ RTA Holder Boost</h2>
 
             <p className="mt-6 text-gray-300">
-              Everyone can join and play for free. RTA holders receive extra race
-              power during Boom Week, helping them compete harder on the
+              Everyone can join and play for free. RTA holders receive extra
+              race power during Boom Week, helping them compete harder on the
               leaderboard.
             </p>
 
