@@ -19,12 +19,13 @@ function getSafeBlogRoutes(): MetadataRoute.Sitemap {
     for (const slug of slugs) {
       try {
         const article = getArticleBySlug(slug);
+        const isBoomWeekArticle = slug === "rrota-boom-week";
 
         routes.push({
           url: `${BASE_URL}/blog/${slug}`,
           lastModified: safeDate(article?.meta?.date),
-          changeFrequency: "weekly",
-          priority: 0.8,
+          changeFrequency: isBoomWeekArticle ? "daily" : "weekly",
+          priority: isBoomWeekArticle ? 0.95 : 0.8,
         });
       } catch (error) {
         console.error(`Failed to add blog article to sitemap: ${slug}`, error);
@@ -46,6 +47,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: buildDate,
       changeFrequency: "daily",
       priority: 1,
+    },
+    {
+      url: `${BASE_URL}/rrota-boom-week`,
+      lastModified: buildDate,
+      changeFrequency: "daily",
+      priority: 0.99,
     },
     {
       url: `${BASE_URL}/how-to-buy-rrota`,
