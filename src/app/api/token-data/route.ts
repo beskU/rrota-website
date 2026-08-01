@@ -1,76 +1,72 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-static";
-export const revalidate = 60;
+export const runtime = "nodejs";
+export const revalidate = 300;
 
-const RROTA_MINT = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-const DEXSCREENER_API = `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`;
-const FALLBACK_CHART = `https://dexscreener.com/solana/${RROTA_MINT}`;
+const RROTA_MINT =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
+const TARGET_POOL_ID =
+  "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
+
+const SOLANA_TRACKER_ENDPOINT =
+  `https://data.solanatracker.io/tokens/${RROTA_MINT}`;
+
+const REQUEST_TIMEOUT = 7_000;
 
 const SUCCESS_CACHE_CONTROL =
-  "public, s-maxage=60, stale-while-revalidate=300";
-const FALLBACK_CACHE_CONTROL =
-  "public, s-maxage=30, stale-while-revalidate=120";
+  "public, s-maxage=300, stale-while-revalidate=900";
 
-type DexToken = {
-  address?: string;
-  name?: string;
-  symbol?: string;
-};
+const ERROR_CACHE_CONTROL = "no-store";
 
-type DexPair = {
-  chainId?: string;
-  dexId?: string;
-  url?: string;
-  pairAddress?: string;
-  baseToken?: DexToken;
-  quoteToken?: DexToken;
-  priceUsd?: string | number;
-  priceNative?: string | number;
-  marketCap?: string | number;
-  fdv?: string | number;
+type NumericValue = number | string | null | undefined;
+
+type SolanaTrackerPool = {
+  poolId?: string;
+  tokenAddress?: string;
   liquidity?: {
-    usd?: string | number;
-    base?: string | number;
-    quote?: string | number;
+    quote?: NumericValue;
+    usd?: NumericValue;
   };
-  volume?: {
-    h24?: string | number;
-    h6?: string | number;
-    h1?: string | number;
-    m5?: string | number;
+  price?: {
+    quote?: NumericValue;
+    usd?: NumericValue;
   };
-  priceChange?: {
-    h24?: string | number;
-    h6?: string | number;
-    h1?: string | number;
-    m5?: string | number;
+  marketCap?: {
+    quote?: NumericValue;
+    usd?: NumericValue;
   };
+  tokenSupply?: NumericValue;
+  lastUpdated?: number | string;
 };
 
-type MarketResponse =
-  | {
-      ok: true;
-      source: "dexscreener";
-      mint: string;
-      dexId: string | null;
-      pairAddress: string | null;
-      chartUrl: string;
-      priceUsd: number | null;
-      marketCap: number | null;
-      fdv: number | null;
-      liquidityUsd: number | null;
-      volume24h: number | null;
-      priceChange24h: number | null;
-      updatedAt: string;
+type SolanaTrackerResponse = {
+  token?: {
+    mint?: string;
+  };
+  pools?: SolanaTrackerPool[];
+  events?: Record<
+    string,
+    {
+      priceChangePercentage?: NumericValue;
     }
-  | {
-      ok: false;
-      source: "dexscreener";
-      message: string;
-      chartUrl: string;
-      updatedAt: string;
-    };
+  >;
+  holders?: NumericValue;
+};
+
+type TokenDataResponse = {
+  price: number;
+  liquidity: number;
+  marketCap: number;
+  tokenSupply: number;
+  holders: number;
+  lastUpdated: number;
+  priceChange24h: number;
+};
+
+type ErrorResponse = {
+  error: string;
+};
 
 function safeNumber(value: unknown): number | null {
   if (typeof value === "number") {
@@ -85,179 +81,243 @@ function safeNumber(value: unknown): number | null {
   return null;
 }
 
-function safeString(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-
-  const normalized = value.trim();
-  return normalized || null;
+function nonNegativeNumber(value: unknown): number {
+  const parsed = safeNumber(value);
+  return parsed !== null && parsed >= 0 ? parsed : 0;
 }
 
-function isExpectedPair(pair: DexPair): boolean {
-  if (pair.chainId && pair.chainId.toLowerCase() !== "solana") {
-    return false;
+function normalizeTimestamp(value: unknown): number {
+  if (typeof value === "string") {
+    const numeric = safeNumber(value);
+
+    if (numeric !== null) {
+      return normalizeTimestamp(numeric);
+    }
+
+    const parsedDate = Date.parse(value);
+    return Number.isFinite(parsedDate) ? parsedDate : Date.now();
   }
 
-  const tokenAddresses = [
-    pair.baseToken?.address,
-    pair.quoteToken?.address,
-  ]
-    .filter((address): address is string => typeof address === "string")
-    .map((address) => address.trim());
+  const numeric = safeNumber(value);
 
+  if (numeric === null || numeric <= 0) {
+    return Date.now();
+  }
+
+  return numeric < 1_000_000_000_000 ? numeric * 1000 : numeric;
+}
+
+function isUsablePool(pool: SolanaTrackerPool): boolean {
   return (
-    tokenAddresses.length === 0 ||
-    tokenAddresses.some((address) => address === RROTA_MINT)
+    nonNegativeNumber(pool.price?.usd) > 0 ||
+    nonNegativeNumber(pool.liquidity?.usd) > 0 ||
+    nonNegativeNumber(pool.marketCap?.usd) > 0 ||
+    nonNegativeNumber(pool.tokenSupply) > 0
   );
 }
 
-function pickBestPair(pairs: DexPair[]): DexPair | null {
-  const candidates = pairs.filter(isExpectedPair);
+function belongsToRrota(pool: SolanaTrackerPool): boolean {
+  return !pool.tokenAddress || pool.tokenAddress === RROTA_MINT;
+}
 
-  if (!candidates.length) return null;
+function selectPrimaryPool(
+  pools: SolanaTrackerPool[]
+): SolanaTrackerPool | null {
+  const eligiblePools = pools.filter(
+    (pool) => belongsToRrota(pool) && isUsablePool(pool)
+  );
 
-  return [...candidates].sort((a, b) => {
+  if (!eligiblePools.length) return null;
+
+  const configuredPool = eligiblePools.find(
+    (pool) => pool.poolId === TARGET_POOL_ID
+  );
+
+  if (configuredPool) {
+    return configuredPool;
+  }
+
+  return [...eligiblePools].sort((a, b) => {
     const liquidityDifference =
-      (safeNumber(b.liquidity?.usd) ?? 0) -
-      (safeNumber(a.liquidity?.usd) ?? 0);
+      nonNegativeNumber(b.liquidity?.usd) -
+      nonNegativeNumber(a.liquidity?.usd);
 
     if (liquidityDifference !== 0) {
       return liquidityDifference;
     }
 
     return (
-      (safeNumber(b.volume?.h24) ?? 0) -
-      (safeNumber(a.volume?.h24) ?? 0)
+      nonNegativeNumber(b.marketCap?.usd) -
+      nonNegativeNumber(a.marketCap?.usd)
     );
   })[0];
 }
 
-function getChartUrl(pair: DexPair): string {
-  const apiUrl = safeString(pair.url);
-
-  if (apiUrl) {
-    try {
-      const parsed = new URL(apiUrl);
-      const hostname = parsed.hostname.toLowerCase();
-
-      if (
-        parsed.protocol === "https:" &&
-        (hostname === "dexscreener.com" ||
-          hostname === "www.dexscreener.com")
-      ) {
-        return parsed.toString();
-      }
-    } catch {
-      // Fall through to a URL built from the verified pair address.
-    }
-  }
-
-  const pairAddress = safeString(pair.pairAddress);
-
-  if (pairAddress && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(pairAddress)) {
-    return `https://dexscreener.com/solana/${pairAddress}`;
-  }
-
-  return FALLBACK_CHART;
-}
-
-function jsonResponse(
-  payload: MarketResponse,
-  cacheControl: string
-): NextResponse<MarketResponse> {
+function successResponse(
+  payload: TokenDataResponse
+): NextResponse<TokenDataResponse> {
   return NextResponse.json(payload, {
     status: 200,
     headers: {
-      "Cache-Control": cacheControl,
+      "Cache-Control": SUCCESS_CACHE_CONTROL,
       "X-Content-Type-Options": "nosniff",
     },
   });
 }
 
-export async function GET(): Promise<NextResponse<MarketResponse>> {
+function errorResponse(
+  message: string,
+  status: number
+): NextResponse<ErrorResponse> {
+  return NextResponse.json(
+    {
+      error: message,
+    },
+    {
+      status,
+      headers: {
+        "Cache-Control": ERROR_CACHE_CONTROL,
+        "X-Content-Type-Options": "nosniff",
+      },
+    }
+  );
+}
+
+function normalizeTokenData(
+  value: unknown
+): TokenDataResponse {
+  if (!value || typeof value !== "object") {
+    throw new Error("Unsupported SolanaTracker response.");
+  }
+
+  const data = value as SolanaTrackerResponse;
+  const returnedMint = data.token?.mint?.trim();
+
+  if (returnedMint && returnedMint !== RROTA_MINT) {
+    throw new Error("SolanaTracker returned an unexpected token.");
+  }
+
+  const pools = Array.isArray(data.pools) ? data.pools : [];
+  const primaryPool = selectPrimaryPool(pools);
+
+  if (!primaryPool) {
+    throw new Error("No usable RROTA pool was returned.");
+  }
+
+  const normalized: TokenDataResponse = {
+    price: nonNegativeNumber(primaryPool.price?.usd),
+    liquidity: nonNegativeNumber(primaryPool.liquidity?.usd),
+    marketCap: nonNegativeNumber(primaryPool.marketCap?.usd),
+    tokenSupply: nonNegativeNumber(primaryPool.tokenSupply),
+    holders: Math.floor(nonNegativeNumber(data.holders)),
+    lastUpdated: normalizeTimestamp(primaryPool.lastUpdated),
+    priceChange24h:
+      safeNumber(
+        data.events?.["24h"]?.priceChangePercentage
+      ) ?? 0,
+  };
+
+  const hasUsefulData =
+    normalized.price > 0 ||
+    normalized.liquidity > 0 ||
+    normalized.marketCap > 0 ||
+    normalized.tokenSupply > 0 ||
+    normalized.holders > 0;
+
+  if (!hasUsefulData) {
+    throw new Error("SolanaTracker returned no usable RROTA data.");
+  }
+
+  return normalized;
+}
+
+export async function GET(
+  request: Request
+): Promise<
+  NextResponse<TokenDataResponse | ErrorResponse>
+> {
+  const requestUrl = new URL(request.url);
+  const requestedToken = requestUrl.searchParams
+    .get("token")
+    ?.trim();
+
+  if (!requestedToken) {
+    return errorResponse("Missing token address.", 400);
+  }
+
+  if (requestedToken !== RROTA_MINT) {
+    return errorResponse("Unsupported token address.", 400);
+  }
+
+  const apiKey = process.env.SOLANATRACKER_API_KEY?.trim();
+
+  if (!apiKey) {
+    console.error(
+      "SOLANATRACKER_API_KEY is not configured."
+    );
+
+    return errorResponse(
+      "Token data service is temporarily unavailable.",
+      503
+    );
+  }
+
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 6_500);
+  const timeout = setTimeout(
+    () => controller.abort(),
+    REQUEST_TIMEOUT
+  );
 
   try {
-    const response = await fetch(DEXSCREENER_API, {
-      headers: {
-        Accept: "application/json",
-      },
-      signal: controller.signal,
-      next: {
-        revalidate: 60,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`DexScreener request failed with status ${response.status}`);
-    }
-
-    const data: unknown = await response.json();
-
-    const pairs: DexPair[] = Array.isArray(data)
-      ? (data as DexPair[])
-      : data &&
-          typeof data === "object" &&
-          "pairs" in data &&
-          Array.isArray((data as { pairs?: unknown }).pairs)
-        ? ((data as { pairs: DexPair[] }).pairs)
-        : [];
-
-    const pair = pickBestPair(pairs);
-    const updatedAt = new Date().toISOString();
-
-    if (!pair) {
-      return jsonResponse(
-        {
-          ok: false,
-          source: "dexscreener",
-          message: "No active RROTA market pair is currently available.",
-          chartUrl: FALLBACK_CHART,
-          updatedAt,
+    const upstream = await fetch(
+      SOLANA_TRACKER_ENDPOINT,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "x-api-key": apiKey,
         },
-        FALLBACK_CACHE_CONTROL
+        signal: controller.signal,
+        cache: "force-cache",
+        next: {
+          revalidate: 300,
+        },
+      }
+    );
+
+    if (!upstream.ok) {
+      console.error(
+        `SolanaTracker request failed with status ${upstream.status}.`
+      );
+
+      return errorResponse(
+        "Token data provider is temporarily unavailable.",
+        upstream.status === 429 ? 503 : 502
       );
     }
 
-    return jsonResponse(
-      {
-        ok: true,
-        source: "dexscreener",
-        mint: RROTA_MINT,
-        dexId: safeString(pair.dexId),
-        pairAddress: safeString(pair.pairAddress),
-        chartUrl: getChartUrl(pair),
-        priceUsd: safeNumber(pair.priceUsd),
-        marketCap: safeNumber(pair.marketCap),
-        fdv: safeNumber(pair.fdv),
-        liquidityUsd: safeNumber(pair.liquidity?.usd),
-        volume24h: safeNumber(pair.volume?.h24),
-        priceChange24h: safeNumber(pair.priceChange?.h24),
-        updatedAt,
-      },
-      SUCCESS_CACHE_CONTROL
-    );
+    const payload: unknown = await upstream.json();
+    const normalized = normalizeTokenData(payload);
+
+    return successResponse(normalized);
   } catch (error) {
     const isTimeout =
       error instanceof Error &&
-      (error.name === "AbortError" || error.name === "TimeoutError");
+      (error.name === "AbortError" ||
+        error.name === "TimeoutError");
 
     console.error(
-      "Failed to load RROTA market data:",
-      isTimeout ? "DexScreener request timed out." : error
+      "Failed to load RROTA token data:",
+      isTimeout
+        ? "SolanaTracker request timed out."
+        : error
     );
 
-    return jsonResponse(
-      {
-        ok: false,
-        source: "dexscreener",
-        message: isTimeout
-          ? "Market data request timed out. Use the direct chart for current data."
-          : "Market data is temporarily unavailable. Use the direct chart for current data.",
-        chartUrl: FALLBACK_CHART,
-        updatedAt: new Date().toISOString(),
-      },
-      FALLBACK_CACHE_CONTROL
+    return errorResponse(
+      isTimeout
+        ? "Token data request timed out."
+        : "Token data is temporarily unavailable.",
+      isTimeout ? 504 : 502
     );
   } finally {
     clearTimeout(timeout);
