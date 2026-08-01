@@ -1,46 +1,66 @@
 "use client";
 
-// Client-side token data helper
-// IMPORTANT: Do NOT put SolanaTracker API key in client code.
-// This file calls our server route: /api/token-data?token=...
+export const RROTA_MINT =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-// ============================
-// Config
-// ============================
-export const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
-const CACHE_KEY_PREFIX = "rrota_token_cache_";
+export const TARGET_POOL_ID =
+  "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
 
-// If you want to force one pool as "primary"
-export const TARGET_POOL_ID = "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
+export const CACHE_DURATION = 5 * 60 * 1000;
 
-// ============================
-// Types
-// ============================
-interface CacheEntry {
+const REQUEST_TIMEOUT = 8_000;
+const MAX_ATTEMPTS = 2;
+const RETRY_DELAY = 500;
+const CACHE_VERSION = 2;
+const CACHE_KEY_PREFIX = `rrota_token_data_v${CACHE_VERSION}_`;
+
+type NumericValue = number | string | null | undefined;
+
+type CacheEntry = {
+  version: number;
+  tokenAddress: string;
+  cachedAt: number;
   data: TokenDataResponse;
-  timestamp: number;
-}
+};
 
-interface Pool {
-  poolId: string;
-  liquidity?: { quote?: number; usd?: number };
-  price?: { quote?: number; usd?: number };
-  marketCap?: { quote?: number; usd?: number };
-  tokenSupply?: number;
-  lastUpdated?: number;
-}
+type Pool = {
+  poolId?: string;
+  id?: string;
+  address?: string;
+  liquidity?: {
+    quote?: NumericValue;
+    usd?: NumericValue;
+  };
+  price?: {
+    quote?: NumericValue;
+    usd?: NumericValue;
+  };
+  marketCap?: {
+    quote?: NumericValue;
+    usd?: NumericValue;
+  };
+  tokenSupply?: NumericValue;
+  lastUpdated?: number | string;
+};
 
-interface TokenData {
+type RawTokenData = {
   token?: {
     name?: string;
     symbol?: string;
     mint?: string;
-    decimals?: number;
+    decimals?: NumericValue;
   };
   pools?: Pool[];
-  events?: Record<string, { priceChangePercentage?: number }>;
-  holders?: number;
-}
+  events?: Record<
+    string,
+    {
+      priceChangePercentage?: NumericValue;
+    }
+  >;
+  holders?: NumericValue;
+};
+
+type NormalizedApiData = Partial<TokenDataResponse>;
 
 export interface TokenDataResponse {
   price: number;
@@ -52,154 +72,364 @@ export interface TokenDataResponse {
   priceChange24h: number;
 }
 
-// ============================
-// Cache helpers (localStorage)
-// ============================
-const getCacheKey = (tokenAddress: string): string =>
-  `${CACHE_KEY_PREFIX}${tokenAddress}`;
+let memoryCache: CacheEntry | null = null;
+let activeRequest: Promise<TokenDataResponse> | null = null;
 
-const getCachedData = (tokenAddress: string): CacheEntry | null => {
-  if (typeof window === "undefined") return null;
+function getCacheKey(tokenAddress: string): string {
+  return `${CACHE_KEY_PREFIX}${tokenAddress}`;
+}
 
-  try {
-    const cached = localStorage.getItem(getCacheKey(tokenAddress));
-    return cached ? (JSON.parse(cached) as CacheEntry) : null;
-  } catch (error) {
-    console.warn("Failed to read from cache:", error);
+function isSupportedToken(tokenAddress: string): boolean {
+  return tokenAddress.trim() === RROTA_MINT;
+}
+
+function safeNumber(value: unknown): number | null {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function nonNegativeNumber(value: unknown): number {
+  const parsed = safeNumber(value);
+  return parsed !== null && parsed >= 0 ? parsed : 0;
+}
+
+function normalizeTimestamp(value: unknown): number {
+  if (typeof value === "string") {
+    const numeric = safeNumber(value);
+
+    if (numeric !== null) {
+      return normalizeTimestamp(numeric);
+    }
+
+    const parsedDate = Date.parse(value);
+    return Number.isFinite(parsedDate) ? parsedDate : Date.now();
+  }
+
+  const numeric = safeNumber(value);
+
+  if (numeric === null || numeric <= 0) {
+    return Date.now();
+  }
+
+  return numeric < 1_000_000_000_000 ? numeric * 1000 : numeric;
+}
+
+function isTokenDataResponse(value: unknown): value is TokenDataResponse {
+  if (!value || typeof value !== "object") return false;
+
+  const data = value as Record<string, unknown>;
+
+  return (
+    safeNumber(data.price) !== null &&
+    safeNumber(data.liquidity) !== null &&
+    safeNumber(data.marketCap) !== null &&
+    safeNumber(data.tokenSupply) !== null &&
+    safeNumber(data.holders) !== null &&
+    safeNumber(data.lastUpdated) !== null &&
+    safeNumber(data.priceChange24h) !== null
+  );
+}
+
+function normalizeResponse(value: unknown): TokenDataResponse | null {
+  if (!value || typeof value !== "object") return null;
+
+  const data = value as NormalizedApiData;
+
+  if (
+    !("price" in data) &&
+    !("liquidity" in data) &&
+    !("marketCap" in data) &&
+    !("tokenSupply" in data)
+  ) {
     return null;
   }
-};
 
-const setCachedData = (
-  tokenAddress: string,
-  data: TokenDataResponse,
-  timestamp: number
-): void => {
+  return {
+    price: nonNegativeNumber(data.price),
+    liquidity: nonNegativeNumber(data.liquidity),
+    marketCap: nonNegativeNumber(data.marketCap),
+    tokenSupply: nonNegativeNumber(data.tokenSupply),
+    holders: Math.floor(nonNegativeNumber(data.holders)),
+    lastUpdated: normalizeTimestamp(data.lastUpdated),
+    priceChange24h: safeNumber(data.priceChange24h) ?? 0,
+  };
+}
+
+function getPoolId(pool: Pool): string {
+  return pool.poolId ?? pool.id ?? pool.address ?? "";
+}
+
+function selectPrimaryPool(pools: Pool[]): Pool | null {
+  if (!pools.length) return null;
+
+  const targetPool = pools.find(
+    (pool) => getPoolId(pool) === TARGET_POOL_ID
+  );
+
+  if (targetPool) return targetPool;
+
+  return [...pools].sort(
+    (a, b) =>
+      nonNegativeNumber(b.liquidity?.usd) -
+      nonNegativeNumber(a.liquidity?.usd)
+  )[0];
+}
+
+function normalizeRawTokenData(value: unknown): TokenDataResponse | null {
+  if (!value || typeof value !== "object") return null;
+
+  const data = value as RawTokenData;
+  const pools = Array.isArray(data.pools) ? data.pools : [];
+  const primaryPool = selectPrimaryPool(pools);
+
+  if (!primaryPool) return null;
+
+  const mint = data.token?.mint?.trim();
+
+  if (mint && mint !== RROTA_MINT) {
+    throw new Error("Token data response contained an unexpected mint address.");
+  }
+
+  const priceChange24h =
+    safeNumber(data.events?.["24h"]?.priceChangePercentage) ??
+    safeNumber(data.events?.h24?.priceChangePercentage) ??
+    0;
+
+  return {
+    price: nonNegativeNumber(primaryPool.price?.usd),
+    liquidity: nonNegativeNumber(primaryPool.liquidity?.usd),
+    marketCap: nonNegativeNumber(primaryPool.marketCap?.usd),
+    tokenSupply: nonNegativeNumber(primaryPool.tokenSupply),
+    holders: Math.floor(nonNegativeNumber(data.holders)),
+    lastUpdated: normalizeTimestamp(primaryPool.lastUpdated),
+    priceChange24h,
+  };
+}
+
+function parseApiResponse(value: unknown): TokenDataResponse {
+  const normalized =
+    normalizeResponse(value) ?? normalizeRawTokenData(value);
+
+  if (!normalized) {
+    throw new Error("Token data endpoint returned an unsupported response.");
+  }
+
+  const hasUsefulData =
+    normalized.price > 0 ||
+    normalized.liquidity > 0 ||
+    normalized.marketCap > 0 ||
+    normalized.tokenSupply > 0 ||
+    normalized.holders > 0;
+
+  if (!hasUsefulData) {
+    throw new Error("Token data endpoint returned no usable RROTA data.");
+  }
+
+  return normalized;
+}
+
+function isCacheEntry(value: unknown): value is CacheEntry {
+  if (!value || typeof value !== "object") return false;
+
+  const entry = value as Partial<CacheEntry>;
+
+  return (
+    entry.version === CACHE_VERSION &&
+    entry.tokenAddress === RROTA_MINT &&
+    typeof entry.cachedAt === "number" &&
+    Number.isFinite(entry.cachedAt) &&
+    isTokenDataResponse(entry.data)
+  );
+}
+
+function isFresh(entry: CacheEntry, now = Date.now()): boolean {
+  return now - entry.cachedAt >= 0 && now - entry.cachedAt < CACHE_DURATION;
+}
+
+function readLocalCache(): CacheEntry | null {
+  if (typeof window === "undefined") return null;
+
+  const key = getCacheKey(RROTA_MINT);
+
+  try {
+    const raw = window.localStorage.getItem(key);
+
+    if (!raw) return null;
+
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!isCacheEntry(parsed)) {
+      window.localStorage.removeItem(key);
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    console.warn("Unable to read RROTA token cache:", error);
+
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // Storage may be unavailable in privacy-restricted environments.
+    }
+
+    return null;
+  }
+}
+
+function writeCache(data: TokenDataResponse): void {
+  const entry: CacheEntry = {
+    version: CACHE_VERSION,
+    tokenAddress: RROTA_MINT,
+    cachedAt: Date.now(),
+    data,
+  };
+
+  memoryCache = entry;
+
   if (typeof window === "undefined") return;
 
   try {
-    const entry: CacheEntry = { data, timestamp };
-    localStorage.setItem(getCacheKey(tokenAddress), JSON.stringify(entry));
+    window.localStorage.setItem(
+      getCacheKey(RROTA_MINT),
+      JSON.stringify(entry)
+    );
   } catch (error) {
-    console.warn("Failed to write to cache:", error);
+    console.warn("Unable to write RROTA token cache:", error);
   }
-};
+}
 
-// ============================
-// Fallback data
-// ============================
-const getDefaultTokenData = (): TokenDataResponse => ({
-  price: 0,
-  liquidity: 0,
-  marketCap: 0,
-  tokenSupply: 17400000000,
-  holders: 0,
-  lastUpdated: Date.now(),
-  priceChange24h: 0,
-});
+function getFreshCachedData(): TokenDataResponse | null {
+  const now = Date.now();
 
-// ============================
-// Retry helper (backoff)
-// ============================
-const retryWithBackoff = async <T,>(
-  fn: () => Promise<T>,
-  maxRetries = 3,
-  baseDelay = 800
-): Promise<T> => {
+  if (memoryCache && isFresh(memoryCache, now)) {
+    return memoryCache.data;
+  }
+
+  const localEntry = readLocalCache();
+
+  if (localEntry && isFresh(localEntry, now)) {
+    memoryCache = localEntry;
+    return localEntry.data;
+  }
+
+  return null;
+}
+
+function shouldRetryStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+  });
+}
+
+async function requestTokenData(): Promise<TokenDataResponse> {
   let lastError: unknown;
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (err) {
-      lastError = err;
-      if (attempt === maxRetries - 1) break;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(
+      () => controller.abort(),
+      REQUEST_TIMEOUT
+    );
 
-      const delay = baseDelay * Math.pow(2, attempt);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+    try {
+      const response = await fetch(
+        `/api/token-data?token=${encodeURIComponent(RROTA_MINT)}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+          },
+          cache: "no-store",
+          signal: controller.signal,
+        }
+      );
+
+      if (!response.ok) {
+        const error = new Error(
+          `Token data request failed with status ${response.status}.`
+        );
+
+        if (!shouldRetryStatus(response.status) || attempt === MAX_ATTEMPTS) {
+          throw error;
+        }
+
+        lastError = error;
+      } else {
+        const payload: unknown = await response.json();
+        return parseApiResponse(payload);
+      }
+    } catch (error) {
+      lastError = error;
+
+      const isAbort =
+        error instanceof Error && error.name === "AbortError";
+
+      if (attempt === MAX_ATTEMPTS) {
+        throw isAbort
+          ? new Error("Token data request timed out.")
+          : error;
+      }
+    } finally {
+      window.clearTimeout(timeout);
     }
+
+    await wait(RETRY_DELAY * attempt);
   }
 
-  throw lastError ?? new Error("Max retries exceeded");
-};
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Unable to load RROTA token data.");
+}
 
-// ============================
-// Main function
-// ============================
 export async function getTokenData(
   tokenAddress: string
 ): Promise<TokenDataResponse> {
-  const now = Date.now();
-
-  // 1) Use cache first (fresh)
-  const cachedEntry = getCachedData(tokenAddress);
-  if (cachedEntry && now - cachedEntry.timestamp < CACHE_DURATION) {
-    return cachedEntry.data;
+  if (!isSupportedToken(tokenAddress)) {
+    throw new Error("Unsupported token address requested.");
   }
 
-  // 2) Fetch from our server route (API key stays server-side)
-  try {
-    const tokenData = await retryWithBackoff(async () => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const cached = getFreshCachedData();
 
-      const url = `/api/token-data?token=${encodeURIComponent(tokenAddress)}`;
+  if (cached) {
+    return cached;
+  }
 
-      const res = await fetch(url, {
-        signal: controller.signal,
-        cache: "no-store", // IMPORTANT: avoid sticky caching in Next
+  if (!activeRequest) {
+    activeRequest = requestTokenData()
+      .then((data) => {
+        writeCache(data);
+        return data;
+      })
+      .finally(() => {
+        activeRequest = null;
       });
+  }
 
-      clearTimeout(timeoutId);
+  return activeRequest;
+}
 
-      if (!res.ok) {
-        throw new Error(`API failed: ${res.status} ${res.statusText}`);
-      }
+export function clearTokenDataCache(): void {
+  memoryCache = null;
+  activeRequest = null;
 
-      const data = (await res.json()) as TokenData;
+  if (typeof window === "undefined") return;
 
-      const pools = Array.isArray(data.pools) ? data.pools : [];
-      if (!pools.length) {
-        throw new Error("No pools returned from API");
-      }
-
-      const targetPool = pools.find((p) => p.poolId === TARGET_POOL_ID);
-      const primaryPool = targetPool ?? pools[0];
-
-      const price = Number(primaryPool.price?.usd ?? 0);
-      const liquidity = Number(primaryPool.liquidity?.usd ?? 0);
-      const marketCap = Number(primaryPool.marketCap?.usd ?? 0);
-      const tokenSupply = Number(primaryPool.tokenSupply ?? 0);
-      const holders = Number(data.holders ?? 0);
-      const lastUpdated = Number(primaryPool.lastUpdated ?? Date.now());
-
-      const priceChange24h = Number(
-        data.events?.["24h"]?.priceChangePercentage ?? 0
-      );
-
-      return {
-        price,
-        liquidity,
-        marketCap,
-        tokenSupply,
-        holders,
-        lastUpdated,
-        priceChange24h,
-      };
-    });
-
-    // 3) Save fresh result in cache
-    setCachedData(tokenAddress, tokenData, now);
-    return tokenData;
+  try {
+    window.localStorage.removeItem(getCacheKey(RROTA_MINT));
   } catch (error) {
-    console.error("Error fetching token data:", error);
-
-    // 4) If we have ANY cached data (even expired), use it
-    if (cachedEntry) return cachedEntry.data;
-
-    // 5) Otherwise fallback
-    const defaultData = getDefaultTokenData();
-    setCachedData(tokenAddress, defaultData, now);
-    return defaultData;
+    console.warn("Unable to clear RROTA token cache:", error);
   }
 }
