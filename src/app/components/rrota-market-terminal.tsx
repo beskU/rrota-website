@@ -1,18 +1,40 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 
 const RROTA_MINT = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-const CHART_URL = `https://dexscreener.com/solana/${RROTA_MINT}`;
-const CHART_EMBED_URL = `${CHART_URL}?embed=1&theme=dark`;
-
+const DEFAULT_CHART_URL = `https://dexscreener.com/solana/${RROTA_MINT}`;
 const JUPITER_URL = `https://jup.ag/tokens/${RROTA_MINT}`;
 const SOLSCAN_URL = `https://solscan.io/token/${RROTA_MINT}`;
 const GECKO_URL = `https://www.geckoterminal.com/solana/tokens/${RROTA_MINT}`;
-const DEXTOOLS_URL = "https://www.dextools.io/app/token/rrota";
-const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
+
+const MARKET_LINKS = [
+  {
+    label: "Buy on Jupiter",
+    detail: "Official $RTA trading route",
+    href: JUPITER_URL,
+    tone: "border-emerald-400/18 bg-emerald-400/8 text-emerald-100",
+  },
+  {
+    label: "DexScreener",
+    detail: "Live market chart",
+    href: DEFAULT_CHART_URL,
+    tone: "border-cyan-400/18 bg-cyan-400/8 text-cyan-100",
+  },
+  {
+    label: "GeckoTerminal",
+    detail: "Pool and liquidity data",
+    href: GECKO_URL,
+    tone: "border-fuchsia-400/18 bg-fuchsia-400/8 text-fuchsia-100",
+  },
+  {
+    label: "Verify on Solscan",
+    detail: "Official Solana mint",
+    href: SOLSCAN_URL,
+    tone: "border-amber-400/18 bg-amber-400/8 text-amber-100",
+  },
+];
 
 type MarketData = {
   ok: boolean;
@@ -26,7 +48,7 @@ type MarketData = {
 };
 
 function formatUsd(value?: number | null, compact = false) {
-  if (value === null || value === undefined || Number.isNaN(value)) {
+  if (value === null || value === undefined || Number.isNaN(value) || value < 0) {
     return null;
   }
 
@@ -38,7 +60,7 @@ function formatUsd(value?: number | null, compact = false) {
     style: "currency",
     currency: "USD",
     notation: compact ? "compact" : "standard",
-    maximumFractionDigits: value < 1 ? 8 : 2,
+    maximumFractionDigits: value < 1 ? 9 : 2,
   }).format(value);
 }
 
@@ -51,32 +73,74 @@ function formatPercent(value?: number | null) {
   return `${sign}${value.toFixed(2)}%`;
 }
 
+function formatUpdatedAt(value?: string) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("en", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZoneName: "short",
+  }).format(date);
+}
+
+function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+function ChartIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 3v18h18" />
+      <path d="m7 16 4-5 4 3 5-7" />
+    </svg>
+  );
+}
+
 function StatCard({
   label,
   value,
-  fallback,
   note,
+  tone,
 }: {
   label: string;
-  value: string | null;
-  fallback: string;
-  note?: string;
+  value: string;
+  note: string;
+  tone: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_35px_rgba(0,0,0,0.25)]">
-      <div className="text-[11px] font-bold uppercase tracking-[0.25em] text-cyan-300/80">
+    <div className={`rounded-3xl border p-5 backdrop-blur-xl ${tone}`}>
+      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">
         {label}
       </div>
-
-      <div className="mt-2 text-2xl font-black text-white">
-        {value ?? fallback}
-      </div>
-
-      {note ? (
-        <div className="mt-1 text-xs text-slate-400">
-          {note}
-        </div>
-      ) : null}
+      <div className="mt-2 text-xl font-black text-white sm:text-2xl">{value}</div>
+      <div className="mt-1 text-xs leading-5 text-white/45">{note}</div>
     </div>
   );
 }
@@ -84,6 +148,8 @@ function StatCard({
 export default function RrotaMarketTerminal() {
   const [market, setMarket] = useState<MarketData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [showChart, setShowChart] = useState(false);
   const [chartLoaded, setChartLoaded] = useState(false);
   const [chartTimedOut, setChartTimedOut] = useState(false);
 
@@ -96,17 +162,22 @@ export default function RrotaMarketTerminal() {
           cache: "no-store",
         });
 
-        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`Market request failed: ${response.status}`);
+        }
+
+        const data = (await response.json()) as MarketData;
 
         if (alive) {
           setMarket(data);
+          setHasError(!data.ok);
         }
-      } catch {
+      } catch (error) {
+        console.error("Unable to load RROTA market data:", error);
+
         if (alive) {
-          setMarket({
-            ok: false,
-            chartUrl: CHART_URL,
-          });
+          setMarket({ ok: false, chartUrl: DEFAULT_CHART_URL });
+          setHasError(true);
         }
       } finally {
         if (alive) {
@@ -116,8 +187,7 @@ export default function RrotaMarketTerminal() {
     }
 
     loadMarket();
-
-    const refresh = window.setInterval(loadMarket, 60_000);
+    const refresh = window.setInterval(loadMarket, 2 * 60 * 1000);
 
     return () => {
       alive = false;
@@ -126,16 +196,23 @@ export default function RrotaMarketTerminal() {
   }, []);
 
   useEffect(() => {
+    if (!showChart || chartLoaded) return;
+
+    setChartTimedOut(false);
+
     const timeout = window.setTimeout(() => {
-      if (!chartLoaded) {
-        setChartTimedOut(true);
-      }
+      setChartTimedOut(true);
     }, 8500);
 
     return () => window.clearTimeout(timeout);
-  }, [chartLoaded]);
+  }, [showChart, chartLoaded]);
 
-  const chartUrl = market?.chartUrl || CHART_URL;
+  const chartUrl = market?.chartUrl || DEFAULT_CHART_URL;
+
+  const chartEmbedUrl = useMemo(() => {
+    const separator = chartUrl.includes("?") ? "&" : "?";
+    return `${chartUrl}${separator}embed=1&theme=dark`;
+  }, [chartUrl]);
 
   const stats = useMemo(() => {
     const price = formatUsd(market?.priceUsd);
@@ -145,281 +222,220 @@ export default function RrotaMarketTerminal() {
     const change = formatPercent(market?.priceChange24h);
 
     return {
-      price,
-      marketCap,
-      liquidity,
-      volume,
+      price: isLoading ? "Checking…" : price ?? "Open chart",
+      marketCap: isLoading ? "Checking…" : marketCap ?? "Open chart",
+      liquidity: isLoading ? "Checking…" : liquidity ?? "Open chart",
+      volume: isLoading ? "Checking…" : volume ?? "Open chart",
       change,
     };
-  }, [market]);
+  }, [isLoading, market]);
+
+  const updatedAt = formatUpdatedAt(market?.updatedAt);
+  const positiveChange = (market?.priceChange24h ?? 0) >= 0;
 
   return (
-    <>
-      <section
-        id="market"
-        className="relative overflow-hidden border-y border-cyan-400/10 bg-slate-950 px-4 py-20 text-white"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.16),transparent_40%)]" />
+    <section
+      id="Market"
+      className="relative mb-20 w-full scroll-mt-28 px-4 text-white sm:px-6 lg:px-8"
+      aria-labelledby="market-title"
+    >
+      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.15),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.13),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-cyan-200">
-              RROTA Token Terminal
+        <div className="relative">
+          <div className="grid gap-8 lg:grid-cols-[0.86fr_1.14fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                RROTA Market
+              </div>
+
+              <h2
+                id="market-title"
+                className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl"
+              >
+                Live market data,
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  kept secondary to utility.
+                </span>
+              </h2>
+
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-white/66 sm:text-base">
+                Track $RTA through official public sources and verify the mint before
+                trading. Market information supports the ecosystem story, but it does
+                not replace product delivery, transparency, or utility.
+              </p>
+
+              {hasError ? (
+                <div className="mt-5 rounded-2xl border border-amber-400/18 bg-amber-400/8 px-4 py-3 text-sm leading-6 text-amber-100/80">
+                  Live market data is temporarily unavailable. Use the official chart
+                  links below for the latest information.
+                </div>
+              ) : null}
             </div>
 
-            <h2 className="mt-5 text-3xl font-black tracking-tight md:text-5xl">
-              Track $RTA market data while the RROTA ecosystem expands.
-            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <StatCard
+                label="Current Price"
+                value={stats.price}
+                note={stats.change ? `24h change: ${stats.change}` : "Public market reference"}
+                tone="border-cyan-400/16 bg-cyan-400/7"
+              />
+              <StatCard
+                label="Market Cap"
+                value={stats.marketCap}
+                note="Shown when available"
+                tone="border-fuchsia-400/16 bg-fuchsia-400/7"
+              />
+              <StatCard
+                label="Liquidity"
+                value={stats.liquidity}
+                note="Best active market pair"
+                tone="border-emerald-400/16 bg-emerald-400/7"
+              />
+              <StatCard
+                label="24h Volume"
+                value={stats.volume}
+                note={updatedAt ? `Updated ${updatedAt}` : "External market data"}
+                tone={
+                  positiveChange
+                    ? "border-amber-400/16 bg-amber-400/7"
+                    : "border-rose-400/16 bg-rose-400/7"
+                }
+              />
+            </div>
+          </div>
 
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-              Follow the RROTA chart, verify the official Solana mint, and use
-              the correct trading links before interacting with the ecosystem.
-              Spin-to-Win is the first live utility, while Crypto Shooter,
-              community tools, and public transportation utility remain part of
-              the wider roadmap.
-            </p>
+          <div className="mt-8 grid gap-5 lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="rounded-[34px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-300/70">
+                    Official Market Chart
+                  </div>
+                  <h3 className="mt-2 text-2xl font-black text-white">
+                    Load the chart only when you need it.
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-sm leading-7 text-white/58">
+                    Keeping the chart optional improves homepage speed and prevents
+                    market data from dominating the wider RROTA ecosystem presentation.
+                  </p>
+                </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                <div className="text-xs uppercase tracking-[0.22em] text-slate-400">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowChart((value) => !value);
+                    setChartLoaded(false);
+                    setChartTimedOut(false);
+                  }}
+                  className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border border-cyan-300/24 bg-cyan-400/10 px-5 text-sm font-black text-cyan-100 transition hover:border-cyan-200/45 hover:bg-cyan-400/15"
+                  aria-expanded={showChart}
+                  aria-controls="rrota-live-chart"
+                >
+                  <ChartIcon />
+                  {showChart ? "Hide Chart" : "Load Live Chart"}
+                </button>
+              </div>
+
+              {showChart ? (
+                <div
+                  id="rrota-live-chart"
+                  className="relative mt-5 h-[420px] overflow-hidden rounded-[28px] border border-white/10 bg-black"
+                >
+                  {!chartLoaded ? (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#050711] px-6 text-center">
+                      <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-300/25 border-t-cyan-300" />
+                      <div className="mt-4 text-sm font-black uppercase tracking-[0.2em] text-cyan-100">
+                        Loading chart
+                      </div>
+                      <p className="mt-2 max-w-sm text-xs leading-5 text-white/48">
+                        Some browsers block third-party chart embeds. The direct chart
+                        remains available below.
+                      </p>
+
+                      {chartTimedOut ? (
+                        <a
+                          href={chartUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-5 text-xs font-black uppercase tracking-[0.16em] text-slate-950"
+                        >
+                          Open Direct Chart
+                          <ExternalIcon />
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <iframe
+                    title="RROTA DexScreener chart"
+                    src={chartEmbedUrl}
+                    className="h-full w-full"
+                    loading="lazy"
+                    onLoad={() => setChartLoaded(true)}
+                  />
+                </div>
+              ) : (
+                <div className="mt-5 flex min-h-[190px] items-center justify-center rounded-[28px] border border-dashed border-cyan-400/18 bg-cyan-400/[0.035] px-6 text-center">
+                  <div>
+                    <ChartIcon className="mx-auto h-8 w-8 text-cyan-300" />
+                    <div className="mt-3 text-sm font-black text-white">
+                      Chart not loaded
+                    </div>
+                    <p className="mx-auto mt-2 max-w-md text-xs leading-6 text-white/48">
+                      Select “Load Live Chart” to open the external market view without
+                      slowing down the initial homepage experience.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-[34px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-fuchsia-300/70">
+                Official Market Resources
+              </div>
+              <h3 className="mt-2 text-2xl font-black text-white">
+                Verify first. Trade through official routes.
+              </h3>
+
+              <div className="mt-5 grid gap-3">
+                {MARKET_LINKS.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group flex items-center justify-between gap-4 rounded-2xl border px-4 py-4 transition hover:-translate-y-0.5 hover:brightness-110 ${link.tone}`}
+                  >
+                    <div>
+                      <div className="text-sm font-black text-white">{link.label}</div>
+                      <div className="mt-1 text-xs text-white/48">{link.detail}</div>
+                    </div>
+                    <ExternalIcon className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                  </a>
+                ))}
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-cyan-400/14 bg-cyan-400/6 px-4 py-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300/70">
                   Official Mint
                 </div>
-                <div className="mt-2 break-all font-mono text-sm text-cyan-100">
+                <div className="mt-2 break-all font-mono text-xs font-semibold leading-6 text-white/72">
                   {RROTA_MINT}
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                <div className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                  Ecosystem Direction
-                </div>
-                <div className="mt-2 text-lg font-black text-white">
-                  Utility-first on Solana
-                </div>
-                <div className="text-xs text-slate-400">
-                  Games, rewards, community tools, and future transport utility
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href={JUPITER_URL}
-                target="_blank"
-                className="rounded-full bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition hover:scale-[1.02]"
-              >
-                Buy $RTA ↗
-              </Link>
-
-              <Link
-                href={SOLSCAN_URL}
-                target="_blank"
-                className="rounded-full border border-violet-300/30 bg-violet-400/10 px-5 py-3 text-sm font-black text-violet-100 transition hover:bg-violet-400/20"
-              >
-                Verify Contract ↗
-              </Link>
-
-              <Link
-                href={SPIN_TO_WIN_URL}
-                target="_blank"
-                className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-black text-white transition hover:bg-white/10"
-              >
-                Play Spin-to-Win ↗
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-cyan-300/15 bg-slate-900/70 p-3 shadow-[0_0_60px_rgba(34,211,238,0.12)] backdrop-blur">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-2">
-              <div>
-                <h3 className="text-lg font-black text-white">
-                  RROTA Live Chart
-                </h3>
-                <p className="text-xs text-slate-400">
-                  External market data. Always verify the official mint before trading.
-                </p>
-              </div>
-
-              <Link
-                href={chartUrl}
-                target="_blank"
-                className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-100 hover:bg-cyan-300/20"
-              >
-                Open Chart ↗
-              </Link>
-            </div>
-
-            <div className="relative h-[430px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black">
-              {!chartLoaded ? (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950 text-center">
-                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-300/30 border-t-cyan-300" />
-                  <div className="mt-4 text-sm font-black uppercase tracking-[0.25em] text-cyan-100">
-                    Loading market chart
-                  </div>
-                  <div className="mt-2 max-w-sm text-xs leading-5 text-slate-400">
-                    If the embedded chart is blocked by your browser, use the direct
-                    chart button.
-                  </div>
-
-                  {chartTimedOut ? (
-                    <Link
-                      href={chartUrl}
-                      target="_blank"
-                      className="mt-5 rounded-full bg-cyan-300 px-5 py-3 text-xs font-black uppercase tracking-[0.2em] text-slate-950"
-                    >
-                      Open Direct Chart ↗
-                    </Link>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <iframe
-                title="RROTA DexScreener Chart"
-                src={CHART_EMBED_URL}
-                className="h-full w-full"
-                loading="lazy"
-                onLoad={() => setChartLoaded(true)}
-              />
-            </div>
-
-            <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-3">
-              <div>◆ Verify the token mint before trading.</div>
-              <div>◆ Use only official RROTA links.</div>
-              <div>◆ Game rewards depend on eligible activity and project rules.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="tokenomics"
-        className="bg-slate-950 px-4 py-20 text-white"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <div className="inline-flex rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.25em] text-violet-200">
-              RROTA Tokenomics
-            </div>
-
-            <h2 className="mt-5 text-3xl font-black tracking-tight md:text-5xl">
-              RROTA market, token, and verification overview.
-            </h2>
-
-            <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-              A clean snapshot of the $RTA Solana token, live market references,
-              supply verification, official trading links, and ecosystem utility
-              context.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              label="Current Price"
-              value={isLoading ? "Checking..." : stats.price}
-              fallback="Check live"
-              note="DexScreener market data"
-            />
-
-            <StatCard
-              label="Market Cap"
-              value={isLoading ? "Checking..." : stats.marketCap}
-              fallback="Check live"
-              note="Shown when available"
-            />
-
-            <StatCard
-              label="Liquidity"
-              value={isLoading ? "Checking..." : stats.liquidity}
-              fallback="Check live"
-              note="Best active pair"
-            />
-
-            <StatCard
-              label="24h Volume"
-              value={isLoading ? "Checking..." : stats.volume}
-              fallback="Check live"
-              note={stats.change ? `24h change: ${stats.change}` : "Live market reference"}
-            />
-          </div>
-
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
-              <div className="text-xs font-black uppercase tracking-[0.25em] text-cyan-300/80">
-                Supply Reference
-              </div>
-
-              <h3 className="mt-3 text-2xl font-black text-white">
-                Verify supply and holder data on-chain.
-              </h3>
-
-              <p className="mt-3 text-sm leading-7 text-slate-300">
-                Burned supply, circulating supply, and holder counts should be
-                confirmed through on-chain explorers and official market pages.
-                This section keeps the website reviewer-friendly by avoiding
-                unsupported claims and pointing users to verification sources.
+              <p className="mt-5 text-xs leading-6 text-white/40">
+                Market data comes from external public sources and may be delayed,
+                unavailable, or different across trackers. Always verify the official
+                mint. Nothing on this website is financial advice.
               </p>
-
-              <div className="mt-5 break-all rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4 font-mono text-sm text-cyan-100">
-                {RROTA_MINT}
-              </div>
-            </div>
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
-              <div className="text-xs font-black uppercase tracking-[0.25em] text-violet-300/80">
-                Official Links
-              </div>
-
-              <div className="mt-5 grid gap-3">
-                <Link
-                  href={JUPITER_URL}
-                  target="_blank"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
-                >
-                  Jupiter — Buy $RTA ↗
-                </Link>
-
-                <Link
-                  href={CHART_URL}
-                  target="_blank"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
-                >
-                  DexScreener — Live Chart ↗
-                </Link>
-
-                <Link
-                  href={GECKO_URL}
-                  target="_blank"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
-                >
-                  GeckoTerminal — Market Data ↗
-                </Link>
-
-                <Link
-                  href={SOLSCAN_URL}
-                  target="_blank"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
-                >
-                  Solscan — Verify Contract ↗
-                </Link>
-
-                <Link
-                  href={DEXTOOLS_URL}
-                  target="_blank"
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
-                >
-                  DEXTools — Token Page ↗
-                </Link>
-              </div>
             </div>
           </div>
-
-          <p className="mt-6 text-xs leading-6 text-slate-500">
-            Market data is loaded from external public sources and may be delayed,
-            unavailable, or different across trackers. Always verify the official
-            mint before trading. Nothing on this page is financial advice.
-          </p>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
