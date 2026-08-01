@@ -1,544 +1,705 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Space_Grotesk } from "next/font/google";
+import Footer from "../components/footer";
+import Navbar from "../components/navbar";
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+const SITE_URL = "https://rrota.xyz";
+const PAGE_URL = `${SITE_URL}/links`;
 
-const OFFICIAL_DOMAIN = "https://rrota.xyz";
-const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const TOKEN_ADDRESS =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-const LINKS = {
+const EXTERNAL_LINKS = {
+  website: SITE_URL,
+  spin: "https://spin.rrota.xyz",
+  telegramBot: "https://t.me/RROTASpin_Bot",
   telegram: "https://t.me/rrotaOfficial",
-  twitter: "https://x.com/rrotacoin",
+  x: "https://x.com/rrotacoin",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   dexscreener: `https://dexscreener.com/solana/${TOKEN_ADDRESS}`,
   birdeye: `https://birdeye.so/token/${TOKEN_ADDRESS}?chain=solana`,
-  geckoterminal: `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
-  audit: "https://freshcoins.io/audit/rrota",
-  solidproof: "https://app.solidproof.io/",
-  spin: "https://spin.rrota.xyz",
-  cmcVerification: "https://x.com/rrotacoin/status/2054219354422510035",
-  contactEmail: "mailto:info@rrota.xyz",
-};
+  geckoterminal:
+    `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
+  solidproof: "https://app.solidproof.io/projects/rrota",
+  freshcoins: "https://freshcoins.io/audit/rrota",
+  email: "mailto:info@rrota.xyz",
+} as const;
 
 export const metadata: Metadata = {
-  title: "Official RROTA Links | Verified $RTA Resources",
+  title: "Official RROTA Links",
   description:
-    "Official RROTA links: website, whitepaper, contract verification, social channels, SolidProof audit, FreshCoins audit, Spin-to-Win utility, trackers and contact details.",
-  alternates: { canonical: `${OFFICIAL_DOMAIN}/links` },
+    "Use the official RROTA resource hub to verify the $RTA mint, access Spin-to-Win, open RROTA AI, review audits, follow community channels, and find documentation.",
+  alternates: {
+    canonical: PAGE_URL,
+  },
+  openGraph: {
+    title: "Official RROTA Links",
+    description:
+      "Verified access to RROTA products, token references, audits, community channels, documentation, and contact information.",
+    url: PAGE_URL,
+    siteName: "RROTA",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Official RROTA Links",
+    description:
+      "The official verification hub for RROTA products, $RTA token references, audits, community channels, and documentation.",
+  },
 };
 
-function ExternalArrow() {
-  return <span aria-hidden="true">↗</span>;
-}
+type ResourceItem = {
+  title: string;
+  description: string;
+  href: string;
+  label: string;
+  external?: boolean;
+  email?: boolean;
+  status?: string;
+};
 
-function AuditMark({
-  letters,
-  tone = "cyan",
+type ResourceGroup = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  tone: string;
+  badge: string;
+  items: ResourceItem[];
+};
+
+const primaryAccess: ResourceItem[] = [
+  {
+    title: "RROTA Home",
+    description:
+      "Main ecosystem overview, current product activity, roadmap progress, market references, and official navigation.",
+    href: "/",
+    label: "Open website",
+    status: "Official",
+  },
+  {
+    title: "RROTA Spin-to-Win",
+    description:
+      "Open the live browser game with spins, missions, referrals, player progression, and connected leaderboards.",
+    href: EXTERNAL_LINKS.spin,
+    label: "Open browser game",
+    external: true,
+    status: "Live",
+  },
+  {
+    title: "Telegram Mini App",
+    description:
+      "Launch the official RROTA Spin-to-Win Telegram bot for mobile and community-connected game access.",
+    href: EXTERNAL_LINKS.telegramBot,
+    label: "Open Telegram bot",
+    external: true,
+    status: "Live",
+  },
+  {
+    title: "RROTA AI Assistant",
+    description:
+      "Use the official informational assistant for project education, ecosystem navigation, product guidance, and safety reminders.",
+    href: "/ai",
+    label: "Open RROTA AI",
+    status: "Available",
+  },
+];
+
+const resourceGroups: ResourceGroup[] = [
+  {
+    eyebrow: "Token verification",
+    title: "$RTA and market access",
+    description:
+      "Use the complete Solana mint as the primary identifier. Names, tickers, logos, and screenshots can be copied.",
+    tone: "border-cyan-400/16 bg-cyan-400/[0.045]",
+    badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
+    items: [
+      {
+        title: "Solscan",
+        description:
+          "Review the official token mint, authorities, supply, holders, accounts, and available on-chain activity.",
+        href: EXTERNAL_LINKS.solscan,
+        label: "Verify token",
+        external: true,
+      },
+      {
+        title: "Jupiter",
+        description:
+          "Open the official Jupiter token route using the verified RROTA mint before reviewing any swap.",
+        href: EXTERNAL_LINKS.jupiter,
+        label: "Open Jupiter",
+        external: true,
+      },
+      {
+        title: "DexScreener",
+        description:
+          "View current decentralized-market information and available RROTA trading-pair data.",
+        href: EXTERNAL_LINKS.dexscreener,
+        label: "View market",
+        external: true,
+      },
+      {
+        title: "GeckoTerminal",
+        description:
+          "Review independent token, pool, liquidity, and market information for RROTA on Solana.",
+        href: EXTERNAL_LINKS.geckoterminal,
+        label: "View tracker",
+        external: true,
+      },
+      {
+        title: "Birdeye",
+        description:
+          "Open another Solana market-data reference using the official RROTA token mint.",
+        href: EXTERNAL_LINKS.birdeye,
+        label: "View tracker",
+        external: true,
+      },
+      {
+        title: "How to Buy RROTA",
+        description:
+          "Follow the safety-first guide for wallet preparation, mint verification, Jupiter access, and transaction review.",
+        href: "/how-to-buy-rrota",
+        label: "Read buying guide",
+      },
+    ],
+  },
+  {
+    eyebrow: "Independent references",
+    title: "Audits and verification",
+    description:
+      "Audit references improve transparency, but they do not guarantee future product security, market value, liquidity, or investment outcomes.",
+    tone: "border-emerald-400/16 bg-emerald-400/[0.04]",
+    badge:
+      "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
+    items: [
+      {
+        title: "SolidProof",
+        description:
+          "Open the direct RROTA project page on SolidProof to review the currently published audit and project information.",
+        href: EXTERNAL_LINKS.solidproof,
+        label: "View SolidProof",
+        external: true,
+      },
+      {
+        title: "FreshCoins",
+        description:
+          "Open the public FreshCoins RROTA audit reference and review the information available from that provider.",
+        href: EXTERNAL_LINKS.freshcoins,
+        label: "View FreshCoins",
+        external: true,
+      },
+      {
+        title: "Tokenomics",
+        description:
+          "Review permanent token facts, live market references, current utility, planned roles, and verification principles.",
+        href: "/tokenomics",
+        label: "Read tokenomics",
+      },
+      {
+        title: "Risk Disclaimer",
+        description:
+          "Review the financial, market, technical, product, wallet, and participation risks connected to crypto assets.",
+        href: "/risk-disclaimer",
+        label: "Read disclaimer",
+      },
+    ],
+  },
+  {
+    eyebrow: "Project information",
+    title: "Documentation and progress",
+    description:
+      "Use these pages to understand what RROTA is, what is live today, what is being developed, and what remains planned.",
+    tone: "border-fuchsia-400/16 bg-fuchsia-400/[0.04]",
+    badge:
+      "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-200",
+    items: [
+      {
+        title: "Roadmap",
+        description:
+          "Track shipped foundations, live products, active development, and longer-term ecosystem plans.",
+        href: "/roadmap",
+        label: "View roadmap",
+      },
+      {
+        title: "Whitepaper",
+        description:
+          "Read the broader RROTA project model, token role, product direction, and ecosystem documentation.",
+        href: "/whitepaper",
+        label: "Read whitepaper",
+      },
+      {
+        title: "Spin-to-Win Product Guide",
+        description:
+          "Understand browser and Telegram access, game features, leaderboards, reward rules, fair-play controls, and safety.",
+        href: "/rrota-spin-to-win",
+        label: "Read product guide",
+      },
+      {
+        title: "RROTA Blog",
+        description:
+          "Read long-form project updates, product explanations, security notices, and ecosystem announcements.",
+        href: "/blog",
+        label: "Read updates",
+      },
+    ],
+  },
+  {
+    eyebrow: "Community and contact",
+    title: "Official communication",
+    description:
+      "Use only the official community destinations and contact address listed below. Verify impersonators before responding.",
+    tone: "border-sky-400/16 bg-sky-400/[0.04]",
+    badge: "border-sky-400/20 bg-sky-400/10 text-sky-200",
+    items: [
+      {
+        title: "Telegram Community",
+        description:
+          "Join the official RROTA Telegram community for project, product, race, and ecosystem announcements.",
+        href: EXTERNAL_LINKS.telegram,
+        label: "Open Telegram",
+        external: true,
+      },
+      {
+        title: "RROTA on X",
+        description:
+          "Follow the official RROTA X account for public updates, product communication, and verification posts.",
+        href: EXTERNAL_LINKS.x,
+        label: "Open X",
+        external: true,
+      },
+      {
+        title: "Official Contact",
+        description:
+          "Use info@rrota.xyz for listing reviews, partnerships, security reports, media inquiries, and formal verification.",
+        href: EXTERNAL_LINKS.email,
+        label: "Email RROTA",
+        email: true,
+      },
+      {
+        title: "About RROTA",
+        description:
+          "Review the ecosystem identity, current product layer, development principles, and long-term direction.",
+        href: "/about",
+        label: "About the project",
+      },
+    ],
+  },
+  {
+    eyebrow: "Policies",
+    title: "Legal and safety documents",
+    description:
+      "These pages explain site use, privacy, risk, and platform responsibilities. Review applicable product rules before participating.",
+    tone: "border-amber-400/16 bg-amber-400/[0.035]",
+    badge:
+      "border-amber-400/20 bg-amber-400/[0.08] text-amber-100",
+    items: [
+      {
+        title: "Terms of Service",
+        description:
+          "Review the terms that apply to the RROTA website and referenced platform services.",
+        href: "/terms",
+        label: "Read terms",
+      },
+      {
+        title: "Privacy Policy",
+        description:
+          "Review how website and platform-related information may be collected, processed, stored, or protected.",
+        href: "/privacy",
+        label: "Read privacy policy",
+      },
+      {
+        title: "Risk Disclaimer",
+        description:
+          "Review the risks associated with crypto assets, wallets, liquidity, markets, products, and game participation.",
+        href: "/risk-disclaimer",
+        label: "Review risks",
+      },
+      {
+        title: "Contact",
+        description:
+          "Use the official contact page for project inquiries and available support or communication routes.",
+        href: "/contact",
+        label: "Open contact page",
+      },
+    ],
+  },
+];
+
+const verificationRules = [
+  {
+    title: "Verify the complete mint",
+    text:
+      "The official RROTA token is identified by its full Solana mint. Do not rely only on the ticker, logo, token name, or price.",
+  },
+  {
+    title: "Start from rrota.xyz",
+    text:
+      "Use this official resource hub before opening a game, swap, market tracker, audit page, social profile, or contact route.",
+  },
+  {
+    title: "Review wallet requests",
+    text:
+      "Reject unexpected transfers, approvals, signatures, permissions, account changes, or requests unrelated to the action you initiated.",
+  },
+  {
+    title: "Protect recovery information",
+    text:
+      "Never share a seed phrase, private key, recovery code, password, login code, or remote access to your device.",
+  },
+  {
+    title: "Ignore prize-unlock payments",
+    text:
+      "Do not pay an unknown account or use a private claim link to unlock a leaderboard reward, airdrop, account, or withdrawal.",
+  },
+  {
+    title: "Check changing information live",
+    text:
+      "Race deadlines, rewards, market data, liquidity, supply, holder counts, and audit-platform displays can change over time.",
+  },
+];
+
+const allPublicResources = [
+  ...primaryAccess,
+  ...resourceGroups.flatMap((group) => group.items),
+];
+
+const PAGE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "Official RROTA Links",
+      description:
+        "The official RROTA resource hub for products, token references, audits, community channels, documentation, and contact information.",
+      isPartOf: {
+        "@type": "WebSite",
+        name: "RROTA",
+        url: SITE_URL,
+      },
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${PAGE_URL}#resources`,
+      name: "Official RROTA resources",
+      itemListElement: allPublicResources
+        .filter((item) => !item.email)
+        .map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.title,
+          url: item.href.startsWith("/")
+            ? `${SITE_URL}${item.href}`
+            : item.href,
+        })),
+    },
+  ],
+};
+
+function ExternalIcon({
+  className = "h-4 w-4",
 }: {
-  letters: string;
-  tone?: "cyan" | "fuchsia";
+  className?: string;
 }) {
-  const toneClass =
-    tone === "fuchsia"
-      ? "border-fuchsia-300/35 bg-fuchsia-400/12 text-fuchsia-100 shadow-[0_0_40px_rgba(217,70,239,0.18)]"
-      : "border-cyan-300/35 bg-cyan-400/12 text-cyan-100 shadow-[0_0_40px_rgba(34,211,238,0.18)]";
-
   return (
-    <div
-      className={`relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[1.4rem] border ${toneClass}`}
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.28),transparent_42%)]" />
-      <svg
-        className="relative h-14 w-14"
-        viewBox="0 0 64 64"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M32 5 54 13.2v17.6C54 44.8 44.6 53 32 59 19.4 53 10 44.8 10 30.8V13.2L32 5Z"
-          stroke="currentColor"
-          strokeWidth="3.2"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M23 32.2 29.2 39 42 24.8"
-          stroke="currentColor"
-          strokeWidth="4.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span className="absolute text-sm font-black tracking-[-0.08em] text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]">
-        {letters}
-      </span>
-    </div>
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h5" />
+    </svg>
   );
 }
 
-function AuditCard({
-  name,
-  subtitle,
-  points,
-  href,
-  cta,
-  letters,
-  tone,
-}: {
-  name: string;
-  subtitle: string;
-  points: string[];
-  href: string;
-  cta: string;
-  letters: string;
-  tone: "cyan" | "fuchsia";
-}) {
-  const accent = tone === "cyan" ? "text-cyan-200" : "text-fuchsia-200";
-  const border =
-    tone === "cyan"
-      ? "hover:border-cyan-300/45"
-      : "hover:border-fuchsia-300/45";
-  const button =
-    tone === "cyan"
-      ? "border-cyan-300/25 bg-cyan-300/[0.09] text-cyan-100 hover:border-cyan-200/55 hover:bg-cyan-300/[0.15]"
-      : "border-fuchsia-300/25 bg-fuchsia-300/[0.09] text-fuchsia-100 hover:border-fuchsia-200/55 hover:bg-fuchsia-300/[0.15]";
-
+function ShieldIcon() {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className={`group relative overflow-hidden rounded-[1.8rem] border border-white/12 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 ${border} hover:bg-white/[0.055]`}
+    <svg
+      className="h-7 w-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
     >
-      <span className="absolute right-0 top-0 h-32 w-32 rounded-full bg-white/[0.055] blur-3xl transition group-hover:bg-cyan-300/[0.12]" />
+      <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
 
-      <div className="relative flex items-start gap-4">
-        <AuditMark letters={letters} tone={tone} />
-        <div className="min-w-0">
-          <p
-            className={`text-[11px] font-black uppercase tracking-[0.24em] ${accent}`}
-          >
-            {name}
-          </p>
-          <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
-            {subtitle}
+function ResourceCard({ item }: { item: ResourceItem }) {
+  const cardClass =
+    "group flex h-full flex-col rounded-[26px] border border-white/10 bg-black/15 p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/24 hover:bg-white/[0.055]";
+
+  const content = (
+    <>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          {item.status ? (
+            <div className="mb-3 inline-flex rounded-full border border-emerald-400/18 bg-emerald-400/[0.07] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-200">
+              {item.status}
+            </div>
+          ) : null}
+
+          <h3 className="text-lg font-black tracking-[-0.02em] text-white">
+            {item.title}
           </h3>
         </div>
+
+        {item.external ? (
+          <ExternalIcon className="mt-1 h-4 w-4 shrink-0 text-cyan-200/55 transition group-hover:text-cyan-100" />
+        ) : null}
       </div>
 
-      <div className="relative mt-5 grid gap-2">
-        {points.map((point) => (
-          <div
-            key={point}
-            className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm font-bold text-slate-200"
-          >
-            {point}
-          </div>
-        ))}
-      </div>
+      <p className="mt-3 flex-1 text-sm leading-7 text-white/56">
+        {item.description}
+      </p>
 
-      <div
-        className={`relative mt-5 inline-flex rounded-2xl border px-4 py-2 text-xs font-black uppercase tracking-[0.15em] transition ${button}`}
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-cyan-200 transition group-hover:text-white">
+        {item.label}
+        <span aria-hidden="true">→</span>
+      </span>
+    </>
+  );
+
+  if (item.email) {
+    return (
+      <a href={item.href} className={cardClass}>
+        {content}
+      </a>
+    );
+  }
+
+  if (item.external) {
+    return (
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cardClass}
       >
-        {cta}{" "}
-        <span className="ml-2">
-          <ExternalArrow />
-        </span>
-      </div>
-    </a>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={item.href} className={cardClass}>
+      {content}
+    </Link>
   );
 }
 
 export default function LinksPage() {
-  const externalItems = [
-    {
-      name: "Official Website",
-      href: OFFICIAL_DOMAIN,
-      note: "Main RROTA ecosystem website",
-    },
-    {
-      name: "RROTA Spin-to-Win",
-      href: LINKS.spin,
-      note: "Live RROTA utility experience",
-    },
-    {
-      name: "SolidProof Audit",
-      href: LINKS.solidproof,
-      note: "SolidProof TrustNet audit reference, 80/100 score and Contract Audited status",
-    },
-    {
-      name: "FreshCoins Audit",
-      href: LINKS.audit,
-      note: "Public FreshCoins audit reference",
-    },
-    {
-      name: "CMC Verification Post",
-      href: LINKS.cmcVerification,
-      note: "Official X confirmation for CoinMarketCap review",
-    },
-    {
-      name: "Token Contract Verification",
-      href: LINKS.solscan,
-      note: "Official Solana token verification on Solscan",
-    },
-    {
-      name: "Buy on Jupiter",
-      href: LINKS.jupiter,
-      note: "Official Jupiter trading link for $RTA",
-    },
-    {
-      name: "Telegram",
-      href: LINKS.telegram,
-      note: "Official RROTA Telegram community",
-    },
-    {
-      name: "Twitter / X",
-      href: LINKS.twitter,
-      note: "Official RROTA X account",
-    },
-    {
-      name: "DexScreener",
-      href: LINKS.dexscreener,
-      note: "Live DEX chart and market data",
-    },
-    {
-      name: "BirdEye",
-      href: LINKS.birdeye,
-      note: "Solana token market tracker",
-    },
-    {
-      name: "GeckoTerminal",
-      href: LINKS.geckoterminal,
-      note: "Pool and market tracker",
-    },
-    {
-      name: "Contact Email",
-      href: LINKS.contactEmail,
-      note: "Official contact: info@rrota.xyz",
-    },
-  ];
-
-  const internalItems = [
-    {
-      name: "Whitepaper",
-      href: "/whitepaper",
-      displayHref: `${OFFICIAL_DOMAIN}/whitepaper`,
-      note: "Official RROTA whitepaper page",
-    },
-    {
-      name: "Privacy Policy",
-      href: "/privacy",
-      displayHref: `${OFFICIAL_DOMAIN}/privacy`,
-      note: "Privacy and data handling information",
-    },
-    {
-      name: "Terms of Service",
-      href: "/terms",
-      displayHref: `${OFFICIAL_DOMAIN}/terms`,
-      note: "Website and platform terms",
-    },
-    {
-      name: "Official Links",
-      href: "/links",
-      displayHref: `${OFFICIAL_DOMAIN}/links`,
-      note: "Verified official RROTA resources",
-    },
-  ];
-
   return (
-    <main
-      className={`${spaceGrotesk.className} relative min-h-screen w-full overflow-hidden bg-[#02030a] pb-16 pt-[110px] text-white`}
-    >
-      {/* Alien-tech background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(0,255,214,0.12),transparent_24%),radial-gradient(circle_at_82%_12%,rgba(168,85,247,0.18),transparent_26%),radial-gradient(circle_at_45%_92%,rgba(14,165,233,0.13),transparent_32%)]" />
-        <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(rgba(103,232,249,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
-        <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(circle,rgba(255,255,255,0.40)_1px,transparent_1px)] [background-size:34px_34px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,3,10,0.12),rgba(2,3,10,0.82),#02030a)]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
-      </div>
+    <>
+      <Navbar />
 
-      <div className="pointer-events-none absolute left-[-160px] top-[160px] h-[520px] w-[520px] rounded-full bg-cyan-400/10 blur-[150px]" />
-      <div className="pointer-events-none absolute right-[-180px] top-[120px] h-[520px] w-[520px] rounded-full bg-fuchsia-500/12 blur-[160px]" />
-      <div className="pointer-events-none absolute bottom-[-160px] left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[160px]" />
+      <main className="relative overflow-hidden bg-[#050711] text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(PAGE_SCHEMA),
+          }}
+        />
 
-      <div className="container relative z-10 mx-auto px-4">
-        <div className="overflow-hidden rounded-[2.35rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.025))] p-6 shadow-[0_0_90px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-10">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/[0.055] px-4 py-2 text-[11px] font-black uppercase tracking-[0.32em] text-cyan-100 shadow-[0_0_42px_rgba(34,211,238,0.14)] backdrop-blur">
-              <span className="relative inline-flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_20px_rgba(103,232,249,1)]" />
-              </span>
-              Verified RROTA Resources
-            </div>
-
-            <Link
-              href="/"
-              className="inline-flex w-fit rounded-2xl border border-white/12 bg-white/[0.055] px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/35 hover:bg-cyan-300/[0.10]"
-            >
-              ← Back to Home
-            </Link>
-          </div>
-
-          <h1 className="mt-6 max-w-5xl text-4xl font-black leading-[0.92] tracking-[-0.055em] text-white md:text-6xl">
-            Official{" "}
-            <span className="bg-[linear-gradient(90deg,#ffffff_0%,#9ff7ff_18%,#5df8d2_42%,#b78cff_72%,#ffffff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-              RROTA Links
-            </span>
-          </h1>
-
-          <p className="mt-5 max-w-[82ch] text-sm leading-8 text-slate-300 md:text-base">
-            Use this page to verify official RROTA resources and access the
-            website, whitepaper, contract, trading links, utility products,
-            community channels, FreshCoins audit, SolidProof TrustNet audit
-            status and contact information.
-          </p>
-
-          {/* Official Contract */}
-          <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-cyan-300/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.10),rgba(168,85,247,0.08),rgba(0,0,0,0.22))] p-5 shadow-[0_0_45px_rgba(34,211,238,0.08)] backdrop-blur">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-100">
-                  Official $RTA Contract
-                </p>
-                <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-300">
-                  Always verify the official Solana mint before trading,
-                  connecting a wallet, or using any RROTA utility.
-                </p>
-              </div>
-
-              <a
-                href={LINKS.solscan}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex w-fit rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-200/50 hover:bg-cyan-300/[0.14]"
-              >
-                Open Solscan{" "}
-                <span className="ml-2">
-                  <ExternalArrow />
-                </span>
-              </a>
-            </div>
-
-            <p className="mt-4 break-all rounded-2xl border border-cyan-300/15 bg-black/20 px-4 py-3 font-mono text-xs text-cyan-50/90">
-              {TOKEN_ADDRESS}
-            </p>
-          </div>
-
-          {/* Official Contact */}
-          <div className="mt-6 rounded-[1.75rem] border border-white/10 bg-black/25 p-5 shadow-[0_0_50px_rgba(0,0,0,0.22)] backdrop-blur">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-white">
-              Official Contact
-            </p>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              For listing reviews, exchange communication, partnership requests,
-              security reports or official verification, contact RROTA only
-              through:
-            </p>
-            <a
-              href={LINKS.contactEmail}
-              className="mt-3 inline-flex rounded-2xl border border-cyan-300/25 bg-cyan-300/[0.08] px-4 py-2 text-sm font-black text-cyan-100 transition hover:border-cyan-200/50 hover:bg-cyan-300/[0.14]"
-            >
-              info@rrota.xyz
-            </a>
-          </div>
-
-          {/* Audit & Verification */}
-          <section className="mt-8 overflow-hidden rounded-[2rem] border border-cyan-300/18 bg-[linear-gradient(135deg,rgba(6,17,32,0.80),rgba(18,8,31,0.78))] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] backdrop-blur-xl md:p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="text-sm font-black uppercase tracking-[0.28em] text-cyan-100">
-                  Audit & Verification
-                </p>
-                <h2 className="mt-3 text-3xl font-black tracking-[-0.045em] text-white md:text-4xl">
-                  RROTA audit layer is now public.
-                </h2>
-                <p className="mt-4 max-w-4xl text-sm leading-7 text-slate-300 md:text-base">
-                  RROTA has completed independent audit reviews through
-                  FreshCoins and SolidProof. SolidProof officially announced the
-                  successful completion of the RROTA smart contract audit, and
-                  RROTA is visible on SolidProof TrustNet with an{" "}
-                  <span className="font-black text-cyan-200">
-                    80/100 Security Score
-                  </span>{" "}
-                  and{" "}
-                  <span className="font-black text-emerald-200">
-                    Contract Audited
-                  </span>{" "}
-                  status.
-                </p>
-              </div>
-
-              <div className="grid w-full gap-2 sm:grid-cols-3 lg:w-[390px]">
-                <div className="rounded-2xl border border-cyan-300/18 bg-cyan-300/[0.08] px-4 py-3 text-center">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">
-                    Score
-                  </div>
-                  <div className="mt-1 text-lg font-black text-white">
-                    80/100
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-emerald-300/18 bg-emerald-300/[0.08] px-4 py-3 text-center">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-200">
-                    Status
-                  </div>
-                  <div className="mt-1 text-lg font-black text-white">
-                    Audited
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-fuchsia-300/18 bg-fuchsia-300/[0.08] px-4 py-3 text-center">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-fuchsia-200">
-                    Chain
-                  </div>
-                  <div className="mt-1 text-lg font-black text-white">
-                    Solana
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-4 lg:grid-cols-2">
-              <AuditCard
-                name="SolidProof"
-                subtitle="80/100 Score"
-                points={[
-                  "Contract Audited status",
-                  "TrustNet visible",
-                  "Official audit announcement completed",
-                ]}
-                href={LINKS.solidproof}
-                cta="Open SolidProof"
-                letters="SP"
-                tone="cyan"
-              />
-
-              <AuditCard
-                name="FreshCoins"
-                subtitle="Audit Reference"
-                points={[
-                  "Public audit review reference",
-                  "RROTA contract review coverage",
-                  "Additional verification layer",
-                ]}
-                href={LINKS.audit}
-                cta="Open FreshCoins"
-                letters="FC"
-                tone="fuchsia"
-              />
-            </div>
-
-            <p className="mt-5 text-xs leading-6 text-slate-400">
-              Audit reviews improve transparency and help identify smart
-              contract risks, but they do not remove market, liquidity, trading
-              or participation risks. Always verify the official contract and
-              links.
-            </p>
-          </section>
-
-          {/* Link Grid */}
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {internalItems.map((i) => (
-              <Link
-                key={i.name}
-                href={i.href}
-                className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.065] hover:shadow-[0_0_45px_rgba(34,211,238,0.12)]"
-              >
-                <span className="absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-300/[0.055] blur-2xl transition group-hover:bg-cyan-300/[0.16]" />
-                <div className="relative flex items-center justify-between gap-3">
-                  <span className="text-base font-black text-white">
-                    {i.name}
-                  </span>
-                  <span className="text-sm font-black uppercase tracking-[0.16em] text-cyan-200">
-                    Open →
-                  </span>
-                </div>
-                <div className="relative mt-3 text-sm leading-6 text-slate-400">
-                  {i.note}
-                </div>
-                <div className="relative mt-3 break-all text-xs text-slate-500">
-                  {i.displayHref}
-                </div>
-              </Link>
-            ))}
-
-            {externalItems.map((i) => (
-              <a
-                key={i.name}
-                href={i.href}
-                target={i.href.startsWith("mailto:") ? undefined : "_blank"}
-                rel={i.href.startsWith("mailto:") ? undefined : "noreferrer"}
-                className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.065] hover:shadow-[0_0_45px_rgba(34,211,238,0.12)]"
-              >
-                <span className="absolute right-0 top-0 h-24 w-24 rounded-full bg-fuchsia-300/[0.045] blur-2xl transition group-hover:bg-cyan-300/[0.14]" />
-                <div className="relative flex items-center justify-between gap-3">
-                  <span className="text-base font-black text-white">
-                    {i.name}
-                  </span>
-                  <span className="text-sm font-black uppercase tracking-[0.16em] text-cyan-200">
-                    {i.href.startsWith("mailto:") ? "Email →" : "Open →"}
-                  </span>
-                </div>
-                <div className="relative mt-3 text-sm leading-6 text-slate-400">
-                  {i.note}
-                </div>
-                <div className="relative mt-3 break-all text-xs text-slate-500">
-                  {i.href}
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* Risk Disclaimer */}
-          <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-white">
-              Risk Disclaimer
-            </p>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              RROTA ($RTA) is a crypto asset on Solana. Crypto assets are
-              volatile and involve risk. Nothing on this website or official
-              pages should be considered financial advice. Always verify
-              official links and make your own decisions.
-            </p>
-          </div>
-
-          {/* Bottom CTA Buttons */}
-          <div className="mt-10 flex flex-col flex-wrap gap-3 sm:flex-row">
-            <Link
-              className="rounded-2xl border border-cyan-300/30 bg-cyan-300/[0.09] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-200/55 hover:bg-cyan-300/[0.15]"
-              href="/"
-            >
-              ← Back to Home
-            </Link>
-
-            <Link
-              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
-              href="/whitepaper"
-            >
-              Whitepaper →
-            </Link>
-
-            <Link
-              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
-              href="/privacy"
-            >
-              Privacy Policy →
-            </Link>
-
-            <Link
-              className="rounded-2xl border border-white/10 bg-white/[0.045] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white/90 transition hover:border-cyan-300/30 hover:bg-white/[0.075]"
-              href="/terms"
-            >
-              Terms →
-            </Link>
-          </div>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_6%,rgba(34,211,238,0.14),transparent_30%),radial-gradient(circle_at_88%_5%,rgba(217,70,239,0.11),transparent_30%),linear-gradient(180deg,#050711_0%,#07101d_52%,#050711_100%)]" />
+          <div className="absolute inset-0 opacity-[0.065] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:58px_58px]" />
         </div>
-      </div>
-    </main>
+
+        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.08] px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-200">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                Official verification hub
+              </div>
+
+              <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+                Start from one trusted page.
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  Verify every RROTA destination.
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-3xl text-sm leading-7 text-white/66 sm:text-base">
+                Use this page to access official RROTA products, token references,
+                market tools, audits, documentation, community channels, contact
+                information, and legal resources.
+              </p>
+            </div>
+
+            <div className="overflow-hidden rounded-[34px] border border-cyan-400/16 bg-white/[0.04] p-6 shadow-[0_0_65px_rgba(34,211,238,0.10)] backdrop-blur-xl">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/[0.09] text-cyan-100">
+                <ShieldIcon />
+              </div>
+
+              <div className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300/68">
+                Official $RTA mint
+              </div>
+
+              <code className="mt-3 block break-all font-mono text-sm font-semibold leading-7 text-white/84">
+                {TOKEN_ADDRESS}
+              </code>
+
+              <p className="mt-5 text-xs leading-6 text-white/48">
+                Compare the complete mint before buying, checking a chart,
+                connecting a wallet, or using a token-related application.
+              </p>
+
+              <a
+                href={EXTERNAL_LINKS.solscan}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/[0.09] px-4 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/[0.15] hover:text-white"
+              >
+                Verify on Solscan
+                <ExternalIcon />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-emerald-300/72">
+              Primary access
+            </div>
+
+            <h2 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
+              The main RROTA destinations.
+            </h2>
+          </div>
+
+          <div className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {primaryAccess.map((item) => (
+              <ResourceCard key={item.title} item={item} />
+            ))}
+          </div>
+        </section>
+
+        {resourceGroups.map((group) => (
+          <section
+            key={group.title}
+            className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8"
+          >
+            <div className={`rounded-[36px] border p-6 sm:p-8 ${group.tone}`}>
+              <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                <div>
+                  <span
+                    className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${group.badge}`}
+                  >
+                    {group.eyebrow}
+                  </span>
+
+                  <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                    {group.title}
+                  </h2>
+                </div>
+
+                <p className="max-w-3xl text-sm leading-7 text-white/58">
+                  {group.description}
+                </p>
+              </div>
+
+              <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {group.items.map((item) => (
+                  <ResourceCard
+                    key={`${group.title}-${item.title}`}
+                    item={item}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        ))}
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="overflow-hidden rounded-[38px] border border-rose-400/14 bg-rose-400/[0.035] p-6 sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <div className="text-[11px] font-black uppercase tracking-[0.24em] text-rose-300/72">
+                  Verification checklist
+                </div>
+
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                  A copied logo does not prove authenticity.
+                </h2>
+
+                <p className="mt-4 text-sm leading-7 text-white/58">
+                  Use the domain, mint, transaction details, and official source
+                  together before trusting a token page, game, bot, message, or
+                  reward claim.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {verificationRules.map((rule) => (
+                  <article
+                    key={rule.title}
+                    className="rounded-2xl border border-white/10 bg-black/15 p-4"
+                  >
+                    <h3 className="font-black text-white">{rule.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-white/56">
+                      {rule.text}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+          <div className="rounded-[38px] border border-cyan-400/16 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(217,70,239,0.08))] p-7 sm:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                  Unsure about a link?
+                </h2>
+
+                <p className="mt-4 max-w-3xl text-sm leading-7 text-white/60">
+                  Return to this page, compare the full destination, and verify the
+                  $RTA mint before connecting a wallet or approving a transaction.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                <a
+                  href={EXTERNAL_LINKS.solscan}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-cyan-400/[0.10] px-5 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/[0.16] hover:text-white"
+                >
+                  Verify the token
+                  <ExternalIcon />
+                </a>
+
+                <a
+                  href={EXTERNAL_LINKS.email}
+                  className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.05] px-5 text-sm font-black text-white/82 transition hover:bg-white/[0.08] hover:text-white"
+                >
+                  Email official contact
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }
