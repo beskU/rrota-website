@@ -1,549 +1,774 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Orbitron, Space_Grotesk } from "next/font/google";
+import Footer from "../components/footer";
+import Navbar from "../components/navbar";
 
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
-  variable: "--font-orbitron",
-});
+const SITE_URL = "https://rrota.xyz";
+const PAGE_URL = `${SITE_URL}/how-to-buy-rrota`;
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-});
+const RROTA_MINT =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
-const RROTA_MINT = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-
-const LINKS = {
-  jupiter: `https://jup.ag/tokens/${RROTA_MINT}`,
-  solscan: `https://solscan.io/token/${RROTA_MINT}`,
-  spin: "https://spin.rrota.xyz",
-  links: "/links",
-  tokenomics: "/tokenomics",
-  roadmap: "/roadmap",
-};
+const JUPITER_URL = `https://jup.ag/tokens/${RROTA_MINT}`;
+const SOLSCAN_URL = `https://solscan.io/token/${RROTA_MINT}`;
+const SPIN_URL = "https://spin.rrota.xyz";
 
 export const metadata: Metadata = {
-  title: "How to Buy RROTA ($RTA) on Jupiter — Official Guide",
+  title: "How to Buy RROTA ($RTA)",
   description:
-    "Learn how to buy RROTA ($RTA) safely on Jupiter using the official Solana mint address. Verify the RROTA contract, avoid fake links, and follow the official buying steps.",
-  keywords: [
-    "How to buy RROTA",
-    "Buy RROTA",
-    "RROTA coin",
-    "RROTA token",
-    "RTA token",
-    "RROTA Solana",
-    "RROTA Jupiter",
-    "RROTA contract address",
-    "RROTA official guide",
-    "RROTA Spin-to-Win",
-  ],
+    "A safety-first guide to accessing RROTA ($RTA) on Solana through Jupiter. Verify the official mint, review every wallet transaction, and avoid fake links.",
   alternates: {
-    canonical: "https://rrota.xyz/how-to-buy-rrota",
+    canonical: PAGE_URL,
   },
   openGraph: {
-    title: "How to Buy RROTA ($RTA) on Jupiter",
+    title: "How to Buy RROTA ($RTA)",
     description:
-      "Official step-by-step guide to buy RROTA ($RTA) safely on Solana using Jupiter and the verified RROTA mint address.",
-    url: "https://rrota.xyz/how-to-buy-rrota",
+      "Follow the official RROTA buying guide: prepare a Solana wallet, verify the $RTA mint, open Jupiter safely, and review the swap before signing.",
+    url: PAGE_URL,
     siteName: "RROTA",
     type: "article",
-    images: [
-      {
-        url: "https://rrota.xyz/rrota-og.png",
-        width: 1200,
-        height: 630,
-        alt: "How to Buy RROTA on Jupiter",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "How to Buy RROTA ($RTA) on Jupiter",
+    title: "How to Buy RROTA ($RTA)",
     description:
-      "Official step-by-step guide to buy RROTA safely using the verified Solana mint address.",
-    images: ["https://rrota.xyz/rrota-og.png"],
+      "A safety-first guide to verifying and accessing $RTA through Jupiter on Solana.",
   },
 };
 
-const steps = [
+type GuideStep = {
+  number: string;
+  title: string;
+  summary: string;
+  checklist: string[];
+  action?: {
+    label: string;
+    href: string;
+    external?: boolean;
+  };
+};
+
+const guideSteps: GuideStep[] = [
   {
     number: "01",
-    title: "Install a Solana wallet",
-    text: "Use a trusted Solana wallet such as Phantom. Keep your seed phrase private and never share it with anyone.",
+    title: "Prepare a compatible Solana wallet",
+    summary:
+      "Use a Solana wallet you understand and control. Create or import it only through the wallet provider’s official application or website.",
+    checklist: [
+      "Back up the recovery phrase offline",
+      "Never send the recovery phrase to support",
+      "Use a separate wallet for experimental applications when appropriate",
+      "Confirm the wallet is connected to Solana",
+    ],
   },
   {
     number: "02",
-    title: "Add SOL for network fees",
-    text: "You need SOL for the swap and small Solana network fees. Start with an amount you understand and can afford to risk.",
+    title: "Fund the wallet with SOL",
+    summary:
+      "SOL is needed for the amount you intend to swap and for Solana network fees. Transfer only an amount you understand and can afford to risk.",
+    checklist: [
+      "Confirm the destination wallet address",
+      "Send a small test amount when using a new withdrawal route",
+      "Keep enough SOL available for network fees",
+      "Wait for the transfer to appear before continuing",
+    ],
   },
   {
     number: "03",
-    title: "Open Jupiter safely",
-    text: "Use the official RROTA website or official links page before opening any trading link. Avoid links sent by unknown accounts.",
+    title: "Verify the official $RTA mint",
+    summary:
+      "The mint address is the token’s primary identifier. A copied name, ticker, logo, or social profile is not enough to verify the real token.",
+    checklist: [
+      "Compare every character of the mint",
+      "Open the token through the official Solscan route",
+      "Do not rely on screenshots or shortened addresses",
+      "Reject any token page showing a different mint",
+    ],
+    action: {
+      label: "Verify on Solscan",
+      href: SOLSCAN_URL,
+      external: true,
+    },
   },
   {
     number: "04",
-    title: "Verify the official mint",
-    text: `Before swapping, confirm the official $RTA mint address: ${RROTA_MINT}.`,
+    title: "Open Jupiter through the official route",
+    summary:
+      "Use the direct Jupiter token route published on rrota.xyz. Avoid swap links sent through private messages, replies, advertisements, or unknown websites.",
+    checklist: [
+      "Confirm the browser domain before connecting",
+      "Check that the selected output token is the verified $RTA mint",
+      "Do not approve unrelated wallet requests",
+      "Close the page if the token or destination changes unexpectedly",
+    ],
+    action: {
+      label: "Open Jupiter",
+      href: JUPITER_URL,
+      external: true,
+    },
   },
   {
     number: "05",
-    title: "Swap SOL to $RTA",
-    text: "Choose your amount, review the transaction carefully, and approve the swap only if the token and details are correct.",
+    title: "Choose the amount and review the quote",
+    summary:
+      "Enter the amount you want to swap, then inspect the route, expected output, price impact, slippage, fees, and wallet balance.",
+    checklist: [
+      "Start with an amount you understand",
+      "Review the expected $RTA output",
+      "Check price impact and slippage",
+      "Keep enough SOL for fees and future transactions",
+    ],
   },
   {
     number: "06",
-    title: "Follow official channels",
-    text: "After buying, use official RROTA channels for updates, Spin-to-Win access, safety notices, and ecosystem announcements.",
+    title: "Review the wallet transaction before signing",
+    summary:
+      "The wallet confirmation is the final checkpoint. Read the transaction details and reject anything that does not match the intended swap.",
+    checklist: [
+      "Confirm the connected wallet",
+      "Confirm the token and amount",
+      "Review requested permissions",
+      "Reject unexpected approvals, transfers, or account changes",
+    ],
   },
-];
-
-const safetyChecks = [
-  "Verify the official mint address before swapping.",
-  "Use only rrota.xyz, official RROTA social links, and trusted market tools.",
-  "Never trust private messages claiming to be support.",
-  "Never share your seed phrase or private key.",
-  "Check the wallet transaction before approving it.",
-  "Avoid fake RROTA websites, clone tokens, and random swap links.",
-];
-
-const faqs = [
   {
-    question: "Where can I buy RROTA?",
-    answer:
-      "RROTA ($RTA) can be bought on Solana through Jupiter using the official RROTA mint address. Always verify the token before swapping.",
+    number: "07",
+    title: "Verify the completed swap",
+    summary:
+      "After confirmation, check the wallet balance and transaction history. Use Solscan when you need an independent on-chain record.",
+    checklist: [
+      "Wait for the transaction to finalize",
+      "Confirm the received token uses the official mint",
+      "Save the transaction signature when needed",
+      "Do not repeat the swap because a wallet interface updates slowly",
+    ],
   },
+  {
+    number: "08",
+    title: "Continue through official RROTA products",
+    summary:
+      "Use the official website for ecosystem updates, Spin-to-Win access, roadmap progress, token information, and security notices.",
+    checklist: [
+      "Bookmark rrota.xyz",
+      "Use the official links directory",
+      "Review product rules before participating",
+      "Ignore private messages offering special access or returns",
+    ],
+    action: {
+      label: "Explore Spin-to-Win",
+      href: SPIN_URL,
+      external: true,
+    },
+  },
+];
+
+const preSwapChecks = [
+  {
+    title: "Correct domain",
+    text:
+      "Check the full website address before connecting a wallet. Look-alike characters and copied designs are common phishing methods.",
+  },
+  {
+    title: "Correct mint",
+    text:
+      "The official mint must match exactly. The ticker $RTA alone is not a reliable identifier.",
+  },
+  {
+    title: "Reasonable transaction",
+    text:
+      "The wallet request should match the action you initiated. Reject unexpected token transfers, permissions, or account changes.",
+  },
+  {
+    title: "Known risk",
+    text:
+      "Crypto assets can lose value and liquidity can change quickly. Use an amount you can afford to lose.",
+  },
+];
+
+const commonMistakes = [
+  {
+    title: "Searching only by token name",
+    text:
+      "Clone tokens can use the same name and symbol. Always verify the complete mint address.",
+  },
+  {
+    title: "Opening links from private messages",
+    text:
+      "Impersonators may claim to be support, administrators, promoters, or team members. Start from rrota.xyz instead.",
+  },
+  {
+    title: "Signing before reading",
+    text:
+      "A familiar interface does not make every wallet request safe. Review the requested action before approving it.",
+  },
+  {
+    title: "Using the entire wallet balance",
+    text:
+      "Keep SOL available for network fees and avoid committing funds needed for other obligations.",
+  },
+  {
+    title: "Expecting guaranteed returns",
+    text:
+      "RROTA utility, product development, audits, or community activity do not guarantee price appreciation.",
+  },
+  {
+    title: "Sharing recovery information",
+    text:
+      "No legitimate RROTA representative or wallet provider needs your seed phrase, private key, or recovery code.",
+  },
+];
+
+const faqItems = [
   {
     question: "What is the official RROTA mint address?",
-    answer: `The official RROTA ($RTA) Solana mint address is ${RROTA_MINT}. Always verify this address before trading or connecting to any third-party tool.`,
+    answer: RROTA_MINT,
   },
   {
-    question: "Is RROTA on Solana?",
+    question: "Where is the official Jupiter route?",
     answer:
-      "Yes. RROTA ($RTA) is a Solana SPL token connected to the wider RROTA ecosystem, including the Spin-to-Win utility and future ecosystem plans.",
+      "The official guide links directly to Jupiter using the verified RROTA mint. You can also begin from the RROTA official links page.",
   },
   {
-    question: "Do I need Phantom to buy RROTA?",
+    question: "Do I need a specific Solana wallet?",
     answer:
-      "You can use a compatible Solana wallet. Phantom is one common option for Solana users, but you should use a wallet you trust and understand.",
+      "No single wallet is required by this guide. Use a compatible Solana wallet that you trust, understand, and obtained from its official source.",
+  },
+  {
+    question: "How much SOL should I use?",
+    answer:
+      "That is a personal financial decision. Use only an amount you understand and can afford to lose, while keeping enough SOL for network fees.",
+  },
+  {
+    question: "Why does the quoted amount change?",
+    answer:
+      "Swap quotes can change because token price, liquidity, routing, slippage, and network conditions are dynamic.",
+  },
+  {
+    question: "Is buying $RTA required to use every RROTA page?",
+    answer:
+      "No. Public information, roadmap pages, the blog, and official resources can be viewed without buying the token. Product-specific rules may vary.",
   },
   {
     question: "Is this financial advice?",
     answer:
-      "No. This guide is for education and safety only. Crypto assets are risky, prices can change quickly, and users should always do their own research.",
+      "No. This page is educational and focuses on verification and transaction safety. It does not recommend an investment amount or promise returns.",
   },
 ];
 
-const jsonLd = {
+function ExternalIcon({
+  className = "h-4 w-4",
+}: {
+  className?: string;
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h5" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg
+      className="h-7 w-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+const HOW_TO_SCHEMA = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebPage",
-      "@id": "https://rrota.xyz/how-to-buy-rrota#webpage",
-      url: "https://rrota.xyz/how-to-buy-rrota",
-      name: "How to Buy RROTA ($RTA) on Jupiter",
+      "@id": `${PAGE_URL}#webpage`,
+      url: PAGE_URL,
+      name: "How to Buy RROTA ($RTA)",
       description:
-        "Official guide explaining how to buy RROTA safely on Solana using Jupiter and the verified RROTA mint address.",
+        "A safety-first guide to accessing RROTA through Jupiter using the verified Solana mint.",
       isPartOf: {
         "@type": "WebSite",
         name: "RROTA",
-        url: "https://rrota.xyz",
+        url: SITE_URL,
       },
     },
     {
       "@type": "HowTo",
+      "@id": `${PAGE_URL}#howto`,
       name: "How to Buy RROTA ($RTA) on Jupiter",
       description:
-        "Step-by-step guide to buy RROTA safely on Solana using Jupiter.",
-      step: steps.map((step, index) => ({
+        "Prepare a Solana wallet, verify the official RROTA mint, review the Jupiter quote, and confirm the wallet transaction safely.",
+      totalTime: "PT15M",
+      supply: [
+        {
+          "@type": "HowToSupply",
+          name: "A compatible Solana wallet",
+        },
+        {
+          "@type": "HowToSupply",
+          name: "SOL for the intended swap and network fees",
+        },
+      ],
+      tool: [
+        {
+          "@type": "HowToTool",
+          name: "Jupiter",
+        },
+        {
+          "@type": "HowToTool",
+          name: "Solscan",
+        },
+      ],
+      step: guideSteps.map((step, index) => ({
         "@type": "HowToStep",
         position: index + 1,
         name: step.title,
-        text: step.text,
+        text: `${step.summary} ${step.checklist.join(". ")}.`,
+        url: `${PAGE_URL}#step-${index + 1}`,
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${PAGE_URL}#faq`,
+      mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
       })),
     },
   ],
 };
 
-export default function HowToBuyRROTA() {
+export default function HowToBuyRrotaPage() {
   return (
-    <main
-      className={`${spaceGrotesk.variable} ${orbitron.variable} min-h-screen overflow-hidden bg-[#03040a] text-white [font-family:var(--font-space-grotesk)]`}
-    >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
-      />
+    <>
+      <Navbar />
 
-      <PageNav />
+      <main className="relative overflow-hidden bg-[#050711] text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(HOW_TO_SCHEMA),
+          }}
+        />
 
-      <section className="relative isolate overflow-hidden border-b border-white/10 px-5 py-20 sm:px-8 lg:px-12 lg:py-24">
-        <div className="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_12%,rgba(34,211,238,0.22),transparent_32%),radial-gradient(circle_at_82%_14%,rgba(217,70,239,0.20),transparent_34%),radial-gradient(circle_at_50%_95%,rgba(250,204,21,0.10),transparent_40%),linear-gradient(180deg,#040511_0%,#080717_55%,#03040a_100%)]" />
-        <div className="absolute inset-0 -z-10 opacity-[0.11] [background-image:linear-gradient(rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
-        <div className="absolute left-1/2 top-8 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_6%,rgba(34,211,238,0.14),transparent_30%),radial-gradient(circle_at_88%_5%,rgba(217,70,239,0.11),transparent_30%),linear-gradient(180deg,#050711_0%,#07101d_52%,#050711_100%)]" />
+          <div className="absolute inset-0 opacity-[0.065] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:58px_58px]" />
+        </div>
 
-        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]">
-          <div>
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <Badge>Official Buying Guide</Badge>
-              <Badge tone="pink">$RTA on Solana</Badge>
+        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+            <div>
+              <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/9 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-200">
+                Official safety-first guide
+              </div>
+
+              <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+                How to access RROTA
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  without skipping verification.
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-3xl text-sm leading-7 text-white/66 sm:text-base">
+                Prepare a Solana wallet, confirm the official $RTA mint, open
+                Jupiter through a trusted route, and review every transaction
+                before signing. Buying a token is optional; safe verification is
+                not.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a
+                  href={JUPITER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 to-sky-500 px-6 text-sm font-black text-white shadow-[0_0_30px_rgba(34,211,238,0.16)] transition hover:brightness-110"
+                >
+                  Open Jupiter
+                  <ExternalIcon />
+                </a>
+
+                <a
+                  href={SOLSCAN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.045] px-6 text-sm font-black text-white/82 transition hover:border-cyan-300/20 hover:bg-white/[0.07] hover:text-white"
+                >
+                  Verify $RTA first
+                  <ExternalIcon />
+                </a>
+
+                <Link
+                  href="/links"
+                  className="inline-flex h-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] px-6 text-sm font-black text-white/68 transition hover:bg-white/[0.07] hover:text-white"
+                >
+                  Official links
+                </Link>
+              </div>
             </div>
 
-            <h1 className="max-w-5xl text-4xl font-black leading-[0.98] tracking-[-0.06em] sm:text-6xl lg:text-7xl">
-              <span className="[font-family:var(--font-orbitron)]">
-                How to Buy
-              </span>{" "}
-              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text [font-family:var(--font-orbitron)] text-transparent">
-                RROTA ($RTA)
-              </span>
-              <span className="block [font-family:var(--font-orbitron)]">
-                Safely.
-              </span>
-            </h1>
+            <div className="overflow-hidden rounded-[34px] border border-cyan-400/16 bg-white/[0.04] p-6 shadow-[0_0_60px_rgba(34,211,238,0.10)] backdrop-blur-xl">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex h-13 w-13 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/9 text-cyan-100">
+                  <ShieldIcon />
+                </div>
 
-            <p className="mt-7 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-              The official RROTA buying guide: verify the mint, open Jupiter
-              through trusted sources, review every wallet transaction, and
-              avoid fake links before swapping into $RTA.
+                <span className="rounded-full border border-amber-400/18 bg-amber-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-amber-100">
+                  Verify before connecting
+                </span>
+              </div>
+
+              <div className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300/68">
+                Official Solana mint
+              </div>
+
+              <code className="mt-3 block break-all font-mono text-sm font-semibold leading-7 text-white/84">
+                {RROTA_MINT}
+              </code>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {[
+                  ["Network", "Solana"],
+                  ["Token", "RROTA"],
+                  ["Symbol", "$RTA"],
+                  ["Official route", "Jupiter"],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                  >
+                    <div className="text-[9px] font-black uppercase tracking-[0.17em] text-white/38">
+                      {label}
+                    </div>
+                    <div className="mt-1 text-sm font-black text-white">
+                      {value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="mt-5 text-xs leading-6 text-white/48">
+                Never verify a token using only its name, symbol, price, logo, or
+                a screenshot.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/72">
+              Before opening a swap
+            </div>
+
+            <h2 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
+              Complete four checks first.
+            </h2>
+
+            <p className="mt-4 text-sm leading-7 text-white/58">
+              These checks reduce avoidable mistakes before a wallet is connected
+              or a transaction is created.
             </p>
+          </div>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a
-                href={LINKS.jupiter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-yellow-200 px-7 text-sm font-black uppercase tracking-[0.18em] !text-[#03040a] shadow-[0_0_46px_rgba(34,211,238,0.28)] transition hover:scale-[1.02]"
-                style={{ color: "#03040a" }}
+          <div className="mt-9 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {preSwapChecks.map((check, index) => (
+              <div
+                key={check.title}
+                className="rounded-[28px] border border-white/10 bg-white/[0.035] p-5"
               >
-                <span className="absolute inset-0 translate-x-[-140%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.55),transparent)] transition duration-700 group-hover:translate-x-[140%]" />
-                <span className="relative">Buy on Jupiter</span>
-              </a>
+                <div className="font-mono text-xs font-black text-cyan-300/50">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
 
-              <a
-                href={LINKS.solscan}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-white/[0.06] px-7 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition hover:border-cyan-300/45 hover:bg-cyan-300/10"
+                <h3 className="mt-4 text-lg font-black text-white">
+                  {check.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-white/56">
+                  {check.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr]">
+            <div>
+              <div className="sticky top-28">
+                <div className="text-[11px] font-black uppercase tracking-[0.24em] text-fuchsia-300/72">
+                  Step-by-step
+                </div>
+
+                <h2 className="mt-3 text-4xl font-black tracking-[-0.04em]">
+                  A safer path from wallet setup to final verification.
+                </h2>
+
+                <p className="mt-4 max-w-xl text-sm leading-7 text-white/58">
+                  Move through the steps in order. The verification step comes
+                  before the trading interface—not after it.
+                </p>
+
+                <div className="mt-6 rounded-2xl border border-amber-400/14 bg-amber-400/[0.05] p-4 text-sm leading-6 text-amber-100/72">
+                  This guide does not recommend an investment amount or guarantee
+                  that buying $RTA is suitable for you.
+                </div>
+              </div>
+            </div>
+
+            <ol className="space-y-4">
+              {guideSteps.map((step, index) => (
+                <li
+                  id={`step-${index + 1}`}
+                  key={step.number}
+                  className="scroll-mt-28 rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl sm:p-6"
+                >
+                  <div className="grid gap-5 sm:grid-cols-[auto_1fr]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/9 font-mono text-xs font-black text-cyan-200">
+                      {step.number}
+                    </div>
+
+                    <div>
+                      <h3 className="text-2xl font-black tracking-[-0.03em] text-white">
+                        {step.title}
+                      </h3>
+
+                      <p className="mt-3 text-sm leading-7 text-white/60">
+                        {step.summary}
+                      </p>
+
+                      <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+                        {step.checklist.map((item) => (
+                          <li
+                            key={item}
+                            className="flex gap-3 rounded-xl border border-white/[0.07] bg-black/15 p-3 text-sm leading-6 text-white/60"
+                          >
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {step.action ? (
+                        step.action.external ? (
+                          <a
+                            href={step.action.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/9 px-4 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/15 hover:text-white"
+                          >
+                            {step.action.label}
+                            <ExternalIcon />
+                          </a>
+                        ) : (
+                          <Link
+                            href={step.action.href}
+                            className="mt-5 inline-flex h-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-400/9 px-4 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/15 hover:text-white"
+                          >
+                            {step.action.label}
+                          </Link>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+            <div>
+              <div className="text-[11px] font-black uppercase tracking-[0.24em] text-rose-300/72">
+                Avoidable mistakes
+              </div>
+
+              <h2 className="mt-3 text-4xl font-black tracking-[-0.04em]">
+                Most wallet losses do not begin with advanced technology.
+              </h2>
+
+              <p className="mt-4 max-w-xl text-sm leading-7 text-white/58">
+                They often begin with a copied link, rushed approval, false support
+                message, or an assumption that a token name proves authenticity.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {commonMistakes.map((mistake) => (
+                <div
+                  key={mistake.title}
+                  className="rounded-2xl border border-rose-400/12 bg-rose-400/[0.035] p-5"
+                >
+                  <h3 className="font-black text-white">{mistake.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-white/56">
+                    {mistake.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="overflow-hidden rounded-[38px] border border-cyan-400/16 bg-cyan-400/[0.045] p-6 sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/72">
+                  After the transaction
+                </div>
+
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                  Verification continues after the swap.
+                </h2>
+
+                <p className="mt-4 text-sm leading-7 text-white/58">
+                  Confirm what was received, keep records when needed, and continue
+                  through official product and community routes.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  "Confirm the received token uses the official mint.",
+                  "Check the transaction signature on Solscan when needed.",
+                  "Keep enough SOL for future network transactions.",
+                  "Review product rules before deposits, withdrawals, or rewards.",
+                  "Use official channels for support and announcements.",
+                  "Never respond to recovery, verification, or investment DMs.",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex gap-3 rounded-2xl border border-white/10 bg-black/15 p-4"
+                  >
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
+                    <span className="text-sm leading-6 text-white/62">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7 flex flex-col gap-3 border-t border-cyan-300/12 pt-6 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/tokenomics"
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-black text-white/74 transition hover:bg-white/[0.07] hover:text-white"
               >
-                Verify Contract
-              </a>
+                Review tokenomics
+              </Link>
 
               <Link
-                href={LINKS.links}
-                className="inline-flex h-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-7 text-sm font-black uppercase tracking-[0.18em] text-white/85 transition hover:border-fuchsia-300/35 hover:bg-fuchsia-300/10 hover:text-white"
+                href="/roadmap"
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-black text-white/74 transition hover:bg-white/[0.07] hover:text-white"
               >
-                Official Links
+                Review roadmap
+              </Link>
+
+              <Link
+                href="/risk-disclaimer"
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-amber-400/15 bg-amber-400/[0.055] px-4 text-sm font-black text-amber-100 transition hover:bg-amber-400/10 hover:text-white"
+              >
+                Read risk disclaimer
               </Link>
             </div>
           </div>
+        </section>
 
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-[2.2rem] bg-gradient-to-br from-cyan-400/30 via-fuchsia-500/20 to-yellow-300/15 blur-xl" />
-            <div className="relative overflow-hidden rounded-[2.2rem] border border-white/12 bg-[#080b16]/88 p-6 shadow-[0_0_80px_rgba(34,211,238,0.14)] backdrop-blur-xl">
-              <div className="absolute right-0 top-0 h-36 w-36 rounded-full bg-cyan-400/10 blur-3xl" />
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+            <div>
+              <div className="text-[11px] font-black uppercase tracking-[0.24em] text-fuchsia-300/72">
+                Buying guide FAQ
+              </div>
 
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200">
-                Official Solana Mint
-              </p>
+              <h2 className="mt-3 text-4xl font-black tracking-[-0.04em]">
+                Common questions before using Jupiter.
+              </h2>
+            </div>
 
-              <div className="mt-5 rounded-3xl border border-cyan-300/20 bg-cyan-300/[0.07] p-5">
-                <p className="break-all font-mono text-sm font-semibold leading-7 text-cyan-50">
-                  {RROTA_MINT}
+            <div className="space-y-3">
+              {faqItems.map((item) => (
+                <article
+                  key={item.question}
+                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-5"
+                >
+                  <h3 className="font-black text-white">{item.question}</h3>
+                  <p className="mt-2 break-words text-sm leading-7 text-white/58">
+                    {item.answer}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+          <div className="rounded-[38px] border border-cyan-400/16 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(217,70,239,0.08))] p-7 sm:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                  The official mint is your first checkpoint.
+                </h2>
+
+                <p className="mt-4 max-w-3xl text-sm leading-7 text-white/60">
+                  Verify the token on Solscan before opening Jupiter. Then review
+                  the quote and wallet transaction before approving anything.
                 </p>
               </div>
 
-              <div className="mt-6 grid gap-3">
-                <InfoRow label="Network" value="Solana" />
-                <InfoRow label="Token" value="RROTA" />
-                <InfoRow label="Ticker" value="$RTA" />
-                <InfoRow label="Swap" value="Jupiter" />
-                <InfoRow label="Verify" value="Solscan" />
-              </div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                <a
+                  href={SOLSCAN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.05] px-5 text-sm font-black text-white/82 transition hover:bg-white/[0.08] hover:text-white"
+                >
+                  Verify first
+                  <ExternalIcon />
+                </a>
 
-              <div className="mt-6 rounded-3xl border border-yellow-300/20 bg-yellow-300/10 p-5">
-                <p className="text-sm font-semibold leading-7 text-yellow-100">
-                  Always verify the mint address before swapping. Do not trust
-                  random DMs, fake support accounts, clone websites, or
-                  screenshots.
-                </p>
+                <a
+                  href={JUPITER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 px-5 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/16 hover:text-white"
+                >
+                  Then open Jupiter
+                  <ExternalIcon />
+                </a>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <section className="px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeader
-            eyebrow="Step-by-step"
-            title="Buy RROTA without guessing."
-            text="Follow a simple, safer buying path: wallet, SOL, official links, mint verification, Jupiter swap, and final transaction review."
-          />
-
-          <div className="mt-11 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {steps.map((step) => (
-              <article
-                key={step.number}
-                className="group relative overflow-hidden rounded-[1.65rem] border border-white/10 bg-white/[0.045] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.065]"
-              >
-                <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-400/8 blur-2xl transition group-hover:bg-fuchsia-400/10" />
-
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-cyan-300/10 text-sm font-black text-cyan-100 [font-family:var(--font-orbitron)]">
-                  {step.number}
-                </div>
-
-                <h3 className="text-xl font-black tracking-[-0.03em] text-white">
-                  {step.title}
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-slate-300">
-                  {step.text}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-white/[0.025] px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-          <SectionHeader
-            eyebrow="Safety checklist"
-            title="Verify before you swap."
-            text="RROTA users should treat verification as the first step. Fake token pages, look-alike domains, and private-message scams are common across crypto."
-          />
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {safetyChecks.map((item) => (
-              <div
-                key={item}
-                className="rounded-3xl border border-white/10 bg-[#070a14]/80 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-              >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-300/10 text-emerald-200">
-                  ✓
-                </div>
-                <p className="text-sm font-medium leading-7 text-slate-200">
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-5 lg:grid-cols-3">
-            <ResourceCard
-              title="Official Links"
-              text="Verify RROTA resources before opening swap, chart, community, or game links."
-              href="/links"
-              label="Open links"
-            />
-            <ResourceCard
-              title="Tokenomics"
-              text="Review the $RTA token overview, utility context, safety notes, and on-chain references."
-              href="/tokenomics"
-              label="View tokenomics"
-            />
-            <ResourceCard
-              title="Roadmap"
-              text="Follow the ecosystem direction across Spin-to-Win, crypto gaming, rewards, and future utility."
-              href="/roadmap"
-              label="View roadmap"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/10 px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
-        <div className="mx-auto max-w-4xl">
-          <SectionHeader
-            eyebrow="FAQ"
-            title="RROTA buying questions."
-            text="Helpful answers for users who want to understand how to buy and verify RROTA safely."
-          />
-
-          <div className="mt-9 space-y-4">
-            {faqs.map((faq) => (
-              <article
-                key={faq.question}
-                className="rounded-[1.45rem] border border-white/10 bg-white/[0.045] p-6"
-              >
-                <h3 className="text-lg font-black tracking-[-0.02em] text-white">
-                  {faq.question}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300">
-                  {faq.answer}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 pb-20 sm:px-8 lg:px-12">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2.2rem] border border-cyan-300/20 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.16),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(217,70,239,0.14),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.025))] p-8 text-center shadow-[0_0_75px_rgba(34,211,238,0.15)]">
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-100">
-            Ready to verify?
-          </p>
-
-          <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">
-            Use the official mint and avoid fake RROTA links.
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300">
-            RROTA does not need fake support accounts, private-message offers,
-            or copied websites. Always verify the contract and review every
-            wallet transaction before signing.
-          </p>
-
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <a
-              href={LINKS.jupiter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2xl bg-white px-7 py-4 text-sm font-black uppercase tracking-[0.18em] !text-[#03040a] transition hover:scale-[1.02]"
-              style={{ color: "#03040a" }}
-            >
-              Buy on Jupiter
-            </a>
-            <a
-              href={LINKS.spin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2xl border border-white/15 bg-white/8 px-7 py-4 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:bg-white/12"
-            >
-              Open Spin-to-Win
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
-
-function PageNav() {
-  return (
-    <div className="relative z-50 border-b border-white/10 bg-[#03040a]/85 px-5 py-4 backdrop-blur-xl sm:px-8 lg:px-12">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-white/45">
-          <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.9)]" />
-          RROTA Official Page
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/"
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 text-xs font-black uppercase tracking-[0.16em] text-cyan-100 transition hover:border-cyan-300/45 hover:bg-cyan-300/15"
-          >
-            Home
-          </Link>
-
-          <Link
-            href="/links"
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-xs font-black uppercase tracking-[0.16em] text-white/85 transition hover:border-fuchsia-300/35 hover:bg-fuchsia-300/10 hover:text-white"
-          >
-            Official Links
-          </Link>
-
-          <Link
-            href="/blog"
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-xs font-black uppercase tracking-[0.16em] text-white/85 transition hover:border-cyan-300/35 hover:bg-cyan-300/10 hover:text-white"
-          >
-            Blog
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Badge({
-  children,
-  tone = "cyan",
-}: {
-  children: React.ReactNode;
-  tone?: "cyan" | "pink";
-}) {
-  const toneClass =
-    tone === "pink"
-      ? "border-fuchsia-300/25 bg-fuchsia-300/10 text-fuchsia-100"
-      : "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
-
-  return (
-    <span
-      className={`rounded-full border px-4 py-1.5 text-xs font-black uppercase tracking-[0.24em] ${toneClass}`}
-    >
-      {children}
-    </span>
-  );
-}
-
-function SectionHeader({
-  eyebrow,
-  title,
-  text,
-}: {
-  eyebrow: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="max-w-3xl">
-      <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-200">
-        {eyebrow}
-      </p>
-      <h2 className="mt-4 text-3xl font-black leading-tight tracking-[-0.05em] text-white sm:text-5xl">
-        {title}
-      </h2>
-      <p className="mt-4 text-base leading-8 text-slate-300">{text}</p>
-    </div>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3">
-      <span className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">
-        {label}
-      </span>
-      <span className="text-sm font-black text-white">{value}</span>
-    </div>
-  );
-}
-
-function ResourceCard({
-  title,
-  text,
-  href,
-  label,
-}: {
-  title: string;
-  text: string;
-  href: string;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-[1.8rem] border border-white/10 bg-white/[0.045] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition duration-300 hover:-translate-y-1 hover:border-fuchsia-300/35 hover:bg-white/[0.065]"
-    >
-      <h3 className="text-2xl font-black tracking-[-0.04em] text-white">
-        {title}
-      </h3>
-      <p className="mt-3 min-h-[84px] text-sm leading-7 text-slate-300">
-        {text}
-      </p>
-      <span className="mt-5 inline-flex rounded-2xl border border-white/12 bg-white/8 px-5 py-3 text-sm font-bold text-white transition group-hover:border-cyan-300/45 group-hover:bg-cyan-300/10">
-        {label}
-      </span>
-    </Link>
+      <Footer />
+    </>
   );
 }
