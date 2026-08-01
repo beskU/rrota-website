@@ -1,212 +1,168 @@
 import Link from "next/link";
 import { getAllArticles } from "@/app/lib/articles";
 
-const focusItems = [
-  "RROTA ecosystem updates",
-  "Token verification and safety",
-  "Utility progress and roadmap",
-];
+function ArrowIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+function ArticleIcon() {
+  return (
+    <svg
+      className="h-5 w-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+      <path d="M14 2v6h6" />
+      <path d="M8 13h8" />
+      <path d="M8 17h5" />
+    </svg>
+  );
+}
 
 export default function BlogPreview() {
   const articles = getAllArticles().slice(0, 3);
 
   return (
-    <section className="relative w-full overflow-hidden py-16 sm:py-20">
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[380px] w-[380px] -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[110px]" />
-        <div className="absolute right-[-140px] top-20 h-[360px] w-[360px] rounded-full bg-fuchsia-500/10 blur-[120px]" />
-        <div className="absolute bottom-[-160px] left-[-120px] h-[420px] w-[420px] rounded-full bg-purple-600/10 blur-[120px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:54px_54px] opacity-25" />
-      </div>
-
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
-        {/* Header */}
-        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+    <section
+      id="Updates"
+      className="relative w-full scroll-mt-28 px-4 py-16 text-white sm:px-6 sm:py-20 lg:px-8"
+    >
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-fuchsia-200 shadow-[0_0_30px_rgba(217,70,239,0.12)]">
-              <span className="h-2 w-2 rounded-full bg-fuchsia-300 shadow-[0_0_18px_rgba(217,70,239,0.95)]" />
-              RROTA Intelligence
+            <div className="inline-flex items-center gap-2 rounded-full border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-fuchsia-200">
+              <span className="h-2 w-2 rounded-full bg-fuchsia-300 shadow-[0_0_12px_rgba(217,70,239,0.9)]" />
+              Latest Updates
             </div>
 
-            <h2 className="max-w-4xl text-3xl font-black tracking-tight text-white sm:text-4xl md:text-5xl">
-              Official updates from the{" "}
-              <span className="bg-gradient-to-r from-cyan-200 via-fuchsia-200 to-yellow-200 bg-clip-text text-transparent">
+            <h2 className="mt-5 max-w-4xl text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl">
+              Follow the progress of the
+              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
                 RROTA ecosystem.
               </span>
             </h2>
 
-            <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
-              Read official RROTA articles covering $RTA on Solana, token
-              verification, ecosystem progress, Spin-to-Win updates, Crypto
-              Shooter planning, public transportation utility direction, and
-              long-term project visibility.
+            <p className="mt-5 max-w-3xl text-sm leading-7 text-white/66 sm:text-base">
+              Official articles document shipped products, ecosystem development,
+              token verification, community activity, security improvements, and
+              future roadmap work.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <Link
-              href="/blog"
-              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-300 via-fuchsia-300 to-yellow-200 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.18)] transition hover:scale-[1.02]"
-            >
-              View All Articles
-              <span className="ml-2">→</span>
-            </Link>
-
-            <Link
-              href="/#ecosystem"
-              className="inline-flex items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-cyan-100 transition hover:border-cyan-200/40 hover:bg-cyan-300/15"
-            >
-              Explore Ecosystem
-              <span className="ml-2">↓</span>
-            </Link>
-          </div>
+          <Link
+            href="/blog"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-300/22 bg-cyan-400/10 px-5 text-sm font-black text-cyan-100 transition-all hover:border-cyan-200/40 hover:bg-cyan-400/15 hover:text-white"
+          >
+            View all updates
+            <ArrowIcon />
+          </Link>
         </div>
 
-        {/* Focus strip */}
-        <div className="mb-6 grid gap-3 md:grid-cols-3">
-          {focusItems.map((item) => (
-            <div
-              key={item}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 shadow-xl shadow-black/20 backdrop-blur-xl"
-            >
-              <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-cyan-200">
-                  ◆
-                </span>
-                <p className="text-sm font-bold text-white">{item}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {articles.length ? (
+          <div className="mt-9 grid gap-5 md:grid-cols-3">
+            {articles.map((article, index) => {
+              const tags = article.meta.tags?.slice(0, 2) ?? [];
 
-        {/* Articles */}
-        <div className="grid gap-5 md:grid-cols-3">
-          {articles.map((article, index) => {
-            const isFeatured = index === 0;
+              return (
+                <article
+                  key={article.slug}
+                  className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-cyan-300/24 hover:bg-cyan-400/5"
+                >
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.10),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.08),transparent_36%)] opacity-0 transition-opacity group-hover:opacity-100" />
 
-            return (
-              <Link
-                key={article.slug}
-                href={`/blog/${article.slug}`}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#070A12]/90 p-5 shadow-2xl shadow-cyan-950/20 backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.06]"
-              >
-                {/* Card glow */}
-                <div className="pointer-events-none absolute inset-0">
-                  <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent opacity-70" />
-                  <div className="absolute right-[-80px] top-[-80px] h-48 w-48 rounded-full bg-cyan-400/10 blur-3xl transition group-hover:bg-cyan-400/15" />
-                  <div className="absolute bottom-[-90px] left-[-90px] h-48 w-48 rounded-full bg-fuchsia-500/10 blur-3xl transition group-hover:bg-fuchsia-500/15" />
-                </div>
+                  <div className="relative flex h-full flex-col">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 text-fuchsia-100">
+                        <ArticleIcon />
+                      </div>
 
-                <div className="relative z-10">
-                  <div className="mb-5 flex items-center justify-between gap-3">
-                    <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
-                      {article.meta.date}
-                    </span>
-
-                    {isFeatured ? (
-                      <span className="rounded-full border border-yellow-300/20 bg-yellow-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-yellow-100">
-                        Featured
+                      <span className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/55">
+                        {index === 0 ? "Latest" : "Update"}
                       </span>
-                    ) : (
-                      <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100">
-                        Update
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/10 text-fuchsia-100 shadow-[0_0_30px_rgba(217,70,239,0.12)]">
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M14 4v6h6M8 13h8M8 17h5"
-                      />
-                    </svg>
-                  </div>
-
-                  <h3 className="text-xl font-black leading-tight text-white transition group-hover:text-cyan-100">
-                    {article.meta.title}
-                  </h3>
-
-                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-400">
-                    {article.meta.description}
-                  </p>
-
-                  {article.meta.tags?.length ? (
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {article.meta.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={`${article.slug}-${tag}`}
-                          className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] font-bold text-slate-300"
-                        >
-                          {tag}
-                        </span>
-                      ))}
                     </div>
-                  ) : null}
 
-                  <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
-                    <span className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
-                      Read Article
-                    </span>
+                    <div className="mt-5 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200/72">
+                      {article.meta.date}
+                    </div>
 
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/10 text-cyan-100 transition group-hover:translate-x-1 group-hover:border-cyan-200/40 group-hover:bg-cyan-300/15">
-                      →
-                    </span>
+                    <h3 className="mt-3 text-xl font-black leading-tight text-white transition-colors group-hover:text-cyan-100">
+                      {article.meta.title}
+                    </h3>
+
+                    <p className="mt-3 line-clamp-3 text-sm leading-6 text-white/58">
+                      {article.meta.description}
+                    </p>
+
+                    {tags.length ? (
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        {tags.map((tag) => (
+                          <span
+                            key={`${article.slug}-${tag}`}
+                            className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white/55"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    <Link
+                      href={`/blog/${article.slug}`}
+                      className="mt-6 inline-flex items-center gap-2 border-t border-white/10 pt-5 text-sm font-black text-cyan-200 transition-colors hover:text-white"
+                      aria-label={`Read ${article.meta.title}`}
+                    >
+                      Read update
+                      <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Empty state safety */}
-        {!articles.length ? (
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 text-center shadow-xl shadow-black/20 backdrop-blur-xl">
-            <p className="text-sm text-slate-300">
-              No articles are published yet. RROTA ecosystem updates will appear
-              here once they are added to the blog.
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-9 rounded-[30px] border border-white/10 bg-white/[0.035] p-7 text-center">
+            <h3 className="text-xl font-black text-white">No updates published yet</h3>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/58">
+              New RROTA ecosystem articles will appear here after they are added to
+              the official blog.
             </p>
           </div>
-        ) : null}
+        )}
 
-        {/* Bottom note */}
-        <div className="mt-6 rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-5 shadow-xl shadow-black/20 backdrop-blur-xl">
-          <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">
-                Official RROTA Updates
-              </p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
-                RROTA articles are designed to explain the project clearly:
-                what is live, what is planned, how the ecosystem is expanding,
-                and how users can verify official links before interacting with
-                $RTA.
-              </p>
-            </div>
+        <div className="mt-6 flex flex-col gap-4 rounded-[26px] border border-amber-400/14 bg-amber-400/6 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-3xl text-sm leading-6 text-amber-100/72">
+            Official updates should clearly separate completed work, active testing,
+            and future plans so visitors can understand the real status of every
+            RROTA product.
+          </p>
 
-            <Link
-              href="/blog"
-              className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white transition hover:border-fuchsia-300/30 hover:bg-white/[0.09]"
-            >
-              Open Blog
-              <span className="ml-2">→</span>
-            </Link>
-          </div>
+          <Link
+            href="/roadmap"
+            className="inline-flex shrink-0 items-center gap-2 text-sm font-black text-amber-100 transition-colors hover:text-white"
+          >
+            Open full roadmap
+            <ArrowIcon />
+          </Link>
         </div>
       </div>
     </section>
