@@ -1,17 +1,12 @@
-"use client";
-
-import React, { useState } from "react";
+import Link from "next/link";
+import React from "react";
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
   spin: "https://spin.rrota.xyz",
-  phantom: "https://phantom.app/",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
-  dextools: "https://www.dextools.io/app/token/rrota",
-  gecko:
-    "https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF",
   telegram: "https://t.me/rrotaOfficial",
   x: "https://x.com/rrotacoin",
 };
@@ -35,10 +30,10 @@ function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-function CopyIcon({ className = "h-4 w-4" }: { className?: string }) {
+function ShieldIcon() {
   return (
     <svg
-      className={className}
+      className="h-6 w-6"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -46,97 +41,6 @@ function CopyIcon({ className = "h-4 w-4" }: { className?: string }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-    >
-      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
-      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-    </svg>
-  );
-}
-
-function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
-
-function StepIcon({
-  children,
-  tone,
-}: {
-  children: React.ReactNode;
-  tone: string;
-}) {
-  return (
-    <div
-      className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border ${tone}`}
-    >
-      {children}
-    </div>
-  );
-}
-
-function WalletSvg() {
-  return (
-    <svg
-      className="h-6 w-6"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h14a2 2 0 0 1 2 2v2" />
-      <path d="M3 6v12a3 3 0 0 0 3 3h13a2 2 0 0 0 2-2v-3" />
-      <path d="M18 12h4v4h-4a2 2 0 0 1 0-4Z" />
-    </svg>
-  );
-}
-
-function SparkSvg() {
-  return (
-    <svg
-      className="h-6 w-6"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2v4" />
-      <path d="M12 18v4" />
-      <path d="m4.93 4.93 2.83 2.83" />
-      <path d="m16.24 16.24 2.83 2.83" />
-      <path d="M2 12h4" />
-      <path d="M18 12h4" />
-      <path d="m4.93 19.07 2.83-2.83" />
-      <path d="m16.24 7.76 2.83-2.83" />
-    </svg>
-  );
-}
-
-function ShieldSvg() {
-  return (
-    <svg
-      className="h-6 w-6"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
     >
       <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" />
       <path d="m9 12 2 2 4-4" />
@@ -144,282 +48,252 @@ function ShieldSvg() {
   );
 }
 
-function PlaySvg() {
+function ExploreIcon() {
   return (
     <svg
       className="h-6 w-6"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M8 5.14v13.72c0 .78.86 1.25 1.52.83l10.78-6.86a.98.98 0 0 0 0-1.66L9.52 4.31A.98.98 0 0 0 8 5.14Z" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="m16.24 7.76-1.83 5.49-5.49 1.83 1.83-5.49 5.49-1.83Z" />
     </svg>
   );
 }
 
-const HowTo = () => {
-  const [copied, setCopied] = useState(false);
-
-  const copyAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(TOKEN_ADDRESS);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch (error) {
-      console.error("Copy failed", error);
-    }
-  };
-
-  const ecosystemSteps = [
-    {
-      title: "Verify the official contract",
-      text: "Start with the official $RTA mint address. Never trust screenshots, DMs, or random swap links without checking the contract.",
-      icon: <ShieldSvg />,
-      tone: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
-    },
-    {
-      title: "Explore RROTA on Solana",
-      text: "Use Solscan, Jupiter, DEXTools, and GeckoTerminal to check the token, liquidity, market activity, and official links.",
-      icon: <SparkSvg />,
-      tone: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
-    },
-    {
-      title: "Buy $RTA safely",
-      text: "Install Phantom, keep SOL for fees, open Jupiter from the official website, and verify the mint before swapping.",
-      icon: <WalletSvg />,
-      tone: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-200",
-    },
-    {
-      title: "Use the live utility",
-      text: "Spin-to-Win is the first live RROTA product. Play through the official app at spin.rrota.xyz only.",
-      icon: <PlaySvg />,
-      tone: "border-amber-400/20 bg-amber-400/10 text-amber-200",
-    },
-    {
-      title: "Follow ecosystem updates",
-      text: "Track game updates, Crypto Shooter plans, community rewards, transport utility direction, and safety announcements through official channels.",
-      icon: <SparkSvg />,
-      tone: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
-    },
-    {
-      title: "Protect your wallet",
-      text: "Never approve random wallet prompts. Use official links, check every transaction, and never share seed phrases or private keys.",
-      icon: <ShieldSvg />,
-      tone: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
-    },
-  ];
-
+function PlayIcon() {
   return (
-    <section id="HowTo" className="mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8">
-      <div className="relative overflow-hidden rounded-[40px] border border-cyan-400/14 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.14),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
-        <div className="pointer-events-none absolute inset-0 opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:54px_54px]" />
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m8 5 11 7-11 7Z" />
+    </svg>
+  );
+}
+
+function CommunityIcon() {
+  return (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+type JourneyCard = {
+  step: string;
+  title: string;
+  text: string;
+  action: string;
+  href: string;
+  external?: boolean;
+  icon: React.ReactNode;
+  tone: string;
+};
+
+const journeyCards: JourneyCard[] = [
+  {
+    step: "01",
+    title: "Verify RROTA",
+    text:
+      "Start with the official website, mint address, audits, and Solscan record. Never rely on screenshots, private messages, or copied trading links.",
+    action: "Verify contract",
+    href: LINKS.solscan,
+    external: true,
+    icon: <ShieldIcon />,
+    tone: "border-cyan-400/18 bg-cyan-400/8 text-cyan-200",
+  },
+  {
+    step: "02",
+    title: "Understand the ecosystem",
+    text:
+      "Review the tokenomics, roadmap, whitepaper, and latest updates to see what is live, what is being improved, and what remains future work.",
+    action: "Explore roadmap",
+    href: "/roadmap",
+    icon: <ExploreIcon />,
+    tone: "border-emerald-400/18 bg-emerald-400/8 text-emerald-200",
+  },
+  {
+    step: "03",
+    title: "Use a live product",
+    text:
+      "Try Spin-to-Win as the first public RROTA utility. The game is one product inside a wider ecosystem of token, AI, gaming, rewards, and future tools.",
+    action: "Launch Spin-to-Win",
+    href: LINKS.spin,
+    external: true,
+    icon: <PlayIcon />,
+    tone: "border-fuchsia-400/18 bg-fuchsia-400/8 text-fuchsia-200",
+  },
+  {
+    step: "04",
+    title: "Follow official progress",
+    text:
+      "Use the official blog, Telegram, and X account for product updates, race announcements, security notices, and roadmap progress.",
+    action: "Open updates",
+    href: "/blog",
+    icon: <CommunityIcon />,
+    tone: "border-amber-400/18 bg-amber-400/8 text-amber-200",
+  },
+];
+
+export default function HowTo() {
+  return (
+    <section
+      id="Start"
+      className="mx-auto max-w-7xl scroll-mt-28 px-4 text-white sm:px-6 lg:px-8"
+    >
+      <div className="relative overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.12),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
 
         <div className="relative">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
-              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
-              How to use RROTA
+          <div className="grid gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/18 bg-cyan-400/8 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                Start with RROTA
+              </div>
+
+              <h2 className="mt-5 text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl">
+                Explore the ecosystem
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  in four clear steps.
+                </span>
+              </h2>
             </div>
 
-            <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
-              Verify, buy, explore, and use
-              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                RROTA the safe way.
-              </span>
-            </h2>
-
-            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-              RROTA has two important user paths: explore the $RTA Solana token safely,
-              then use the ecosystem through live and planned utility products.
+            <p className="max-w-3xl text-sm leading-7 text-white/66 sm:text-base">
+              RROTA should be easy to verify and understand before anyone trades,
+              connects a wallet, or joins a product. Begin with official information,
+              then explore the parts of the ecosystem that are already available.
             </p>
           </div>
 
-          <div className="mx-auto mt-8 max-w-5xl rounded-[30px] border border-cyan-400/14 bg-[#07101d]/82 p-5 backdrop-blur-xl">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-300/70">
-                  <ShieldSvg />
-                  Official RROTA Token Address
-                </div>
-                <p className="mt-3 text-sm leading-6 text-white/62">
-                  Always verify the mint address before swapping, connecting, or trusting any token page.
-                </p>
-                <p className="mt-3 break-all font-mono text-sm font-semibold text-white/88">
-                  {TOKEN_ADDRESS}
-                </p>
-              </div>
+          <div className="mt-9 grid gap-4 md:grid-cols-2">
+            {journeyCards.map((card) => {
+              const content = (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${card.tone}`}
+                    >
+                      {card.icon}
+                    </div>
 
-              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                <button
-                  onClick={copyAddress}
-                  type="button"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100 transition hover:bg-cyan-400/15"
-                >
-                  {copied ? (
-                    <>
-                      <CheckIcon className="text-emerald-300" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <CopyIcon />
-                      Copy Address
-                    </>
-                  )}
-                </button>
+                    <span className="font-mono text-sm font-black text-white/28">
+                      {card.step}
+                    </span>
+                  </div>
 
+                  <h3 className="mt-5 text-xl font-black text-white">{card.title}</h3>
+
+                  <p className="mt-3 text-sm leading-7 text-white/58">{card.text}</p>
+
+                  <div className="mt-5 inline-flex items-center gap-2 text-sm font-black text-cyan-200 transition-colors group-hover:text-white">
+                    {card.action}
+                    {card.external ? <ExternalIcon /> : <span aria-hidden="true">→</span>}
+                  </div>
+                </>
+              );
+
+              const className =
+                "group rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-cyan-300/22 hover:bg-cyan-400/5";
+
+              return card.external ? (
                 <a
-                  href={LINKS.solscan}
+                  key={card.title}
+                  href={card.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-sm font-bold text-fuchsia-100 transition hover:bg-fuchsia-400/14"
+                  className={className}
                 >
-                  Open Solscan
-                  <ExternalIcon />
+                  {content}
                 </a>
-              </div>
-            </div>
+              ) : (
+                <Link key={card.title} href={card.href} className={className}>
+                  {content}
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="mt-10">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-                  RROTA User Path
-                </div>
-                <h3 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-                  From token verification to live utility.
-                </h3>
+          <div className="mt-7 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="rounded-[26px] border border-amber-400/14 bg-amber-400/6 px-5 py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200/72">
+                Wallet safety
               </div>
+              <p className="mt-2 text-sm leading-6 text-amber-100/72">
+                Never share a seed phrase or private key. Review every transaction
+                before signing and use only links published on the official RROTA
+                website.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+              <Link
+                href="/how-to-buy-rrota"
+                className="inline-flex h-12 items-center justify-center rounded-2xl border border-emerald-400/18 bg-emerald-400/9 px-5 text-sm font-black text-emerald-100 transition hover:border-emerald-300/32 hover:bg-emerald-400/14 hover:text-white"
+              >
+                Open buying guide
+              </Link>
 
               <a
-                href={LINKS.spin}
+                href={LINKS.jupiter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500/25 to-fuchsia-500/25 px-5 text-sm font-black text-white transition hover:brightness-110"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-5 text-sm font-black text-white/74 transition hover:border-cyan-300/20 hover:bg-cyan-400/8 hover:text-white"
               >
-                Launch Spin-to-Win
+                Jupiter
                 <ExternalIcon />
               </a>
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {ecosystemSteps.map((step, index) => (
-                <div
-                  key={step.title}
-                  className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl transition-all hover:border-cyan-300/22 hover:bg-cyan-400/5"
-                >
-                  <div className="absolute right-4 top-4 text-4xl font-black text-white/[0.04]">
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
-
-                  <StepIcon tone={step.tone}>{step.icon}</StepIcon>
-
-                  <h4 className="text-lg font-black text-white">{step.title}</h4>
-                  <p className="mt-2 text-sm leading-6 text-white/58">{step.text}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          <div className="mt-12 grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-            <div className="rounded-[32px] border border-emerald-400/14 bg-emerald-400/7 p-6">
-              <div className="text-[11px] font-black uppercase tracking-[0.24em] text-emerald-300/80">
-                Buy $RTA
-              </div>
-              <h3 className="mt-3 text-2xl font-black text-white">
-                Simple Solana buying path
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-white/62">
-                If you are new, start small. Install Phantom, get SOL for fees, then use Jupiter
-                with the official RROTA mint address.
-              </p>
-
-              <div className="mt-5 flex flex-col gap-3">
-                <a
-                  href={LINKS.phantom}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.055] px-4 text-sm font-bold text-white/84 transition hover:bg-white/10"
-                >
-                  Download Phantom
-                  <ExternalIcon />
-                </a>
-
-                <a
-                  href={LINKS.jupiter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-300/25 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_28px_rgba(34,211,238,0.18)] transition hover:brightness-110"
-                >
-                  Open Jupiter
-                  <ExternalIcon />
-                </a>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                {
-                  title: "1. Install wallet",
-                  text: "Use Phantom and back up your seed phrase safely. Never share it.",
-                },
-                {
-                  title: "2. Get SOL",
-                  text: "Send SOL to your Phantom wallet for swapping and network fees.",
-                },
-                {
-                  title: "3. Swap to $RTA",
-                  text: "Open Jupiter and verify the RROTA mint address before swapping.",
-                },
-              ].map((step) => (
-                <div
-                  key={step.title}
-                  className="rounded-3xl border border-white/10 bg-white/[0.035] p-5"
-                >
-                  <h4 className="text-base font-black text-white">{step.title}</h4>
-                  <p className="mt-2 text-sm leading-6 text-white/58">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/38">
             <a
-              href={LINKS.jupiter}
+              href={LINKS.telegram}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-2xl border border-cyan-400/14 bg-cyan-400/7 px-4 py-3 text-sm font-bold text-cyan-100 transition hover:bg-cyan-400/12"
+              className="transition hover:text-cyan-200"
             >
-              Jupiter <span className="text-white/40">↗</span>
+              Official Telegram
             </a>
             <a
-              href={LINKS.dextools}
+              href={LINKS.x}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-2xl border border-fuchsia-400/14 bg-fuchsia-400/7 px-4 py-3 text-sm font-bold text-fuchsia-100 transition hover:bg-fuchsia-400/12"
+              className="transition hover:text-cyan-200"
             >
-              DEXTools <span className="text-white/40">↗</span>
+              Official X
             </a>
-            <a
-              href={LINKS.gecko}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-2xl border border-amber-400/14 bg-amber-400/7 px-4 py-3 text-sm font-bold text-amber-100 transition hover:bg-amber-400/12"
-            >
-              GeckoTerminal <span className="text-white/40">↗</span>
-            </a>
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-amber-400/16 bg-amber-400/7 px-5 py-4 text-sm leading-7 text-amber-100/80">
-            Important: nothing here is financial advice. Always verify official links, review
-            wallet transactions before signing, and never approve random wallet prompts.
+            <Link href="/links" className="transition hover:text-cyan-200">
+              All official links
+            </Link>
           </div>
         </div>
       </div>
     </section>
   );
-};
-
-export default HowTo;
+}
