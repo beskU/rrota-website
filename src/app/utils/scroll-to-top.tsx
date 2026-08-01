@@ -1,62 +1,106 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
-const ScrollToTop = () => {
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+const VISIBILITY_THRESHOLD = 420;
+
+function ArrowUpIcon() {
+  return (
+    <svg
+      className="h-5 w-5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m18 15-6-6-6 6" />
+    </svg>
+  );
+}
+
+export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const frameRef = useRef<number | null>(null);
 
-  // Show button when page is scrolled down
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+    const updateVisibility = () => {
+      frameRef.current = null;
+
+      setIsVisible(
+        window.scrollY > VISIBILITY_THRESHOLD
+      );
     };
 
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
+    const handleScroll = () => {
+      if (frameRef.current !== null) {
+        return;
+      }
+
+      frameRef.current =
+        window.requestAnimationFrame(
+          updateVisibility
+        );
+    };
+
+    updateVisibility();
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+      {
+        passive: true,
+      }
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(
+          frameRef.current
+        );
+      }
+    };
   }, []);
 
-  // Scroll to top smoothly
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
+    const prefersReducedMotion =
+      window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: prefersReducedMotion
+        ? "auto"
+        : "smooth",
     });
-  };
+  }, []);
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-          onClick={scrollToTop}
-          className="fixed bottom-3 right-8 z-50 p-3 rounded-full !bg-[#20befa] !hover:bg-[#1bbffb] text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-          aria-label="Scroll to top"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
-          >
-            <path d="m18 15-6-6-6 6" />
-          </svg>
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <button
+      type="button"
+      onClick={scrollToTop}
+      aria-label="Scroll to top"
+      title="Scroll to top"
+      className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/24 bg-[#07101d]/90 text-cyan-100 shadow-[0_14px_40px_rgba(0,0,0,0.35),0_0_24px_rgba(34,211,238,0.12)] backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:border-cyan-200/40 hover:bg-cyan-400/[0.14] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050711] motion-reduce:transform-none motion-reduce:transition-none sm:right-6 ${
+        isVisible
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-3 opacity-0"
+      }`}
+    >
+      <ArrowUpIcon />
+    </button>
   );
-};
-
-export default ScrollToTop;
+}
