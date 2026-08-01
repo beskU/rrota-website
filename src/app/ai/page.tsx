@@ -1,370 +1,446 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Space_Grotesk } from "next/font/google";
+import Footer from "../components/footer";
+import Navbar from "../components/navbar";
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+const SITE_URL = "https://rrota.xyz";
+const PAGE_URL = `${SITE_URL}/ai`;
+const TOKEN_ADDRESS =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
+const RROTA_ASSISTANT_URL =
+  "https://chatgpt.com/g/g-6a10b37f0bc48191a130acf6d3f24390-rrota-assistant";
+
+const SOLSCAN_URL = `https://solscan.io/token/${TOKEN_ADDRESS}`;
 
 export const metadata: Metadata = {
-  title: "RROTA AI Assistant | Official $RTA AI Guide",
+  title: "RROTA AI Assistant",
   description:
-    "Explore the official RROTA AI Assistant. Learn about $RTA, Spin-to-Win, official links, token safety, ecosystem updates, and how to join the RROTA community.",
+    "Use the official RROTA AI Assistant to learn about the $RTA token, Spin-to-Win, ecosystem products, official links, wallet safety, and roadmap progress.",
   alternates: {
-    canonical: "https://rrota.xyz/ai",
+    canonical: PAGE_URL,
   },
   openGraph: {
     title: "RROTA AI Assistant",
     description:
-      "Official AI guide for RROTA ($RTA), Spin-to-Win, official links, safety, and ecosystem information.",
-    url: "https://rrota.xyz/ai",
+      "An official informational assistant for the RROTA ecosystem, $RTA token, Spin-to-Win, safety guidance, and project onboarding.",
+    url: PAGE_URL,
     siteName: "RROTA",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "RROTA AI Assistant",
+    description:
+      "Explore the RROTA ecosystem with an official informational assistant focused on clarity, safety, and onboarding.",
+  },
 };
 
-const gptLink =
-  "https://chatgpt.com/g/g-6a10b37f0bc48191a130acf6d3f24390-rrota-assistant";
-
-const officialLinks = [
+const capabilityCards = [
   {
-    label: "Official Website",
-    value: "rrota.xyz",
-    href: "https://rrota.xyz",
+    number: "01",
+    title: "Understand RROTA",
+    text:
+      "Get a clear introduction to the $RTA token, the wider RROTA ecosystem, current products, development direction, and official terminology.",
   },
   {
-    label: "Spin-to-Win",
-    value: "spin.rrota.xyz",
-    href: "https://spin.rrota.xyz",
+    number: "02",
+    title: "Explore Spin-to-Win",
+    text:
+      "Learn how the first public RROTA product works, where to access it, how leaderboard competition is structured, and where official rules are published.",
   },
   {
-    label: "Telegram",
-    value: "RROTA Official Community",
-    href: "https://t.me/rrotaOfficial",
+    number: "03",
+    title: "Find verified resources",
+    text:
+      "Locate the official website, Solana mint, project pages, community channels, buying guide, whitepaper, audits, and market references.",
   },
   {
-    label: "X / Twitter",
-    value: "@rrotacoin",
-    href: "https://x.com/rrotacoin",
-  },
-  {
-    label: "Jupiter",
-    value: "Swap $RTA",
-    href: "https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a",
-  },
-  {
-    label: "Solscan",
-    value: "View Token",
-    href: "https://solscan.io/token/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a",
+    number: "04",
+    title: "Improve wallet safety",
+    text:
+      "Review basic wallet-safety practices, contract verification, link checking, transaction review, and common impersonation risks.",
   },
 ];
 
-const intelligenceCards = [
-  {
-    eyebrow: "Identity Matrix",
-    title: "What is RROTA?",
-    text: "Decode the $RTA token, Solana foundation, ecosystem direction, and the project vision beyond short-term hype.",
-  },
-  {
-    eyebrow: "Game Protocol",
-    title: "Spin-to-Win Beta",
-    text: "Understand the live public beta, player flow, leaderboard activity, reward logic, and how users can participate.",
-  },
-  {
-    eyebrow: "Safety Layer",
-    title: "Verified Access",
-    text: "Use only official links, verify the mint address, avoid impersonators, and never share private keys or seed phrases.",
-  },
+const suggestedPrompts = [
+  "What is RROTA and what is live today?",
+  "How do I verify the official $RTA token?",
+  "How does RROTA Spin-to-Win work?",
+  "Where can I find the official RROTA links?",
+  "What is RROTA AI designed to help with?",
+  "Which RROTA products are live, in progress, or planned?",
 ];
 
-const promptCards = [
-  "What is RROTA?",
-  "How do I buy $RTA safely?",
-  "How do I play RROTA Spin-to-Win?",
-  "What are the official RROTA links?",
-  "Is RROTA only a meme coin or does it have utility?",
-  "What should I know before using RROTA Spin-to-Win?",
+const trustPoints = [
+  "Use the assistant for education and project navigation.",
+  "Verify token and market information through official sources.",
+  "Never share a seed phrase, private key, password, or recovery code.",
+  "Review every wallet transaction before signing.",
+  "Treat future plans as development goals, not guaranteed delivery dates.",
+  "Do not treat AI responses as financial, legal, or tax advice.",
 ];
 
-const signalStats = [
-  {
-    label: "Network",
-    value: "Solana",
+function ExternalIcon({
+  className = "h-4 w-4",
+}: {
+  className?: string;
+}) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+function SparkIcon() {
+  return (
+    <svg
+      className="h-7 w-7"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m12 3-1.8 4.2L6 9l4.2 1.8L12 15l1.8-4.2L18 9l-4.2-1.8L12 3Z" />
+      <path d="m5 15-.9 2.1L2 18l2.1.9L5 21l.9-2.1L8 18l-2.1-.9L5 15Z" />
+      <path d="m19 13-.9 2.1L16 16l2.1.9L19 19l.9-2.1L22 16l-2.1-.9L19 13Z" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg
+      className="h-6 w-6"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+const SOFTWARE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "RROTA AI Assistant",
+  url: PAGE_URL,
+  applicationCategory: "ReferenceApplication",
+  operatingSystem: "Web",
+  description:
+    "An informational assistant for the RROTA ecosystem, $RTA token, Spin-to-Win, official resources, wallet safety, and onboarding.",
+  publisher: {
+    "@type": "Organization",
+    name: "RROTA",
+    url: SITE_URL,
   },
-  {
-    label: "Token",
-    value: "$RTA",
-  },
-  {
-    label: "AI Layer",
-    value: "Online",
-  },
-  {
-    label: "Mode",
-    value: "Official",
-  },
-];
+  sameAs: RROTA_ASSISTANT_URL,
+};
 
 export default function RrotaAiPage() {
   return (
-    <main
-      className={`${spaceGrotesk.className} relative min-h-screen overflow-hidden bg-[#02030a] text-white`}
-    >
-      {/* Ambient technology background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(0,255,214,0.12),transparent_25%),radial-gradient(circle_at_82%_16%,rgba(168,85,247,0.20),transparent_25%),radial-gradient(circle_at_45%_90%,rgba(14,165,233,0.12),transparent_30%)]" />
-        <div className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(rgba(103,232,249,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.10)_1px,transparent_1px)] [background-size:76px_76px]" />
-        <div className="absolute inset-0 opacity-[0.12] [background-image:radial-gradient(circle,rgba(255,255,255,0.36)_1px,transparent_1px)] [background-size:34px_34px]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,3,10,0.08),rgba(2,3,10,0.74),#02030a)]" />
-      </div>
+    <>
+      <Navbar />
 
-      {/* Animated scan beams */}
-      <div className="pointer-events-none absolute left-0 top-20 h-px w-full animate-pulse bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent" />
-      <div className="pointer-events-none absolute bottom-40 left-0 h-px w-full animate-pulse bg-gradient-to-r from-transparent via-fuchsia-300/25 to-transparent [animation-delay:900ms]" />
+      <main className="relative overflow-hidden bg-[#050711] text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(SOFTWARE_SCHEMA),
+          }}
+        />
 
-      {/* Large glows */}
-      <div className="pointer-events-none absolute left-[-160px] top-[130px] h-[520px] w-[520px] rounded-full bg-cyan-400/10 blur-[150px]" />
-      <div className="pointer-events-none absolute right-[-180px] top-[40px] h-[540px] w-[540px] rounded-full bg-fuchsia-500/12 blur-[160px]" />
-      <div className="pointer-events-none absolute bottom-[-160px] left-1/2 h-[420px] w-[760px] -translate-x-1/2 rounded-full bg-blue-500/10 blur-[160px]" />
-
-      <section className="relative mx-auto flex w-full max-w-7xl flex-col px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-        {/* Top status bar */}
-        <div className="mb-10 grid gap-3 rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 shadow-[0_0_60px_rgba(0,0,0,0.25)] backdrop-blur md:grid-cols-4">
-          {signalStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-2xl border border-white/8 bg-black/25 px-4 py-3"
-            >
-              <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-200/80">
-                {stat.label}
-              </div>
-              <div className="mt-1 text-sm font-bold text-white">
-                {stat.value}
-              </div>
-            </div>
-          ))}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(34,211,238,0.14),transparent_30%),radial-gradient(circle_at_88%_4%,rgba(217,70,239,0.12),transparent_30%),linear-gradient(180deg,#050711_0%,#07101d_52%,#050711_100%)]" />
+          <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:58px_58px]" />
         </div>
 
-        {/* Hero */}
-        <div className="grid items-center gap-12 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/[0.045] px-4 py-2 text-[11px] font-black uppercase tracking-[0.34em] text-cyan-100 shadow-[0_0_42px_rgba(34,211,238,0.14)] backdrop-blur">
-              <span className="relative inline-flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-300 opacity-70" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-cyan-200 shadow-[0_0_20px_rgba(103,232,249,1)]" />
-              </span>
-              Official RROTA AI Interface
-            </div>
-
-            <h1 className="mt-7 max-w-5xl text-4xl font-black leading-[0.9] tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl">
-              Alien-grade{" "}
-              <span className="bg-[linear-gradient(90deg,#ffffff_0%,#9ff7ff_18%,#5df8d2_42%,#b78cff_72%,#ffffff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(34,211,238,0.18)]">
-                AI access
-              </span>{" "}
-              for RROTA.
-            </h1>
-
-            <p className="mt-7 max-w-2xl text-sm leading-8 text-slate-300 sm:text-base">
-              A premium intelligence layer built for RROTA ($RTA), Spin-to-Win,
-              official links, safety checks, ecosystem onboarding, and trusted
-              user education. Designed to make the RROTA universe easier to
-              understand, verify, and explore.
-            </p>
-
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <a
-                href={gptLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/35 bg-[linear-gradient(135deg,rgba(45,255,231,0.20),rgba(168,85,247,0.10),rgba(0,0,0,0.20))] px-7 py-4 text-sm font-black uppercase tracking-[0.26em] text-cyan-50 shadow-[0_0_55px_rgba(34,211,238,0.22)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-200/70 hover:shadow-[0_0_80px_rgba(34,211,238,0.30)]"
-              >
-                <span className="absolute inset-0 translate-x-[-120%] bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.28),transparent)] transition duration-700 group-hover:translate-x-[120%]" />
-                <span className="relative">Open RROTA Assistant</span>
-              </a>
-
-              <Link
-                href="/links"
-                className="inline-flex items-center justify-center rounded-2xl border border-white/12 bg-white/[0.035] px-7 py-4 text-sm font-black uppercase tracking-[0.26em] text-white/90 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/[0.07]"
-              >
-                Official Links
-              </Link>
-            </div>
-
-            <div className="mt-6 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-3 text-xs leading-6 text-slate-400 backdrop-blur">
-              The RROTA AI Assistant is an informational guide only. It does not
-              provide financial advice, guarantee rewards, or promise future
-              token performance. Always verify official links and do your own
-              research.
-            </div>
-          </div>
-
-          {/* Futuristic Alien AI Core */}
-          <div className="relative mx-auto flex w-full max-w-[560px] items-center justify-center lg:justify-end">
-            <div className="relative h-[470px] w-[470px] max-w-full">
-              <div className="absolute inset-0 animate-spin rounded-full border border-dashed border-cyan-300/20 [animation-duration:42s]" />
-              <div className="absolute inset-6 animate-spin rounded-full border border-fuchsia-300/15 [animation-direction:reverse] [animation-duration:34s]" />
-              <div className="absolute inset-12 animate-spin rounded-full border border-cyan-200/20 [animation-duration:26s]" />
-              <div className="absolute inset-20 rounded-full border border-white/10 bg-[radial-gradient(circle,rgba(103,232,249,0.14),rgba(168,85,247,0.08),transparent_68%)] shadow-[0_0_110px_rgba(34,211,238,0.18)]" />
-
-              <div className="absolute left-1/2 top-1/2 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full border border-cyan-200/25 bg-[radial-gradient(circle,#e7ffff_0%,#9ff7ff_10%,#22d3ee_34%,rgba(168,85,247,0.52)_62%,rgba(3,3,10,0.18)_100%)] shadow-[0_0_100px_rgba(34,211,238,0.48)]" />
-              <div className="absolute left-1/2 top-1/2 h-[88px] w-[88px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-[#02030a]/40 shadow-[inset_0_0_35px_rgba(255,255,255,0.12),0_0_60px_rgba(34,211,238,0.38)] backdrop-blur" />
-              <div className="absolute left-1/2 top-1/2 h-[20px] w-[20px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_35px_rgba(255,255,255,1)]" />
-
-              {/* Energy lines */}
-              <div className="absolute left-1/2 top-1/2 h-px w-[82%] -translate-x-1/2 bg-gradient-to-r from-transparent via-cyan-200/35 to-transparent" />
-              <div className="absolute left-1/2 top-1/2 h-px w-[82%] -translate-x-1/2 rotate-45 bg-gradient-to-r from-transparent via-fuchsia-200/25 to-transparent" />
-              <div className="absolute left-1/2 top-1/2 h-px w-[82%] -translate-x-1/2 -rotate-45 bg-gradient-to-r from-transparent via-emerald-200/25 to-transparent" />
-              <div className="absolute left-1/2 top-1/2 h-px w-[82%] -translate-x-1/2 rotate-90 bg-gradient-to-r from-transparent via-cyan-200/30 to-transparent" />
-
-              {/* Orbit nodes */}
-              <div className="absolute left-[15%] top-[17%] h-4 w-4 animate-pulse rounded-full bg-cyan-300 shadow-[0_0_26px_rgba(103,232,249,1)]" />
-              <div className="absolute right-[12%] top-[27%] h-3.5 w-3.5 animate-pulse rounded-full bg-fuchsia-300 shadow-[0_0_26px_rgba(244,114,182,0.95)] [animation-delay:400ms]" />
-              <div className="absolute bottom-[19%] left-[22%] h-3.5 w-3.5 animate-pulse rounded-full bg-sky-300 shadow-[0_0_26px_rgba(125,211,252,0.95)] [animation-delay:800ms]" />
-              <div className="absolute bottom-[15%] right-[21%] h-4 w-4 animate-pulse rounded-full bg-emerald-300 shadow-[0_0_26px_rgba(110,231,183,0.95)] [animation-delay:1200ms]" />
-
-              {/* Floating panels */}
-              <div className="absolute left-0 top-[7%] rounded-2xl border border-cyan-300/20 bg-[#07111f]/85 px-4 py-3 shadow-[0_0_35px_rgba(34,211,238,0.10)] backdrop-blur">
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-200">
-                  Neural State
-                </div>
-                <div className="mt-1 text-sm font-bold text-white">ONLINE</div>
-              </div>
-
-              <div className="absolute right-0 top-[66%] rounded-2xl border border-fuchsia-300/20 bg-[#15081f]/85 px-4 py-3 shadow-[0_0_35px_rgba(217,70,239,0.10)] backdrop-blur">
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-fuchsia-200">
-                  Knowledge Core
-                </div>
-                <div className="mt-1 text-sm font-bold text-white">
-                  RROTA // $RTA
-                </div>
-              </div>
-
-              <div className="absolute bottom-2 left-[9%] rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3 shadow-[0_0_35px_rgba(255,255,255,0.06)] backdrop-blur">
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-300">
-                  Access Mode
-                </div>
-                <div className="mt-1 text-sm font-bold text-white">
-                  PREMIUM AI GATEWAY
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Prompt console */}
-        <div className="mt-16 rounded-[2.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.055),rgba(255,255,255,0.022))] p-6 shadow-[0_0_70px_rgba(0,0,0,0.32)] backdrop-blur xl:p-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section className="relative mx-auto max-w-7xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-36 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
-              <div className="text-[11px] font-black uppercase tracking-[0.34em] text-cyan-200">
-                Suggested Intelligence Queries
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                RROTA AI
               </div>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-white sm:text-3xl">
-                Start with official RROTA questions
-              </h2>
+
+              <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+                Understand the RROTA ecosystem
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  with an official AI guide.
+                </span>
+              </h1>
+
+              <p className="mt-6 max-w-2xl text-sm leading-7 text-white/66 sm:text-base">
+                RROTA AI helps visitors learn about the $RTA token, live products,
+                official resources, wallet safety, roadmap progress, and the wider
+                ecosystem without searching through multiple pages first.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a
+                  href={RROTA_ASSISTANT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-cyan-300/30 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 text-sm font-black text-white shadow-[0_0_34px_rgba(34,211,238,0.20)] transition hover:brightness-110"
+                >
+                  Open RROTA Assistant
+                  <ExternalIcon />
+                </a>
+
+                <Link
+                  href="/links"
+                  className="inline-flex h-14 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.045] px-7 text-sm font-black text-white/84 transition hover:border-cyan-300/24 hover:bg-cyan-400/8 hover:text-white"
+                >
+                  View official links
+                </Link>
+              </div>
+
+              <p className="mt-5 max-w-2xl text-xs leading-6 text-white/42">
+                The assistant is hosted on ChatGPT and is intended for information
+                and onboarding. Availability may depend on ChatGPT access.
+              </p>
             </div>
-            <div className="max-w-md text-sm leading-6 text-slate-400">
-              These prompts open the RROTA Assistant on ChatGPT and help new
-              users understand the ecosystem faster.
+
+            <div className="relative mx-auto w-full max-w-xl">
+              <div className="absolute -inset-8 rounded-full bg-cyan-400/10 blur-3xl" />
+
+              <div className="relative overflow-hidden rounded-[38px] border border-cyan-400/18 bg-white/[0.04] p-6 shadow-[0_0_70px_rgba(34,211,238,0.12)] backdrop-blur-xl sm:p-8">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(217,70,239,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,0.12),transparent_35%)]" />
+
+                <div className="relative">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-200 shadow-[0_0_28px_rgba(34,211,238,0.15)]">
+                      <SparkIcon />
+                    </div>
+
+                    <span className="rounded-full border border-emerald-400/18 bg-emerald-400/8 px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-emerald-200">
+                      Available
+                    </span>
+                  </div>
+
+                  <h2 className="mt-6 text-3xl font-black tracking-[-0.04em] text-white">
+                    One assistant. Clearer project navigation.
+                  </h2>
+
+                  <p className="mt-4 text-sm leading-7 text-white/60">
+                    Ask a question in plain language and use the answer as a starting
+                    point. Important claims should still be checked against the
+                    official website and on-chain sources.
+                  </p>
+
+                  <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                    {[
+                      ["Network", "Solana"],
+                      ["Token", "$RTA"],
+                      ["Purpose", "Education"],
+                    ].map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                      >
+                        <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/40">
+                          {label}
+                        </div>
+                        <div className="mt-1 text-sm font-black text-white">
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-300/68">
+                      Official $RTA mint
+                    </div>
+                    <code className="mt-2 block break-all font-mono text-xs leading-6 text-white/70">
+                      {TOKEN_ADDRESS}
+                    </code>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {promptCards.map((prompt) => (
-              <a
-                key={prompt}
-                href={gptLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-5 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-cyan-300/[0.06] hover:shadow-[0_0_45px_rgba(34,211,238,0.14)]"
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300/72">
+              What it can help with
+            </div>
+
+            <h2 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
+              A clearer starting point for new and existing users.
+            </h2>
+          </div>
+
+          <div className="mt-9 grid gap-4 md:grid-cols-2">
+            {capabilityCards.map((card) => (
+              <div
+                key={card.title}
+                className="rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl"
               >
-                <span className="absolute right-0 top-0 h-20 w-20 rounded-full bg-cyan-300/[0.05] blur-2xl transition group-hover:bg-cyan-300/[0.14]" />
-                <div className="relative text-[10px] font-black uppercase tracking-[0.28em] text-slate-400 transition group-hover:text-cyan-200">
-                  AI Prompt
+                <div className="font-mono text-xs font-black text-cyan-300/54">
+                  {card.number}
                 </div>
-                <div className="relative mt-3 text-base font-bold leading-7 text-white">
-                  {prompt}
-                </div>
-              </a>
+                <h3 className="mt-4 text-xl font-black text-white">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-white/58">
+                  {card.text}
+                </p>
+              </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Intelligence cards */}
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {intelligenceCards.map((item) => (
-            <div
-              key={item.title}
-              className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.048),rgba(255,255,255,0.02))] p-6 shadow-[0_0_55px_rgba(0,0,0,0.25)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30"
-            >
-              <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-cyan-300/[0.08] blur-2xl transition group-hover:bg-cyan-300/[0.18]" />
-              <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-300/25 to-transparent" />
-              <div className="relative text-[11px] font-black uppercase tracking-[0.30em] text-cyan-200">
-                {item.eyebrow}
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+            <div>
+              <div className="text-[11px] font-black uppercase tracking-[0.24em] text-fuchsia-300/72">
+                Suggested questions
               </div>
-              <h3 className="relative mt-4 text-2xl font-black tracking-[-0.035em] text-white">
-                {item.title}
-              </h3>
-              <p className="relative mt-4 text-sm leading-7 text-slate-400">
-                {item.text}
-              </p>
-            </div>
-          ))}
-        </div>
 
-        {/* Official links */}
-        <div className="mt-12 overflow-hidden rounded-[2.35rem] border border-cyan-300/14 bg-[linear-gradient(135deg,rgba(8,15,28,0.96),rgba(4,5,15,0.98),rgba(25,10,42,0.94))] shadow-[0_0_90px_rgba(34,211,238,0.09)]">
-          <div className="relative p-6 sm:p-8 lg:p-10">
-            <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-cyan-400/10 blur-[110px]" />
-            <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[110px]" />
-
-            <div className="relative z-10">
-              <div className="text-[11px] font-black uppercase tracking-[0.34em] text-cyan-200">
-                Verified Access Nodes
-              </div>
-              <h2 className="mt-3 text-3xl font-black tracking-[-0.035em] text-white sm:text-4xl">
-                Official RROTA Links
+              <h2 className="mt-3 text-4xl font-black tracking-[-0.04em]">
+                Start with a specific question.
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                Use only verified RROTA links. The RROTA team never DMs first.
-                Always verify where you are interacting before connecting a
-                wallet or exploring the ecosystem.
+
+              <p className="mt-4 max-w-xl text-sm leading-7 text-white/60">
+                Open the assistant, then paste or adapt one of these prompts.
+                Specific questions usually produce clearer and more useful answers.
               </p>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {officialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-300/[0.065]"
+              <a
+                href={RROTA_ASSISTANT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/20 bg-fuchsia-400/8 px-5 text-sm font-black text-fuchsia-100 transition hover:bg-fuchsia-400/13 hover:text-white"
+              >
+                Open assistant
+                <ExternalIcon />
+              </a>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {suggestedPrompts.map((prompt) => (
+                <div
+                  key={prompt}
+                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm font-semibold leading-6 text-white/72"
+                >
+                  “{prompt}”
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="overflow-hidden rounded-[38px] border border-amber-400/14 bg-amber-400/6 p-6 sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+              <div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/18 bg-amber-400/9 text-amber-100">
+                  <ShieldIcon />
+                </div>
+
+                <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white">
+                  Use AI as a guide—not as proof.
+                </h2>
+
+                <p className="mt-4 text-sm leading-7 text-amber-100/68">
+                  AI responses can be incomplete, outdated, or incorrect. Verify
+                  important information before trading, connecting a wallet, or
+                  making a decision.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {trustPoints.map((point) => (
+                  <div
+                    key={point}
+                    className="flex gap-3 rounded-2xl border border-white/10 bg-black/15 p-4"
                   >
-                    <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-200">
-                      {link.label}
-                    </div>
-                    <div className="mt-3 text-base font-bold text-white">
-                      {link.value}
-                    </div>
-                    <div className="mt-3 text-xs text-slate-500 transition group-hover:text-slate-300">
-                      Open verified destination
-                    </div>
-                  </a>
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-200 shadow-[0_0_10px_rgba(253,230,138,0.8)]" />
+                    <span className="text-sm leading-6 text-white/68">
+                      {point}
+                    </span>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Footer note */}
-        <div className="mt-8 text-center text-xs leading-6 text-slate-500">
-          RROTA AI is designed as a premium information layer for the RROTA
-          ecosystem — focused on clarity, safety, official access, and better
-          user onboarding.
-        </div>
-      </section>
-    </main>
+            <div className="mt-7 flex flex-col gap-3 border-t border-amber-300/12 pt-6 sm:flex-row sm:flex-wrap">
+              <a
+                href={SOLSCAN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-4 text-sm font-black text-cyan-100 transition hover:bg-cyan-400/13 hover:text-white"
+              >
+                Verify token on Solscan
+                <ExternalIcon />
+              </a>
+
+              <Link
+                href="/roadmap"
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-black text-white/74 transition hover:bg-white/[0.07] hover:text-white"
+              >
+                Review roadmap
+              </Link>
+
+              <Link
+                href="/risk-disclaimer"
+                className="inline-flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-black text-white/74 transition hover:bg-white/[0.07] hover:text-white"
+              >
+                Read risk disclaimer
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+          <div className="rounded-[38px] border border-cyan-400/16 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(217,70,239,0.08))] p-7 text-center sm:p-10">
+            <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+              Ready to explore RROTA?
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/60">
+              Open the assistant for project guidance, then verify important
+              information through the official website and on-chain resources.
+            </p>
+
+            <a
+              href={RROTA_ASSISTANT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-cyan-300/28 bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-7 text-sm font-black text-white shadow-[0_0_30px_rgba(34,211,238,0.18)] transition hover:brightness-110"
+            >
+              Open RROTA Assistant
+              <ExternalIcon />
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }
