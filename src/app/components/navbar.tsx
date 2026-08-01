@@ -204,7 +204,7 @@ export default function Navbar() {
               pathname.startsWith(LINKS.blog) ? "bg-cyan-400/10 text-cyan-100" : ""
             }`}
           >
-            Updates
+            Blog
           </Link>
         </nav>
 
@@ -285,7 +285,7 @@ export default function Navbar() {
                   </Link>
 
                   <Link href={LINKS.blog} onClick={closeMenu} className={mobileNavClass}>
-                    <span>Latest updates</span>
+                    <span>Blog &amp; Updates</span>
                   </Link>
 
                   <Link href={LINKS.whitepaper} onClick={closeMenu} className={mobileNavClass}>
