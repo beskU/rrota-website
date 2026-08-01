@@ -1,33 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { getTokenData, type TokenDataResponse } from "../lib/token-data";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip,
-} from "recharts";
-
-interface PieChartData {
-  name: string;
-  value: number;
-  amount: string;
-  color: string;
-}
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
+  tokenomics: "/tokenomics",
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
-  dextools: "https://www.dextools.io/app/token/rrota",
-  gecko:
-    "https://www.geckoterminal.com/solana/pools/8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF",
-  audit: "https://freshcoins.io/audit/rrota",
+  dexscreener: `https://dexscreener.com/solana/${TOKEN_ADDRESS}`,
+  gecko: `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
+  freshcoins: "https://freshcoins.io/audit/rrota",
+  solidproof: "https://app.solidproof.io/projects/rrota",
 };
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -84,264 +69,199 @@ function CheckIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
+function formatPrice(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "Open live chart";
+  if (value < 0.000001) return `$${value.toExponential(2)}`;
+  return `$${value.toFixed(9)}`;
+}
+
+function formatMoney(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "Open live chart";
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(2)}`;
+}
+
+function formatTokenAmount(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "Verify on Solscan";
+  if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(3)}B RTA`;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(2)}M RTA`;
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })} RTA`;
+}
+
+function formatPercent(value: number) {
+  if (!Number.isFinite(value)) return "Open live chart";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}%`;
+}
+
+function shortAddress(address: string) {
+  return `${address.slice(0, 8)}...${address.slice(-8)}`;
+}
+
+function MarketCard({
+  label,
+  value,
+  note,
+  tone,
+}: {
+  label: string;
+  value: string;
+  note: string;
+  tone: string;
+}) {
+  return (
+    <div className={`rounded-3xl border p-5 backdrop-blur-xl ${tone}`}>
+      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
+        {label}
+      </div>
+      <div className="mt-2 text-xl font-black text-white">{value}</div>
+      <div className="mt-2 text-xs leading-5 text-white/46">{note}</div>
+    </div>
+  );
+}
+
 const Tokenomics = () => {
   const [tokenData, setTokenData] = useState<TokenDataResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  const BURNED_TOKENS = 0;
+  const [error, setError] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchTokenData = async () => {
       try {
-        setError(null);
         const data = await getTokenData(TOKEN_ADDRESS);
+        if (!mounted) return;
         setTokenData(data);
-
-        if (data.price === 0 && data.holders === 0 && data.liquidity === 0) {
-          setError("Live market data is temporarily unavailable");
-        }
+        setError(false);
       } catch (err) {
-        console.error("Failed to fetch token data:", err);
-        setError("Live market data is temporarily unavailable");
-        setTokenData({
-          price: 0,
-          liquidity: 0,
-          marketCap: 0,
-          tokenSupply: 17446373786,
-          holders: 0,
-          lastUpdated: Date.now(),
-          priceChange24h: 0,
-        });
+        console.error("Failed to fetch RROTA token data:", err);
+        if (!mounted) return;
+        setError(true);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
 
     fetchTokenData();
-    const interval = setInterval(fetchTokenData, 5 * 60 * 1000);
+    const interval = window.setInterval(fetchTokenData, 5 * 60 * 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
   }, []);
-
-  const supply = tokenData?.tokenSupply ?? 17446373786;
-  const liquidityUsd = tokenData?.liquidity ?? 0;
-  const marketCap = tokenData?.marketCap ?? 0;
-  const holders = tokenData?.holders ?? 0;
-  const price = tokenData?.price ?? 0;
-
-  const safeSlices = [
-    {
-      name: "Circulating Supply",
-      value: Math.max(supply - BURNED_TOKENS, 0),
-      amount: `${Math.max(supply - BURNED_TOKENS, 0).toLocaleString()} tokens`,
-      color: "#1cc2fc",
-    },
-    ...(BURNED_TOKENS > 0
-      ? [
-          {
-            name: "Burned Tokens",
-            value: BURNED_TOKENS,
-            amount: `${BURNED_TOKENS.toLocaleString()} tokens`,
-            color: "#f59e0b",
-          },
-        ]
-      : []),
-  ];
-
-  const totalForChart = safeSlices.reduce((total, item) => total + item.value, 0);
-
-  const pieChartData: PieChartData[] = safeSlices.map((slice) => ({
-    name: slice.name,
-    amount: slice.amount,
-    color: slice.color,
-    value:
-      totalForChart > 0
-        ? Number(((slice.value / totalForChart) * 100).toFixed(2))
-        : 0,
-  }));
-
-  const formatPrice = (value: number) => {
-    if (!value || value <= 0) return "Live chart";
-    if (value < 0.000001) return `$${value.toExponential(2)}`;
-    return `$${value.toFixed(9)}`;
-  };
-
-  const formatMoney = (value: number) => {
-    if (!value || value <= 0) return "Live chart";
-    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-    if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
-    return `$${value.toFixed(2)}`;
-  };
 
   const copyAddress = async () => {
     try {
       await navigator.clipboard.writeText(TOKEN_ADDRESS);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      window.setTimeout(() => setCopied(false), 1800);
     } catch (err) {
-      console.error("Copy failed", err);
+      console.error("Copy failed:", err);
     }
-  };
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: { payload: PieChartData }[];
-  }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-2xl border border-cyan-400/20 bg-[#07101d] p-4 shadow-xl">
-          <p className="font-black text-white">{data.name}</p>
-          <p className="mt-1 text-sm text-cyan-200">{data.value}%</p>
-          <p className="text-sm text-white/60">{data.amount}</p>
-        </div>
-      );
-    }
-
-    return null;
   };
 
   const marketCards = [
     {
       label: "Current Price",
-      value: loading ? "Loading..." : formatPrice(price),
+      value: loading ? "Loading..." : formatPrice(tokenData?.price ?? 0),
+      note: "Live market estimate from the RROTA data endpoint.",
       tone: "border-cyan-400/16 bg-cyan-400/7",
     },
     {
       label: "Market Cap",
-      value: loading ? "Loading..." : formatMoney(marketCap),
+      value: loading ? "Loading..." : formatMoney(tokenData?.marketCap ?? 0),
+      note: "Calculated from the current market data source.",
       tone: "border-fuchsia-400/16 bg-fuchsia-400/7",
     },
     {
       label: "Liquidity",
-      value: loading ? "Loading..." : formatMoney(liquidityUsd),
+      value: loading ? "Loading..." : formatMoney(tokenData?.liquidity ?? 0),
+      note: "Use the official charts below for pool-level details.",
       tone: "border-emerald-400/16 bg-emerald-400/7",
     },
     {
-      label: "Holders",
-      value: loading ? "Loading..." : holders ? holders.toLocaleString() : "Live chart",
+      label: "24h Change",
+      value: loading ? "Loading..." : formatPercent(tokenData?.priceChange24h ?? 0),
+      note: "Market movement can change quickly and is not guaranteed.",
       tone: "border-amber-400/16 bg-amber-400/7",
     },
   ];
 
+  const tokenFacts = [
+    ["Network", "Solana"],
+    ["Token standard", "SPL"],
+    ["Symbol", "$RTA"],
+    ["Mint authority", "Revoked"],
+    ["Freeze authority", "Revoked"],
+    ["Current supply", loading ? "Loading..." : formatTokenAmount(tokenData?.tokenSupply ?? 0)],
+  ];
+
   return (
-    <section id="Tokenomics" className="mx-auto max-w-7xl px-4 text-white sm:px-6 lg:px-8">
-      <motion.div
-        ref={ref}
-        className="relative overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10"
-        initial={{ opacity: 0, y: 28 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-        transition={{ duration: 0.65 }}
-      >
+    <section
+      id="Tokenomics"
+      className="relative mx-auto max-w-7xl scroll-mt-28 px-4 text-white sm:px-6 lg:px-8"
+    >
+      <div className="relative overflow-hidden rounded-[40px] border border-white/10 bg-[#050711] p-5 shadow-[0_0_70px_rgba(34,211,238,0.08)] sm:p-8 lg:p-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.15),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.13),transparent_34%),linear-gradient(135deg,rgba(8,18,35,0.95),rgba(8,7,18,0.98))]" />
 
         <div className="relative">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
-              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
-              Tokenomics
+          <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+                <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                RROTA Token
+              </div>
+
+              <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
+                Clear token facts.
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
+                  Verifiable on-chain.
+                </span>
+              </h2>
             </div>
 
-            <h2 className="mt-5 text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">
-              RROTA market and
-              <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300 bg-clip-text text-transparent">
-                token overview.
-              </span>
-            </h2>
-
-            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/68 sm:text-base">
-              A clear snapshot of the RROTA token, supply reference, market data, and official
-              verification links.
-            </p>
+            <div className="rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl">
+              <p className="text-sm leading-7 text-white/66 sm:text-base">
+                This section combines a live market snapshot with the permanent facts that users
+                should verify before trading or connecting a wallet. Supply, authorities, liquidity,
+                and burn history should always be checked through official on-chain sources.
+              </p>
+            </div>
           </div>
 
           {error && (
-            <div className="mx-auto mt-7 max-w-4xl rounded-2xl border border-amber-400/18 bg-amber-400/8 p-4 text-center text-sm text-amber-100/85">
-              {error}. Use the official chart links below for current market details.
+            <div className="mt-7 rounded-2xl border border-amber-400/18 bg-amber-400/8 p-4 text-center text-sm text-amber-100/85">
+              Live market data is temporarily unavailable. The official chart and Solscan links below remain available.
             </div>
           )}
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {marketCards.map((card) => (
-              <div
-                key={card.label}
-                className={`rounded-3xl border p-5 backdrop-blur-xl ${card.tone}`}
-              >
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
-                  {card.label}
-                </div>
-                <div className="mt-2 text-xl font-black text-white">{card.value}</div>
-              </div>
+              <MarketCard key={card.label} {...card} />
             ))}
           </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div className="rounded-[34px] border border-white/10 bg-white/[0.035] p-5">
-              <div className="mb-4 flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-                    Supply Reference
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="rounded-[34px] border border-cyan-400/14 bg-cyan-400/6 p-5 sm:p-6">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/75">
+                    Official Solana Mint
                   </div>
-                  <div className="mt-1 text-xl font-black text-white">
-                    Circulating supply view
+                  <div className="mt-2 break-all font-mono text-sm font-semibold leading-6 text-white/88">
+                    {TOKEN_ADDRESS}
+                  </div>
+                  <div className="mt-2 text-xs text-white/46">
+                    Short form: {shortAddress(TOKEN_ADDRESS)}
                   </div>
                 </div>
-              </div>
 
-              <div className="h-[320px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieChartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={65}
-                      outerRadius={120}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend
-                      verticalAlign="bottom"
-                      height={42}
-                      formatter={(value) => (
-                        <span style={{ color: "#ffffff", fontSize: "12px" }}>
-                          {value}
-                        </span>
-                      )}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="mt-4 rounded-2xl border border-amber-400/14 bg-amber-400/7 p-4 text-sm leading-6 text-amber-100/75">
-                Burned supply should only be shown after confirming the exact on-chain amount.
-                This view avoids unsupported burn claims.
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="rounded-[30px] border border-cyan-400/14 bg-cyan-400/7 p-5">
-                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-300/70">
-                  Official Contract
-                </div>
-                <div className="mt-3 break-all font-mono text-sm font-semibold leading-6 text-white/82">
-                  {TOKEN_ADDRESS}
-                </div>
-
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
                   <button
                     onClick={copyAddress}
                     className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-cyan-400/18 bg-cyan-400/10 px-4 text-sm font-bold text-cyan-100 transition hover:bg-cyan-400/15"
@@ -355,7 +275,7 @@ const Tokenomics = () => {
                     ) : (
                       <>
                         <CopyIcon />
-                        Copy Address
+                        Copy address
                       </>
                     )}
                   </button>
@@ -366,54 +286,90 @@ const Tokenomics = () => {
                     rel="noopener noreferrer"
                     className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-fuchsia-400/18 bg-fuchsia-400/8 px-4 text-sm font-bold text-fuchsia-100 transition hover:bg-fuchsia-400/14"
                   >
-                    Solscan
+                    Verify on Solscan
                     <ExternalIcon />
                   </a>
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  ["Network", "Solana SPL"],
-                  ["Mint Authority", "Revoked"],
-                  ["Freeze Authority", "Revoked"],
-                  ["Utility", "Spin-to-Win live"],
-                ].map(([label, value]) => (
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {tokenFacts.map(([label, value]) => (
                   <div
                     key={label}
-                    className="rounded-3xl border border-white/10 bg-white/[0.035] p-5"
+                    className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
                   >
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">
                       {label}
                     </div>
-                    <div className="mt-2 text-lg font-black text-white">{value}</div>
+                    <div className="mt-2 text-sm font-black text-white">{value}</div>
                   </div>
                 ))}
               </div>
+            </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                {[
-                  ["Jupiter", LINKS.jupiter],
-                  ["DEXTools", LINKS.dextools],
-                  ["GeckoTerminal", LINKS.gecko],
-                  ["Audit", LINKS.audit],
-                ].map(([label, href]) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex h-12 items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] px-4 text-sm font-bold text-white/78 transition hover:border-cyan-300/22 hover:bg-cyan-400/7 hover:text-white"
-                  >
-                    {label}
-                    <ExternalIcon />
-                  </a>
-                ))}
+            <div className="grid gap-4">
+              <div className="rounded-[30px] border border-emerald-400/14 bg-emerald-400/7 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-300/75">
+                  Supply & burn transparency
+                </div>
+                <h3 className="mt-3 text-2xl font-black text-white">
+                  On-chain proof comes first.
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-white/62">
+                  Current supply is loaded from the token-data service when available. Burned tokens
+                  are not estimated from a hard-coded number or a decorative chart. Burn history should
+                  be published with dates, amounts, and Solscan transaction links on the full tokenomics page.
+                </p>
+
+                <a
+                  href={LINKS.tokenomics}
+                  className="mt-5 inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-emerald-400/18 bg-emerald-400/10 px-4 text-sm font-black text-emerald-100 transition hover:bg-emerald-400/15"
+                >
+                  Open full tokenomics
+                  <ExternalIcon />
+                </a>
+              </div>
+
+              <div className="rounded-[30px] border border-amber-400/14 bg-amber-400/7 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-200/75">
+                  Token role
+                </div>
+                <p className="mt-3 text-sm leading-7 text-white/64">
+                  $RTA is the shared token layer across the RROTA ecosystem. Its role is to connect
+                  live and planned utilities, including game participation, reward systems, holder-linked
+                  features, community campaigns, and future ecosystem products.
+                </p>
               </div>
             </div>
           </div>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+            {[
+              ["Buy on Jupiter", LINKS.jupiter],
+              ["Solscan", LINKS.solscan],
+              ["DEX Screener", LINKS.dexscreener],
+              ["GeckoTerminal", LINKS.gecko],
+              ["SolidProof", LINKS.solidproof],
+              ["FreshCoins", LINKS.freshcoins],
+            ].map(([label, href]) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-sm font-bold text-white/76 transition hover:border-cyan-300/22 hover:bg-cyan-400/7 hover:text-white"
+              >
+                <span>{label}</span>
+                <ExternalIcon className="h-4 w-4 shrink-0" />
+              </a>
+            ))}
+          </div>
+
+          <p className="mt-6 text-center text-xs leading-6 text-white/40">
+            Market values can change quickly. Always verify the mint address and review live third-party market data before trading.
+          </p>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
