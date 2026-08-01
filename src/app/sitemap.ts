@@ -1,138 +1,120 @@
 import type { MetadataRoute } from "next";
-import { getArticleSlugs, getArticleBySlug } from "./lib/articles";
+import { getArticleBySlug, getArticleSlugs } from "./lib/articles";
 
 const BASE_URL = "https://rrota.xyz";
 
-function safeDate(value?: string) {
-  if (!value) return new Date();
+function parseArticleDate(value?: string): Date | undefined {
+  if (!value) return undefined;
 
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? new Date() : date;
+  return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-function getSafeBlogRoutes(): MetadataRoute.Sitemap {
-  const routes: MetadataRoute.Sitemap = [];
-
+function getBlogRoutes(): MetadataRoute.Sitemap {
   try {
-    const slugs = getArticleSlugs();
-
-    for (const slug of slugs) {
+    return getArticleSlugs().flatMap((slug) => {
       try {
         const article = getArticleBySlug(slug);
-        const isBoomWeekArticle = slug === "rrota-boom-week";
+        const lastModified = parseArticleDate(article?.meta?.date);
 
-        routes.push({
-          url: `${BASE_URL}/blog/${slug}`,
-          lastModified: safeDate(article?.meta?.date),
-          changeFrequency: isBoomWeekArticle ? "daily" : "weekly",
-          priority: isBoomWeekArticle ? 0.95 : 0.8,
-        });
+        return [
+          {
+            url: `${BASE_URL}/blog/${slug}`,
+            ...(lastModified ? { lastModified } : {}),
+            changeFrequency: "monthly" as const,
+            priority: 0.72,
+          },
+        ];
       } catch (error) {
         console.error(`Failed to add blog article to sitemap: ${slug}`, error);
+        return [];
       }
-    }
+    });
   } catch (error) {
     console.error("Failed to load blog routes for sitemap:", error);
+    return [];
   }
-
-  return routes;
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const buildDate = new Date();
-
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${BASE_URL}/`,
-      lastModified: buildDate,
-      changeFrequency: "daily",
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${BASE_URL}/rrota-boom-week`,
-      lastModified: buildDate,
-      changeFrequency: "daily",
-      priority: 0.99,
-    },
-    {
-      url: `${BASE_URL}/how-to-buy-rrota`,
-      lastModified: buildDate,
+      url: `${BASE_URL}/ai`,
       changeFrequency: "weekly",
-      priority: 0.98,
-    },
-    {
-      url: `${BASE_URL}/rrota-spin-to-win`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
-      priority: 0.96,
-    },
-    {
-      url: `${BASE_URL}/links`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
-      priority: 0.95,
-    },
-    {
-      url: `${BASE_URL}/whitepaper`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.95,
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/tokenomics`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.92,
+      changeFrequency: "weekly",
+      priority: 0.88,
     },
     {
       url: `${BASE_URL}/roadmap`,
-      lastModified: buildDate,
       changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/blog`,
-      lastModified: buildDate,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/ai`,
-      lastModified: buildDate,
-      changeFrequency: "weekly",
       priority: 0.86,
     },
     {
-      url: `${BASE_URL}/about`,
-      lastModified: buildDate,
+      url: `${BASE_URL}/rrota-spin-to-win`,
+      changeFrequency: "weekly",
+      priority: 0.84,
+    },
+    {
+      url: `${BASE_URL}/how-to-buy-rrota`,
       changeFrequency: "monthly",
+      priority: 0.82,
+    },
+    {
+      url: `${BASE_URL}/blog`,
+      changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/contact`,
-      lastModified: buildDate,
+      url: `${BASE_URL}/whitepaper`,
       changeFrequency: "monthly",
-      priority: 0.75,
+      priority: 0.78,
     },
     {
-      url: `${BASE_URL}/risk-disclaimer`,
-      lastModified: buildDate,
+      url: `${BASE_URL}/links`,
+      changeFrequency: "monthly",
+      priority: 0.76,
+    },
+    {
+      url: `${BASE_URL}/about`,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
+      url: `${BASE_URL}/contact`,
+      changeFrequency: "yearly",
+      priority: 0.55,
+    },
+    {
+      url: `${BASE_URL}/risk-disclaimer`,
+      changeFrequency: "yearly",
+      priority: 0.45,
+    },
+    {
       url: `${BASE_URL}/privacy`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.5,
+      changeFrequency: "yearly",
+      priority: 0.35,
     },
     {
       url: `${BASE_URL}/terms`,
-      lastModified: buildDate,
-      changeFrequency: "monthly",
-      priority: 0.5,
+      changeFrequency: "yearly",
+      priority: 0.35,
     },
   ];
 
-  return [...staticRoutes, ...getSafeBlogRoutes()];
+  const routesByUrl = new Map<string, MetadataRoute.Sitemap[number]>();
+
+  for (const route of [...staticRoutes, ...getBlogRoutes()]) {
+    routesByUrl.set(route.url, route);
+  }
+
+  return Array.from(routesByUrl.values());
 }
