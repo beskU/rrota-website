@@ -1,333 +1,296 @@
-"use client";
-import React, { useState } from "react";
-import RrotaImage2 from "../../../public/rrota-image-2.jpg";
 import Image from "next/image";
+import Link from "next/link";
+import RrotaImage2 from "../../../public/rrota-image-2.jpg";
 
-const AboutUs = () => {
-  const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
-  const [copied, setCopied] = useState(false);
+const currentStatus = [
+  {
+    label: "Live now",
+    title: "$RTA on Solana",
+    text: "The official RROTA token, public contract verification, market access, audits, and community channels are active.",
+    tone: "cyan",
+  },
+  {
+    label: "Live product",
+    title: "Spin-to-Win",
+    text: "The first public RROTA utility, with wallet-linked play, weekly, monthly, and yearly leaderboards, and recurring rewards.",
+    tone: "emerald",
+  },
+  {
+    label: "Ecosystem access",
+    title: "RROTA AI",
+    text: "A dedicated assistant that helps visitors understand the project, official resources, products, and ecosystem direction.",
+    tone: "fuchsia",
+  },
+];
 
-  const copyAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(TOKEN_ADDRESS);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch (e) {
-      console.error("Copy failed", e);
-    }
-  };
+const developmentPath = [
+  {
+    step: "01",
+    title: "Build working utility",
+    text: "Release usable products first, improve them in public, and connect each product to a clear role inside the RROTA ecosystem.",
+  },
+  {
+    step: "02",
+    title: "Prove activity openly",
+    text: "Publish official links, product status, race results, reward proofs, audits, and development updates that visitors can verify.",
+  },
+  {
+    step: "03",
+    title: "Expand in layers",
+    text: "Grow from the token and first live game into additional gaming, holder, community, AI, and practical utility products.",
+  },
+];
 
+const roadmapLayers = [
+  {
+    status: "Improving now",
+    title: "Utility and holder experience",
+    items: [
+      "Stronger links between holding, playing, and ecosystem access",
+      "Clearer winner history, reward proof, and campaign visibility",
+      "Continued anti-abuse, leaderboard, and gameplay improvements",
+    ],
+    tone: "cyan",
+  },
+  {
+    status: "Next expansion",
+    title: "Games and community tools",
+    items: [
+      "Crypto Shooter and additional playable experiences",
+      "Community reward systems, referrals, dashboards, and player tools",
+      "More ways for $RTA to connect products across the ecosystem",
+    ],
+    tone: "fuchsia",
+  },
+  {
+    status: "Long-term direction",
+    title: "Practical and transport utility",
+    items: [
+      "Public-transport-focused tools and user-facing features",
+      "Practical integrations developed only when technically ready",
+      "A broader ecosystem that extends beyond one token or one game",
+    ],
+    tone: "amber",
+  },
+];
+
+const toneClasses: Record<string, string> = {
+  cyan: "border-cyan-400/18 bg-cyan-400/[0.065] text-cyan-200",
+  emerald: "border-emerald-400/18 bg-emerald-400/[0.065] text-emerald-200",
+  fuchsia: "border-fuchsia-400/18 bg-fuchsia-400/[0.065] text-fuchsia-200",
+  amber: "border-amber-400/18 bg-amber-400/[0.065] text-amber-200",
+};
+
+function ArrowIcon() {
   return (
-    <section id="AboutUs" className="w-full px-4 mb-20 text-white">
-      <div className="max-w-[1300px] mx-auto">
-        <h2 className="text-center text-3xl md:text-4xl font-extrabold bg-gradient-to-r pb-5 from-[#fff] via-[#fff] to-[#fff] bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(168,144,255,0.35)]">
-          About RROTA
-        </h2>
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
 
-        {/* Quick Intro */}
-        <div className="text-center mb-10">
-          <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-6 max-w-4xl mx-auto">
-            <span className="text-[#20befa] font-bold">RROTA ($RTA)</span> is a
-            utility-first Solana ecosystem focused on <span className="text-[#20befa] font-bold">digital rewards</span>,
-            crypto gaming, community growth, and future public transportation utility.
+function CheckIcon() {
+  return (
+    <svg
+      className="mt-0.5 h-4 w-4 shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+export default function AboutUs() {
+  return (
+    <section
+      id="About"
+      className="relative w-full scroll-mt-28 px-4 text-white sm:px-6 lg:px-8"
+      aria-labelledby="about-rrota-title"
+    >
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/18 bg-cyan-400/8 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-cyan-300">
+              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+              About RROTA
+            </div>
+
+            <h2
+              id="about-rrota-title"
+              className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl"
+            >
+              Built as an ecosystem.
+              <span className="rrota-safe-title-accent block">
+                Delivered product by product.
+              </span>
+            </h2>
+          </div>
+
+          <p className="max-w-2xl text-sm leading-7 text-white/68 sm:text-base lg:justify-self-end">
+            RROTA ($RTA) is a Solana utility ecosystem connecting a live token,
+            gaming, digital rewards, AI-assisted access, community products, and
+            a longer-term practical utility direction. The goal is not to make
+            every promise at once—it is to ship, verify, improve, and expand in
+            clear stages.
           </p>
-
-          <p className="text-white/70 max-w-4xl mx-auto text-base md:text-lg leading-relaxed">
-            Spin-to-Win is the first live product inside the RROTA ecosystem — not the whole story.
-            The long-term direction is to keep expanding $RTA into more user-facing utilities,
-            games, tools, and practical integrations.
-          </p>
         </div>
 
-        {/* Verify / Trust Box */}
-        <div className="max-w-4xl mx-auto mb-12 rounded-2xl border border-[#2b3139] bg-[#202329]/60 backdrop-blur-sm p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-2">
-              <p className="text-white font-semibold text-lg">✅ Verify the mint address</p>
-              <p className="text-white/70 text-sm">
-                Always verify the token address before swapping. Fake clones and random links can appear.
-              </p>
-              <p className="font-mono text-xs md:text-sm break-all text-white/90">
-                {TOKEN_ADDRESS}
-              </p>
-            </div>
-
-            <div className="flex gap-3 flex-wrap">
-              <button
-                onClick={copyAddress}
-                type="button"
-                className="px-4 py-3 rounded-xl border border-[#1cc2fc]/30 bg-[#1cc2fc]/10 hover:bg-[#1cc2fc]/15 transition text-[#7dd9ff] font-semibold"
-              >
-                {copied ? "Copied ✓" : "Copy Address"}
-              </button>
-
-              <a
-                href={`https://solscan.io/token/${TOKEN_ADDRESS}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-white font-semibold"
-              >
-                Open Solscan ↗
-              </a>
-
-              <a
-                href="https://freshcoins.io/audit/rrota"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-3 rounded-xl border border-green-500/20 bg-green-500/10 hover:bg-green-500/15 transition text-green-300 font-semibold"
-              >
-                Audit ↗
-              </a>
-            </div>
-          </div>
-
-          <div className="mt-4 text-xs text-white/60">
-            Tip: if a wallet or chart app does not show $RTA, paste the official mint address above.
-          </div>
-        </div>
-
-        {/* Key Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
-          <div className="flex flex-col items-center p-6 rounded-xl border border-green-500/30 !bg-gradient-to-br !from-green-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-green-400"
-              >
-                <path d="M9 12l2 2 4-4" />
-                <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z" />
-                <path d="M3 5h18v6H3V5z" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-lg text-white mb-2">Verified</h3>
-            <p className="text-green-400 text-sm font-medium">Contract + audit references</p>
-          </div>
-
-          <div className="flex flex-col items-center p-6 rounded-xl border border-blue-500/30 !bg-gradient-to-br !from-blue-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
-            <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-blue-400"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                <path d="M9 9h.01" />
-                <path d="M15 9h.01" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-lg text-white mb-2">Utility-first</h3>
-            <p className="text-blue-400 text-sm font-medium">Games, rewards, future tools</p>
-          </div>
-
-          <div className="flex flex-col items-center p-6 rounded-xl border border-orange-500/30 !bg-gradient-to-br !from-orange-500/10 !to-transparent hover:scale-[1.03] transition-transform duration-300">
-            <div className="w-16 h-16 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-orange-400"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-                <path d="M17 3l3 3-3 3" />
-                <path d="M7 21l-3-3 3-3" />
-              </svg>
-            </div>
-            <h3 className="font-bold text-lg text-white mb-2">Ecosystem</h3>
-            <p className="text-orange-400 text-sm font-medium">Coin, games, transport vision</p>
-          </div>
-        </div>
-
-        {/* Now vs Next */}
-        <div className="max-w-5xl mx-auto mb-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-[#2b3139] bg-[#1c1f24] p-6">
-            <h3 className="text-[#20befa] font-bold text-lg mb-3">What exists now</h3>
-            <ul className="space-y-2 text-white/80 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Live $RTA token on Solana with public contract verification</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Official website, official links, audit reference, charts, and token pages</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Spin-to-Win live as the first RROTA utility product</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="rounded-2xl border border-[#2b3139] bg-[#1c1f24] p-6">
-            <h3 className="text-[#20befa] font-bold text-lg mb-3">What comes next</h3>
-            <ul className="space-y-2 text-white/80 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Crypto Shooter concept and additional game utility expansion</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Community rewards, referral systems, dashboards, and player tools</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#20befa] mt-1">•</span>
-                <span>Future public transportation utility direction and practical user features</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Image + Long Copy */}
-        <div className="w-full bg-[#1c1f24] border border-[#2b3139] rounded-[24px] overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="relative w-full h-[300px] sm:h-[400px] md:h-full">
+        <div className="mt-8 overflow-hidden rounded-[38px] border border-white/10 bg-[#070A12] shadow-[0_0_70px_rgba(34,211,238,0.08)]">
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="relative min-h-[360px] overflow-hidden lg:min-h-[610px]">
               <Image
-                alt="RROTA Solana ecosystem visual"
                 src={RrotaImage2}
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: "center top" }}
-                priority
+                alt="RROTA Solana utility ecosystem"
+                fill
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f14] via-transparent to-transparent opacity-70"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,17,0.08),rgba(5,7,17,0.82))] lg:bg-[linear-gradient(90deg,rgba(5,7,17,0.02),rgba(5,7,17,0.7))]" />
+
+              <div className="absolute inset-x-5 bottom-5 rounded-[28px] border border-white/12 bg-[#050711]/78 p-5 backdrop-blur-xl sm:inset-x-7 sm:bottom-7">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/75">
+                  The RROTA approach
+                </div>
+                <p className="mt-2 text-sm leading-6 text-white/76">
+                  Start with a transparent token foundation, connect it to real
+                  products, and let completed work—not unsupported hype—define
+                  the project’s progress.
+                </p>
+              </div>
             </div>
 
-            <div className="text-[#aaa] text-sm mt-1 leading-relaxed space-y-6 p-4 md:p-6 flex flex-col justify-center">
-              <p>
-                <span className="text-[#20befa]">RROTA</span> is community-built
-                on Solana’s high-performance infrastructure — focused on speed,
-                low fees, transparency, and a clean on-chain footprint.
-              </p>
+            <div className="relative p-5 sm:p-8 lg:p-10">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.09),transparent_38%)]" />
 
-              <p>
-                The goal is to grow an ecosystem where holding and using $RTA makes sense:
-                digital rewards, crypto games, community systems, and future practical tools —
-                shipped step by step, not promised overnight.
-              </p>
-
-              <div className="space-y-3">
-                <h3 className="text-[#20befa] font-semibold text-base">
-                  Core principles
+              <div className="relative">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/42">
+                  What RROTA is
+                </div>
+                <h3 className="mt-3 text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
+                  One ecosystem with multiple utility layers.
                 </h3>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>Transparency: link everything important through official sources</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>Utility-first: ship working products before heavy promotion</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#20befa] mt-1">•</span>
-                    <span>Ecosystem growth: coin, games, tools, rewards, and future transport direction</span>
-                  </li>
+                <p className="mt-4 text-sm leading-7 text-white/64 sm:text-base">
+                  $RTA is the common token layer. Spin-to-Win is the first live
+                  product. RROTA AI helps users navigate the ecosystem. Future
+                  gaming, holder, community, and practical tools are designed to
+                  expand the same ecosystem rather than create disconnected ideas.
+                </p>
+
+                <div className="mt-6 grid gap-3">
+                  {currentStatus.map((item) => (
+                    <div
+                      key={item.title}
+                      className={`rounded-3xl border p-4 ${toneClasses[item.tone]}`}
+                    >
+                      <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-75">
+                        {item.label}
+                      </div>
+                      <div className="mt-1.5 text-base font-black text-white">
+                        {item.title}
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-white/62 sm:text-sm sm:leading-6">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Link
+                    href="/roadmap"
+                    className="inline-flex h-12 items-center justify-center gap-3 rounded-2xl border border-cyan-300/28 bg-cyan-400/10 px-5 text-sm font-black text-cyan-50 transition-all hover:border-cyan-200/45 hover:bg-cyan-400/15"
+                  >
+                    View Development Roadmap
+                    <ArrowIcon />
+                  </Link>
+
+                  <Link
+                    href="/whitepaper"
+                    className="inline-flex h-12 items-center justify-center gap-3 rounded-2xl border border-white/12 bg-white/[0.045] px-5 text-sm font-black text-white/82 transition-all hover:border-white/24 hover:bg-white/[0.075] hover:text-white"
+                  >
+                    Read Whitepaper
+                    <ArrowIcon />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {developmentPath.map((item) => (
+            <article
+              key={item.step}
+              className="rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/70">
+                  Building principle
+                </div>
+                <div className="font-mono text-sm font-black text-white/24">
+                  {item.step}
+                </div>
+              </div>
+              <h3 className="mt-4 text-lg font-black text-white">{item.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-white/58">{item.text}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-6 rounded-[36px] border border-white/10 bg-white/[0.03] p-5 sm:p-7">
+          <div className="max-w-3xl">
+            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-fuchsia-200/70">
+              From today to the long-term vision
+            </div>
+            <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
+              Clear status matters more than pretending everything is finished.
+            </h3>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {roadmapLayers.map((layer) => (
+              <div
+                key={layer.title}
+                className={`rounded-[28px] border p-5 ${toneClasses[layer.tone]}`}
+              >
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-75">
+                  {layer.status}
+                </div>
+                <h4 className="mt-2 text-lg font-black text-white">{layer.title}</h4>
+                <ul className="mt-4 space-y-3">
+                  {layer.items.map((item) => (
+                    <li key={item} className="flex gap-2 text-sm leading-6 text-white/62">
+                      <CheckIcon />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
-
-              <p className="text-[#20befa] font-medium">
-                RROTA is building from token visibility toward real ecosystem utility.
-              </p>
-
-              <div className="flex gap-5 pt-2 flex-wrap">
-                <a
-                  href="https://x.com/rrotacoin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition text-white"
-                  aria-label="Twitter (X)"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                    <path d="M3.04371 3.57629L9.99338 12.8687L3 20.4237H4.57397L10.6968 13.8092L15.6437 20.4237H21L13.6593 10.6087L20.169 3.57629H18.5951L12.9562 9.6682L8.39998 3.57629H3.04371ZM5.35834 4.73568H7.81903L18.685 19.2642H16.2243L5.35852 4.73568H5.35834Z"></path>
-                  </svg>
-                </a>
-
-                <a
-                  href="https://t.me/rrotaOfficial"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
-                  aria-label="Telegram"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send w-5 h-5 text-white">
-                    <path d="m22 2-7 20-4-9-9-4Z"></path>
-                    <path d="M22 2 11 13"></path>
-                  </svg>
-                </a>
-
-                <a
-                  href="https://freshcoins.io/audit/rrota"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
-                  aria-label="Audit"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
-                    <path d="M9 12l2 2 4-4" />
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
-                </a>
-
-                <a
-                  href="mailto:info@rrota.xyz"
-                  className="p-3 rounded-full bg-[#202329] hover:opacity-80 transition"
-                  aria-label="Email"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail w-5 h-5 text-white">
-                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                  </svg>
-                </a>
-              </div>
-
-              <div className="pt-2 flex flex-wrap gap-3">
-                <a
-                  href={`https://jup.ag/tokens/${TOKEN_ADDRESS}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold bg-gradient-to-r from-[#1cc2fc] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#1cc2fc] transition-all duration-300 shadow-lg hover:shadow-[#1cc2fc]/30"
-                >
-                  Buy on Jupiter ↗
-                </a>
-
-                <a
-                  href="https://spin.rrota.xyz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-300"
-                >
-                  Open Spin-to-Win ↗
-                </a>
-              </div>
-            </div>
+            ))}
           </div>
+
+          <p className="mt-5 text-xs leading-5 text-white/42">
+            Product and roadmap labels should be updated whenever features move
+            from concept to development, beta, or live release.
+          </p>
         </div>
       </div>
     </section>
   );
-};
-
-export default AboutUs;
+}
