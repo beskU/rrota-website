@@ -659,6 +659,10 @@ export default async function BlogPostPage({
   const schemaImage = resolveImageUrl(
     article.meta.coverImage
   );
+  const publishedDate = parseDate(article.meta.date);
+  const isHistoricalUpdate = publishedDate
+    ? Date.now() - publishedDate.getTime() > 60 * 24 * 60 * 60 * 1000
+    : false;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -821,6 +825,17 @@ export default async function BlogPostPage({
             </div>
           ) : null}
         </header>
+
+        {isHistoricalUpdate ? (
+          <div className="relative mx-auto mb-8 max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="rounded-[26px] border border-amber-300/18 bg-amber-400/[0.06] p-5 text-sm leading-7 text-amber-50/82">
+              <strong className="text-amber-100">Historical update:</strong>{" "}
+              this article reflects RROTA at the time it was published. Product status, race rewards, deadlines, market data, liquidity, and roadmap items may have changed. Check the{" "}
+              <Link href="/roadmap" className="font-black text-white underline underline-offset-4">current roadmap</Link>,{" "}
+              <Link href="/proof" className="font-black text-white underline underline-offset-4">Proof Vault</Link>, and the live Spin-to-Win product for current information.
+            </div>
+          </div>
+        ) : null}
 
         {coverImage ? (
           <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

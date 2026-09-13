@@ -78,6 +78,8 @@ const internalGroups = [
     links: [
       { label: "Home", href: "/" },
       { label: "Tokenomics", href: "/tokenomics" },
+      { label: "Proof Vault", href: "/proof" },
+      { label: "Race Results", href: "/rewards" },
       { label: "Roadmap", href: "/roadmap" },
       { label: "RROTA AI", href: "/ai" },
       { label: "Spin-to-Win Guide", href: "/rrota-spin-to-win" },
@@ -90,6 +92,7 @@ const internalGroups = [
       { label: "Blog & Updates", href: "/blog" },
       { label: "Whitepaper", href: "/whitepaper" },
       { label: "Official Links", href: "/links" },
+      { label: "Verify / Anti-Phishing", href: "/verify" },
       { label: "Contact", href: "/contact" },
     ],
   },

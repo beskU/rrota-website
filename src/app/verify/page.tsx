@@ -520,6 +520,13 @@ export default function VerifyPage() {
                 </a>
 
                 <Link
+                  href="/proof"
+                  className="inline-flex h-14 items-center justify-center rounded-2xl border border-emerald-300/18 bg-emerald-400/[0.07] px-6 text-sm font-black text-emerald-100 transition hover:bg-emerald-400/[0.12] hover:text-white"
+                >
+                  Open Proof Vault
+                </Link>
+
+                <Link
                   href="/links"
                   className="inline-flex h-14 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.045] px-6 text-sm font-black text-white/82 transition hover:bg-white/[0.07] hover:text-white"
                 >

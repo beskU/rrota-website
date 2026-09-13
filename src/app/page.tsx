@@ -8,11 +8,14 @@ import Footer from "./components/footer";
 import HowTo from "./components/howTo";
 import Roadmap from "./components/roadmap";
 import AboutUs from "./components/aboutus";
+import RrotaUniverse from "./components/rrota-universe";
+import WeeklyRacePulse from "./components/weekly-race-pulse";
+import { WEEKLY_REWARDS } from "./lib/race-schedule";
 
 const SITE_URL = "https://rrota.xyz";
 const SITE_NAME = "RROTA";
 const DEFAULT_OG = `${SITE_URL}/rrota-og-solidproof.jpg`;
-const PUBLISHER_LOGO = `${SITE_URL}/favicon.png`;
+const PUBLISHER_LOGO = `${SITE_URL}/rrota-logo2.png`;
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
@@ -28,11 +31,7 @@ const GECKO_URL =
 const FRESHCOINS_AUDIT_URL = "https://freshcoins.io/audit/rrota";
 const SOLIDPROOF_AUDIT_URL = "https://app.solidproof.io/projects/rrota";
 
-const WEEKLY_REWARDS = [
-  { place: "1st place", reward: "2 SOL", icon: "🥇" },
-  { place: "2nd place", reward: "1 SOL", icon: "🥈" },
-  { place: "3rd place", reward: "0.5 SOL", icon: "🥉" },
-];
+
 
 export const revalidate = 300;
 
@@ -130,36 +129,6 @@ function ArrowIcon() {
       <path d="m13 6 6 6-6 6" />
     </svg>
   );
-}
-
-function getNextWeeklyDeadline(now = new Date()) {
-  const deadline = new Date(now);
-  const day = deadline.getUTCDay();
-  let daysUntilSaturday = (6 - day + 7) % 7;
-
-  deadline.setUTCHours(16, 0, 0, 0);
-
-  if (daysUntilSaturday === 0 && now.getTime() >= deadline.getTime()) {
-    daysUntilSaturday = 7;
-  }
-
-  deadline.setUTCDate(deadline.getUTCDate() + daysUntilSaturday);
-  return deadline;
-}
-
-function formatUtcDeadline(deadline: Date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  })
-    .format(deadline)
-    .replace(",", " •")
-    .concat(" UTC");
 }
 
 function EcosystemOverviewSection() {
@@ -306,9 +275,6 @@ function EcosystemOverviewSection() {
 }
 
 function CurrentActivitySection() {
-  const nextDeadline = getNextWeeklyDeadline();
-  const formattedDeadline = formatUtcDeadline(nextDeadline);
-
   return (
     <section id="Activity" className="relative w-full px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -341,12 +307,7 @@ function CurrentActivitySection() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-left sm:text-right">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-                    Next weekly deadline
-                  </div>
-                  <div className="mt-1 text-sm font-black text-cyan-100">{formattedDeadline}</div>
-                </div>
+                <WeeklyRacePulse compact />
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -642,6 +603,18 @@ export default function Home() {
             description: "The first live product inside the RROTA ecosystem.",
           },
           {
+            "@type": "WebPage",
+            name: "Proof of RROTA",
+            url: `${SITE_URL}/proof`,
+            description: "Verification hub for token identity, authorities, market references, audits, and official resources.",
+          },
+          {
+            "@type": "WebPage",
+            name: "RROTA race results and reward transparency",
+            url: `${SITE_URL}/rewards`,
+            description: "Public archive of published weekly race results and payout-proof status.",
+          },
+          {
             "@type": "Thing",
             name: "RROTA ecosystem roadmap",
             description: "Gaming, community rewards, information tools, and long-term real-world utility development.",
@@ -703,6 +676,8 @@ export default function Home() {
 
         <main className="relative w-full">
           <Hero />
+
+          <RrotaUniverse />
 
           <EcosystemOverviewSection />
 

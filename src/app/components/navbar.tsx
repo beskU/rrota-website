@@ -17,6 +17,8 @@ const LINKS = {
   blog: "/blog",
   officialLinks: "/links",
   whitepaper: "/whitepaper",
+  proof: "/proof",
+  rewards: "/rewards",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   solidproof: "https://app.solidproof.io/projects/rrota",
@@ -26,10 +28,9 @@ const LINKS = {
 };
 
 const HOME_SECTIONS = [
+  { label: "Universe", id: "Universe" },
   { label: "Ecosystem", id: "Ecosystem" },
-  { label: "Activity", id: "Activity" },
-  { label: "Roadmap", id: "Roadmap" },
-  { label: "About", id: "About" },
+  { label: "Race", id: "Activity" },
 ] as const;
 
 function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -190,6 +191,15 @@ export default function Navbar() {
           ))}
 
           <Link
+            href={LINKS.proof}
+            className={`${desktopNavClass} ${
+              pathname === LINKS.proof ? "bg-emerald-400/10 text-emerald-100" : ""
+            }`}
+          >
+            Proof
+          </Link>
+
+          <Link
             href={LINKS.tokenomics}
             className={`${desktopNavClass} ${
               pathname === LINKS.tokenomics ? "bg-cyan-400/10 text-cyan-100" : ""
@@ -213,7 +223,7 @@ export default function Navbar() {
             href={SPIN_TO_WIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-white/10 bg-white/[0.045] px-4 text-sm font-black text-white/82 transition-all hover:border-fuchsia-300/25 hover:bg-fuchsia-400/9 hover:text-white"
+            className="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-cyan-200/28 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_28px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
           >
             Play
             <ExternalIcon className="h-3.5 w-3.5" />
@@ -223,7 +233,7 @@ export default function Navbar() {
             href={LINKS.jupiter}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-cyan-200/28 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-5 text-sm font-black text-white shadow-[0_0_28px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
+            className="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.08] px-4 text-sm font-black text-emerald-100 transition-all hover:border-emerald-300/35 hover:bg-emerald-400/[0.13] hover:text-white"
           >
             Buy $RTA
             <ExternalIcon className="h-3.5 w-3.5" />
@@ -284,6 +294,14 @@ export default function Navbar() {
                     <span>Tokenomics</span>
                   </Link>
 
+                  <Link href={LINKS.proof} onClick={closeMenu} className={mobileNavClass}>
+                    <span>Proof Vault</span>
+                  </Link>
+
+                  <Link href={LINKS.rewards} onClick={closeMenu} className={mobileNavClass}>
+                    <span>Race Results</span>
+                  </Link>
+
                   <Link href={LINKS.blog} onClick={closeMenu} className={mobileNavClass}>
                     <span>Blog &amp; Updates</span>
                   </Link>
@@ -304,24 +322,24 @@ export default function Navbar() {
 
                 <div className="grid gap-2 sm:grid-cols-2">
                   <a
-                    href={LINKS.jupiter}
+                    href={SPIN_TO_WIN_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={closeMenu}
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-cyan-200/28 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-5 py-3 text-sm font-black text-white shadow-[0_0_28px_rgba(34,211,238,0.18)] transition-all hover:brightness-110"
                   >
-                    Buy $RTA
+                    Play Spin-to-Win
                     <ExternalIcon />
                   </a>
 
                   <a
-                    href={SPIN_TO_WIN_URL}
+                    href={LINKS.jupiter}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={closeMenu}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-400/10 px-5 py-3 text-sm font-black text-fuchsia-100 transition-all hover:bg-fuchsia-400/15 hover:text-white"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald-300/20 bg-emerald-400/[0.08] px-5 py-3 text-sm font-black text-emerald-100 transition-all hover:bg-emerald-400/[0.13] hover:text-white"
                   >
-                    Play Spin-to-Win
+                    Buy $RTA
                     <ExternalIcon />
                   </a>
                 </div>

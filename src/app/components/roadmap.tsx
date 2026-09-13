@@ -25,6 +25,8 @@ const LINKS = {
   freshCoins: "https://freshcoins.io/audit/rrota",
   solidProof: "https://app.solidproof.io/projects/rrota",
   whitepaper: "/whitepaper",
+  rewards: "/rewards",
+  proof: "/proof",
 };
 
 const roadmapItems: RoadmapItem[] = [
@@ -103,10 +105,14 @@ const roadmapItems: RoadmapItem[] = [
   },
   {
     phase: "Transparency",
-    title: "Previous Winners and Payment Archive",
+    title: "Race Results and Reward Archive",
     description:
-      "A public history of completed races, final rankings, reward amounts, and payment proofs is planned to make competition outcomes easier to verify from the main ecosystem website.",
-    status: "In Progress",
+      "A public archive now records completed weekly races, final rankings, leaderboard earnings, prize allocations, and the publication status of payout proofs. Transaction proofs are only marked verified when a public link is attached.",
+    status: "Live",
+    proof: {
+      label: "View race archive",
+      href: LINKS.rewards,
+    },
   },
   {
     phase: "Gaming",

@@ -1,6 +1,6 @@
 ---
-title: "RROTA Boom Week Is Live — 72H Global Spin Race"
-description: "RROTA Boom Week is a 72-hour global Spin-to-Win race with free entry, a live leaderboard, 6 SOL reward pool, and RTA holder boost."
+title: "RROTA Boom Week Archive — 72H Global Spin Race"
+description: "Archive of the completed June 2026 RROTA Boom Week: a 72-hour Spin-to-Win race with free entry, a live leaderboard, a 6 SOL reward pool, and RTA holder benefits."
 date: "2026-06-20"
 author: "RROTA Team"
 tags:
@@ -13,9 +13,9 @@ tags:
 coverImage: "/rrota-og-solidproof.jpg"
 ---
 
-RROTA Boom Week is live.
+> **Historical archive:** RROTA Boom Week ended on June 25, 2026 at 18:00 UTC. The details below describe that completed campaign. For current races and rewards, use the live Spin-to-Win product or the official race archive.
 
-The event is a 72-hour Global Spin Race built around the official RROTA Spin-to-Win experience. Players can enter for free, spin, climb the live leaderboard, and compete for a 6 SOL reward pool before the race ends.
+RROTA Boom Week was a 72-hour Global Spin Race built around the official RROTA Spin-to-Win experience. Players could enter for free, spin, climb the live leaderboard, and compete for a published 6 SOL reward pool during the campaign window.
 
 The goal of Boom Week is simple: create one focused event where the RROTA community, players, and new visitors can all participate in the same live race at the same time.
 
@@ -50,21 +50,21 @@ The RROTA Boom Week reward pool is split between the top 3 leaderboard players.
 | 2nd Place | 2 SOL |
 | 3rd Place | 1 SOL |
 
-The final leaderboard will be reviewed after the race ends.
+The final leaderboard was subject to review after the race ended.
 
 Fair-play checks are important because RROTA Boom Week is built for real players. Botting, multi-account abuse, fake referrals, or leaderboard manipulation may lead to disqualification after review.
 
-## How to Join RROTA Boom Week
+## How Players Joined RROTA Boom Week
 
-Joining the race is simple.
+During the campaign, joining the race was simple.
 
-1. Open [https://spin.rrota.xyz](https://spin.rrota.xyz)
-2. Start playing or connect your wallet
-3. Spin daily
+1. Open the official Spin-to-Win product
+2. Start playing or connect a supported wallet where needed
+3. Spin during the event window
 4. Watch the live leaderboard
-5. Compete until the timer ends
+5. Compete until the timer ended
 
-Every spin can change the leaderboard.
+Every eligible spin could change the leaderboard.
 
 The official Boom Week page also includes race details, reward breakdown, holder boost information, official links, and fair-play rules.
 
@@ -119,11 +119,11 @@ The following behavior may lead to disqualification:
 - Suspicious or automated activity
 - Attempts to exploit the game system
 
-Final winners will be announced only after leaderboard verification.
+Final winners were to be announced only after leaderboard verification.
 
 ## Official RROTA Links
 
-Use only official RROTA links during Boom Week.
+Use only official RROTA links when reviewing historical Boom Week material or joining current RROTA products.
 
 Website: [https://rrota.xyz](https://rrota.xyz)
 
@@ -157,6 +157,8 @@ RROTA Boom Week is a game and community race event.
 
 Nothing in this article is financial advice. RROTA does not guarantee market performance, trading results, or token price movement. Players and users should always verify official links, understand the risks, and make their own decisions.
 
-Join the official Boom Week race here:
+Review the archived Boom Week campaign here:
 
 [https://rrota.xyz/rrota-boom-week](https://rrota.xyz/rrota-boom-week)
+
+For the current RROTA race, use [https://spin.rrota.xyz](https://spin.rrota.xyz) and verify current rules, deadlines, and rewards in the live product.

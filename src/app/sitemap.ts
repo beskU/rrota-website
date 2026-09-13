@@ -54,6 +54,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.88,
     },
     {
+      url: `${BASE_URL}/proof`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/rewards`,
+      changeFrequency: "weekly",
+      priority: 0.89,
+    },
+    {
       url: `${BASE_URL}/roadmap`,
       changeFrequency: "monthly",
       priority: 0.86,
@@ -79,9 +89,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.78,
     },
     {
+      url: `${BASE_URL}/community`,
+      changeFrequency: "weekly",
+      priority: 0.79,
+    },
+    {
       url: `${BASE_URL}/links`,
       changeFrequency: "monthly",
       priority: 0.76,
+    },
+    {
+      url: `${BASE_URL}/verify`,
+      changeFrequency: "monthly",
+      priority: 0.77,
     },
     {
       url: `${BASE_URL}/about`,
@@ -92,6 +112,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE_URL}/contact`,
       changeFrequency: "yearly",
       priority: 0.55,
+    },
+    {
+      url: `${BASE_URL}/rrota-boom-week`,
+      changeFrequency: "yearly",
+      priority: 0.42,
     },
     {
       url: `${BASE_URL}/risk-disclaimer`,

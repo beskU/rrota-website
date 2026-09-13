@@ -18,6 +18,8 @@ const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
 const LINKS = {
   ecosystem: "#Ecosystem",
+  universe: "#Universe",
+  proof: "/proof",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   dexscreener: `https://dexscreener.com/solana/${TOKEN_ADDRESS}`,
@@ -351,21 +353,21 @@ export default function Hero() {
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
           >
             <a
-              href={LINKS.ecosystem}
+              href={LINKS.spinToWin}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/35 bg-gradient-to-r from-cyan-500 via-sky-500 to-fuchsia-500 px-7 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_0_38px_rgba(34,211,238,0.20)] transition-all hover:scale-[1.02] hover:brightness-110"
             >
-              Explore Ecosystem
-              <ArrowIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              Play RROTA Now
+              <ExternalIcon />
             </a>
 
             <a
-              href={LINKS.jupiter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-emerald-400/22 bg-emerald-400/10 px-7 text-sm font-black uppercase tracking-[0.12em] text-emerald-100 transition-all hover:border-emerald-300/38 hover:bg-emerald-400/15 hover:text-white"
+              href={LINKS.universe}
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-400/[0.07] px-7 text-sm font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:border-cyan-200/35 hover:bg-cyan-400/[0.12] hover:text-white"
             >
-              Buy $RTA
-              <ExternalIcon />
+              Enter RROTA Universe
+              <ArrowIcon />
             </a>
           </motion.div>
 
@@ -374,12 +376,12 @@ export default function Hero() {
             className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-xs font-black uppercase tracking-[0.1em]"
           >
             <a
-              href={LINKS.spinToWin}
+              href={LINKS.jupiter}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-white/60 transition-colors hover:text-cyan-200"
+              className="inline-flex items-center gap-2 text-white/60 transition-colors hover:text-emerald-200"
             >
-              Play Spin-to-Win <ExternalIcon className="h-3.5 w-3.5" />
+              Get $RTA on Jupiter <ExternalIcon className="h-3.5 w-3.5" />
             </a>
             <a
               href={LINKS.aiAssistant}
@@ -388,12 +390,10 @@ export default function Hero() {
               Ask RROTA AI <ArrowIcon className="h-3.5 w-3.5" />
             </a>
             <a
-              href={LINKS.solscan}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={LINKS.proof}
               className="inline-flex items-center gap-2 text-white/60 transition-colors hover:text-emerald-200"
             >
-              Verify Contract <ExternalIcon className="h-3.5 w-3.5" />
+              Open Proof Vault <ArrowIcon className="h-3.5 w-3.5" />
             </a>
           </motion.div>
 
