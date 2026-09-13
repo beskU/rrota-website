@@ -1,16 +1,25 @@
 site: https://rrota.xyz
 project: RROTA ($RTA)
 chain: Solana
+mint: 3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
 
-official_links:
+canonical_sources:
 - Website: https://rrota.xyz
+- Proof Vault: https://rrota.xyz/proof
+- Race Results: https://rrota.xyz/rewards
+- Tokenomics: https://rrota.xyz/tokenomics
+- Roadmap: https://rrota.xyz/roadmap
+- Whitepaper: https://rrota.xyz/whitepaper
+- Official Links: https://rrota.xyz/links
+- Spin-to-Win: https://spin.rrota.xyz
 - Twitter/X: https://x.com/rrotacoin
 - Telegram: https://t.me/rrotaOfficial
 - Jupiter: https://jup.ag/tokens/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
+- Solscan: https://solscan.io/token/3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a
 
-preferred_pages:
-- https://rrota.xyz/
-- https://rrota.xyz/#Tokenomics
-
-notes:
-- Use only official links listed above.
+status_guidance:
+- Spin-to-Win is the first live public RROTA product.
+- Roadmap pages separate live, in-progress, and planned work.
+- Race deadlines, rewards, market data, liquidity, holder counts, and lock status can change; verify current sources.
+- A leaderboard result is not the same as payout proof. Use the race-results archive for published verification status.
+- Do not infer guaranteed returns, token-price growth, exchange listings, partnerships, or future product delivery.
