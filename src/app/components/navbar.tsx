@@ -5,9 +5,10 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import logo from "../../../public/rrota-logo2.png";
 
-const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const TOKEN_ADDRESS =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 
 const LINKS = {
@@ -28,12 +29,25 @@ const LINKS = {
 };
 
 const HOME_SECTIONS = [
-  { label: "Universe", id: "Universe" },
-  { label: "Ecosystem", id: "Ecosystem" },
-  { label: "Race", id: "Activity" },
+  {
+    label: "Universe",
+    id: "Universe",
+  },
+  {
+    label: "Ecosystem",
+    id: "Ecosystem",
+  },
+  {
+    label: "Race",
+    id: "Activity",
+  },
 ] as const;
 
-function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
+function ExternalIcon({
+  className = "h-4 w-4",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       className={className}
@@ -52,7 +66,11 @@ function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-function MenuIcon({ open }: { open: boolean }) {
+function MenuIcon({
+  open,
+}: {
+  open: boolean;
+}) {
   return open ? (
     <svg
       className="h-5 w-5"
@@ -82,7 +100,9 @@ function MenuIcon({ open }: { open: boolean }) {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] =
+    useState(false);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -90,7 +110,9 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMobileMenuOpen(false);
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
     };
 
     window.addEventListener("keydown", handleEscape);
@@ -100,12 +122,18 @@ export default function Navbar() {
     }
 
     return () => {
-      window.removeEventListener("keydown", handleEscape);
+      window.removeEventListener(
+        "keydown",
+        handleEscape,
+      );
+
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
 
-  const closeMenu = () => setIsMobileMenuOpen(false);
+  const closeMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   const goToSection = (sectionId: string) => {
     closeMenu();
@@ -115,13 +143,23 @@ export default function Navbar() {
       return;
     }
 
-    const section = document.getElementById(sectionId);
+    const section =
+      document.getElementById(sectionId);
+
     if (!section) return;
 
-    const headerOffset = window.innerWidth < 1024 ? 86 : 94;
-    const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+    const headerOffset =
+      window.innerWidth < 1024 ? 86 : 94;
 
-    window.scrollTo({ top, behavior: "smooth" });
+    const top =
+      section.getBoundingClientRect().top +
+      window.scrollY -
+      headerOffset;
+
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
   };
 
   const goHome = () => {
@@ -132,7 +170,10 @@ export default function Navbar() {
       return;
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const desktopNavClass =
@@ -147,16 +188,25 @@ export default function Navbar() {
         <motion.button
           type="button"
           onClick={goHome}
-          initial={{ opacity: 0, x: -14 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
+          initial={{
+            opacity: 0,
+            x: -14,
+          }}
+          animate={{
+            opacity: 1,
+            x: 0,
+          }}
+          transition={{
+            duration: 0.4,
+          }}
           className="group flex min-w-0 items-center gap-3 text-left"
           aria-label="Go to RROTA homepage"
         >
           <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 shadow-[0_0_24px_rgba(34,211,238,0.13)] transition-all group-hover:border-cyan-200/40 group-hover:bg-cyan-400/15">
             <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.18),transparent_42%)]" />
+
             <Image
-              src={logo}
+              src="/rrota-logo2.png"
               alt="RROTA logo"
               width={34}
               height={34}
@@ -169,6 +219,7 @@ export default function Navbar() {
             <span className="block text-lg font-black leading-none tracking-[0.2em] text-white sm:text-xl">
               RROTA
             </span>
+
             <span className="mt-1 hidden text-[9px] font-black uppercase tracking-[0.23em] text-cyan-200/68 sm:block">
               Solana Utility Ecosystem
             </span>
@@ -183,7 +234,9 @@ export default function Navbar() {
             <button
               key={item.id}
               type="button"
-              onClick={() => goToSection(item.id)}
+              onClick={() => {
+                goToSection(item.id);
+              }}
               className={desktopNavClass}
             >
               {item.label}
@@ -193,7 +246,9 @@ export default function Navbar() {
           <Link
             href={LINKS.proof}
             className={`${desktopNavClass} ${
-              pathname === LINKS.proof ? "bg-emerald-400/10 text-emerald-100" : ""
+              pathname === LINKS.proof
+                ? "bg-emerald-400/10 text-emerald-100"
+                : ""
             }`}
           >
             Proof
@@ -202,7 +257,9 @@ export default function Navbar() {
           <Link
             href={LINKS.tokenomics}
             className={`${desktopNavClass} ${
-              pathname === LINKS.tokenomics ? "bg-cyan-400/10 text-cyan-100" : ""
+              pathname === LINKS.tokenomics
+                ? "bg-cyan-400/10 text-cyan-100"
+                : ""
             }`}
           >
             Tokenomics
@@ -211,7 +268,9 @@ export default function Navbar() {
           <Link
             href={LINKS.blog}
             className={`${desktopNavClass} ${
-              pathname.startsWith(LINKS.blog) ? "bg-cyan-400/10 text-cyan-100" : ""
+              pathname.startsWith(LINKS.blog)
+                ? "bg-cyan-400/10 text-cyan-100"
+                : ""
             }`}
           >
             Blog
@@ -242,9 +301,17 @@ export default function Navbar() {
 
         <button
           type="button"
-          onClick={() => setIsMobileMenuOpen((open) => !open)}
+          onClick={() => {
+            setIsMobileMenuOpen(
+              (open) => !open,
+            );
+          }}
           className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.045] text-white transition-all hover:border-cyan-300/25 hover:bg-cyan-400/10 xl:hidden"
-          aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-label={
+            isMobileMenuOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
           aria-expanded={isMobileMenuOpen}
           aria-controls="rrota-mobile-navigation"
         >
@@ -256,10 +323,21 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <motion.div
             id="rrota-mobile-navigation"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: -12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -12,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
             className="fixed inset-x-0 top-[74px] max-h-[calc(100dvh-74px)] overflow-y-auto border-t border-cyan-400/10 bg-[#050711]/98 px-4 py-4 shadow-[0_22px_60px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:px-6 lg:top-[82px] lg:max-h-[calc(100dvh-82px)] xl:hidden"
           >
             <div className="mx-auto max-w-3xl">
@@ -267,15 +345,23 @@ export default function Navbar() {
                 <div className="rounded-2xl border border-cyan-300/16 bg-[linear-gradient(135deg,rgba(34,211,238,0.10),rgba(217,70,239,0.07))] px-4 py-3">
                   <div className="flex items-center gap-2 text-sm font-black text-white">
                     <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.9)]" />
+
                     Official RROTA ecosystem hub
                   </div>
+
                   <p className="mt-1 text-xs leading-5 text-white/55">
-                    Explore $RTA, live products, development progress, market information, and verified resources.
+                    Explore $RTA, live products,
+                    development progress, market
+                    information, and verified resources.
                   </p>
                 </div>
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <button type="button" onClick={goHome} className={mobileNavClass}>
+                  <button
+                    type="button"
+                    onClick={goHome}
+                    className={mobileNavClass}
+                  >
                     <span>Home</span>
                   </button>
 
@@ -283,35 +369,62 @@ export default function Navbar() {
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => goToSection(item.id)}
+                      onClick={() => {
+                        goToSection(item.id);
+                      }}
                       className={mobileNavClass}
                     >
                       <span>{item.label}</span>
                     </button>
                   ))}
 
-                  <Link href={LINKS.tokenomics} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.tokenomics}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Tokenomics</span>
                   </Link>
 
-                  <Link href={LINKS.proof} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.proof}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Proof Vault</span>
                   </Link>
 
-                  <Link href={LINKS.rewards} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.rewards}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Race Results</span>
                   </Link>
 
-                  <Link href={LINKS.blog} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.blog}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Blog &amp; Updates</span>
                   </Link>
 
-                  <Link href={LINKS.whitepaper} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.whitepaper}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Whitepaper</span>
                   </Link>
 
-                  <Link href={LINKS.ai} onClick={closeMenu} className={mobileNavClass}>
+                  <Link
+                    href={LINKS.ai}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
                     <span>Ask RROTA AI</span>
+
                     <span className="rounded-full border border-violet-300/18 bg-violet-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.13em] text-violet-200">
                       Beta
                     </span>
@@ -358,10 +471,15 @@ export default function Navbar() {
                       className={mobileNavClass}
                     >
                       <span>Verify contract</span>
+
                       <ExternalIcon className="h-3.5 w-3.5 text-cyan-200/70" />
                     </a>
 
-                    <Link href={LINKS.officialLinks} onClick={closeMenu} className={mobileNavClass}>
+                    <Link
+                      href={LINKS.officialLinks}
+                      onClick={closeMenu}
+                      className={mobileNavClass}
+                    >
                       <span>All official links</span>
                     </Link>
 
@@ -373,6 +491,7 @@ export default function Navbar() {
                       className={mobileNavClass}
                     >
                       <span>SolidProof audit</span>
+
                       <ExternalIcon className="h-3.5 w-3.5 text-cyan-200/70" />
                     </a>
 
@@ -384,6 +503,7 @@ export default function Navbar() {
                       className={mobileNavClass}
                     >
                       <span>FreshCoins audit</span>
+
                       <ExternalIcon className="h-3.5 w-3.5 text-cyan-200/70" />
                     </a>
 
@@ -395,6 +515,7 @@ export default function Navbar() {
                       className={mobileNavClass}
                     >
                       <span>Telegram</span>
+
                       <ExternalIcon className="h-3.5 w-3.5 text-cyan-200/70" />
                     </a>
 
@@ -406,6 +527,7 @@ export default function Navbar() {
                       className={mobileNavClass}
                     >
                       <span>X / Twitter</span>
+
                       <ExternalIcon className="h-3.5 w-3.5 text-cyan-200/70" />
                     </a>
                   </div>
