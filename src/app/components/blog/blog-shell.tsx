@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import logo from "../../../../public/rrota-logo2.png";
 
 type Crumb = { label: string; href?: string };
 
@@ -35,7 +34,8 @@ export default function BlogShell({
     return isDark
       ? {
           page: "min-h-screen bg-[#0c0f14] text-white",
-          topbar: "border-b border-white/10 bg-[#0c0f14]/95 backdrop-blur-md",
+          topbar:
+            "border-b border-white/10 bg-[#0c0f14]/95 backdrop-blur-md",
           card: "border border-white/10 bg-white/5",
           cardHover: "hover:bg-white/10",
           muted: "text-white/60",
@@ -67,6 +67,7 @@ export default function BlogShell({
   const toggle = () => {
     const next = isDark ? "light" : "dark";
     setMode(next);
+
     try {
       localStorage.setItem("rrota_blog_theme", next);
     } catch {
@@ -80,15 +81,26 @@ export default function BlogShell({
       <div className={theme.topbar}>
         <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <Image src={logo} alt="RROTA" width={36} height={36} />
-            <span className="text-xl font-semibold tracking-wide">RROTA</span>
+            <Image
+              src="/rrota-logo2.png"
+              alt="RROTA"
+              width={36}
+              height={36}
+            />
+            <span className="text-xl font-semibold tracking-wide">
+              RROTA
+            </span>
           </Link>
 
           <div className="flex items-center gap-2">
             <Link href="/" className={`${theme.button} ${theme.link}`}>
               ← Home
             </Link>
-            <Link href="/blog" className={`${theme.button} ${theme.link}`}>
+
+            <Link
+              href="/blog"
+              className={`${theme.button} ${theme.link}`}
+            >
               Blog
             </Link>
 
@@ -106,18 +118,24 @@ export default function BlogShell({
       </div>
 
       {/* Breadcrumb */}
-      <div className={`max-w-6xl mx-auto px-6 pt-6`}>
+      <div className="max-w-6xl mx-auto px-6 pt-6">
         <nav className={`text-sm ${theme.muted}`}>
           <ol className="flex flex-wrap items-center gap-2">
             {crumbs.map((c, i) => (
-              <li key={`${c.label}-${i}`} className="flex items-center gap-2">
+              <li
+                key={`${c.label}-${i}`}
+                className="flex items-center gap-2"
+              >
                 {c.href ? (
                   <Link href={c.href} className={theme.link}>
                     {c.label}
                   </Link>
                 ) : (
-                  <span className={theme.muted}>{c.label}</span>
+                  <span className={theme.muted}>
+                    {c.label}
+                  </span>
                 )}
+
                 {i < crumbs.length - 1 ? <span>›</span> : null}
               </li>
             ))}
@@ -131,15 +149,20 @@ export default function BlogShell({
                 {title}
               </h1>
             ) : null}
+
             {subtitle ? (
-              <p className={`mt-3 text-lg ${theme.muted2}`}>{subtitle}</p>
+              <p className={`mt-3 text-lg ${theme.muted2}`}>
+                {subtitle}
+              </p>
             ) : null}
           </header>
         )}
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-10">{children}</div>
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {children}
+      </div>
     </main>
   );
 }
