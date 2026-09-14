@@ -57,6 +57,7 @@ export const metadata: Metadata = {
     "RROTA is a Solana ecosystem built around the $RTA token, live digital products, community rewards, crypto gaming, RROTA AI, and long-term practical utility.",
 
   applicationName: "RROTA",
+  manifest: "/manifest.webmanifest",
   category: "cryptocurrency",
   creator: "RROTA",
   publisher: "RROTA",

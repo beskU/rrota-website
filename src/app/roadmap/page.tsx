@@ -73,7 +73,7 @@ const roadmapGroups: RoadmapGroup[] = [
           "Official mint publicly documented",
           "Solscan and Jupiter verification links",
           "Mint and freeze authorities revoked",
-          "Liquidity-lock information published",
+          "Live liquidity and market references published",
         ],
         href: SOLSCAN_URL,
         linkLabel: "Verify on Solscan",
@@ -105,6 +105,19 @@ const roadmapGroups: RoadmapGroup[] = [
         href: SOLIDPROOF_URL,
         linkLabel: "View SolidProof",
         external: true,
+      },
+      {
+        title: "Proof Vault and verification layer",
+        description:
+          "RROTA now separates promotional content from verification surfaces with a dedicated proof hub for the mint, authorities, pool references, audits, official identities, and reward records.",
+        notes: [
+          "Primary on-chain verification links",
+          "Live-vs-permanent fact guidance",
+          "Audit and market cross-checks",
+          "Reward archive integration",
+        ],
+        href: "/proof",
+        linkLabel: "Open Proof Vault",
       },
       {
         title: "Official discovery layer",
@@ -170,6 +183,19 @@ const roadmapGroups: RoadmapGroup[] = [
         linkLabel: "Explore RROTA AI",
       },
       {
+        title: "Race results and reward-transparency archive",
+        description:
+          "The website now publishes completed weekly race results and separates final leaderboard outcomes from payout-proof verification status.",
+        notes: [
+          "Previous race winners",
+          "Leaderboard earnings and prize allocations",
+          "Review-status disclosure",
+          "Public payout-proof field",
+        ],
+        href: "/rewards",
+        linkLabel: "View race archive",
+      },
+      {
         title: "Public project updates",
         description:
           "The blog, roadmap, Telegram, and X provide ongoing communication around development, campaigns, safety, and ecosystem progress.",
@@ -212,17 +238,6 @@ const roadmapGroups: RoadmapGroup[] = [
           "Holder benefit definitions",
           "Clearer utility communication",
           "Testing before wider activation",
-        ],
-      },
-      {
-        title: "Winners and payment-proof archive",
-        description:
-          "A dedicated public record is being prepared to make past race results, winners, and completed reward payments easier to verify.",
-        notes: [
-          "Previous race winners",
-          "Leaderboard period references",
-          "Reward-payment evidence",
-          "Public archive navigation",
         ],
       },
       {

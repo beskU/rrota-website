@@ -11,7 +11,7 @@ tags:
   - Solana
   - Web3 Gaming
   - DeFi
-image: "/rrota-solidproof-audit-completed.png"
+coverImage: "/rrota-solidproof-audit-completed.webp"
 ---
 
 # RROTA SolidProof Audit Completed Successfully

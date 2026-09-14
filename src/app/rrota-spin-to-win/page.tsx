@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "../components/footer";
 import Navbar from "../components/navbar";
+import WeeklyRacePulse from "../components/weekly-race-pulse";
 
 const SITE_URL = "https://rrota.xyz";
 const PAGE_URL = `${SITE_URL}/rrota-spin-to-win`;
@@ -507,8 +508,12 @@ export default function RrotaSpinToWinPage() {
                 ))}
               </div>
 
-              <p className="mt-5 text-xs leading-6 text-white/46">
-                Current rewards, deadlines, and qualifying positions should always
+              <div className="mt-5">
+                <WeeklyRacePulse compact />
+              </div>
+
+              <p className="mt-4 text-xs leading-6 text-white/46">
+                Current qualifying positions and any race-specific rule changes should always
                 be checked in the live game or official race announcement.
               </p>
             </div>

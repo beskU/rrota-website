@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://rrota.xyz/sitemap.xml
-Host: rrota.xyz

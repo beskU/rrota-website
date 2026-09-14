@@ -11,7 +11,7 @@ tags:
   - Web3 Gaming
   - Spin-to-Win
   - Token Verification
-image: "/rrota-og.jpg"
+coverImage: "/rrota-og-solidproof.jpg"
 ---
 
 # RROTA Ecosystem Update: Cleaner, Safer, and Easier to Verify

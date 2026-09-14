@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import RrotaImage2 from "../../../public/rrota-image-2.jpg";
 
 const currentStatus = [
   {
@@ -76,9 +75,12 @@ const roadmapLayers = [
 
 const toneClasses: Record<string, string> = {
   cyan: "border-cyan-400/18 bg-cyan-400/[0.065] text-cyan-200",
-  emerald: "border-emerald-400/18 bg-emerald-400/[0.065] text-emerald-200",
-  fuchsia: "border-fuchsia-400/18 bg-fuchsia-400/[0.065] text-fuchsia-200",
-  amber: "border-amber-400/18 bg-amber-400/[0.065] text-amber-200",
+  emerald:
+    "border-emerald-400/18 bg-emerald-400/[0.065] text-emerald-200",
+  fuchsia:
+    "border-fuchsia-400/18 bg-fuchsia-400/[0.065] text-fuchsia-200",
+  amber:
+    "border-amber-400/18 bg-amber-400/[0.065] text-amber-200",
 };
 
 function ArrowIcon() {
@@ -143,11 +145,11 @@ export default function AboutUs() {
           </div>
 
           <p className="max-w-2xl text-sm leading-7 text-white/68 sm:text-base lg:justify-self-end">
-            RROTA ($RTA) is a Solana utility ecosystem connecting a live token,
-            gaming, digital rewards, AI-assisted access, community products, and
-            a longer-term practical utility direction. The goal is not to make
-            every promise at once—it is to ship, verify, improve, and expand in
-            clear stages.
+            RROTA ($RTA) is a Solana utility ecosystem connecting a live
+            token, gaming, digital rewards, AI-assisted access,
+            community products, and a longer-term practical utility
+            direction. The goal is not to make every promise at once—it
+            is to ship, verify, improve, and expand in clear stages.
           </p>
         </div>
 
@@ -155,22 +157,24 @@ export default function AboutUs() {
           <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
             <div className="relative min-h-[360px] overflow-hidden lg:min-h-[610px]">
               <Image
-                src={RrotaImage2}
+                src="/rrota-image-2.jpg"
                 alt="RROTA Solana utility ecosystem"
                 fill
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-cover object-center"
               />
+
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,7,17,0.08),rgba(5,7,17,0.82))] lg:bg-[linear-gradient(90deg,rgba(5,7,17,0.02),rgba(5,7,17,0.7))]" />
 
               <div className="absolute inset-x-5 bottom-5 rounded-[28px] border border-white/12 bg-[#050711]/78 p-5 backdrop-blur-xl sm:inset-x-7 sm:bottom-7">
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/75">
                   The RROTA approach
                 </div>
+
                 <p className="mt-2 text-sm leading-6 text-white/76">
-                  Start with a transparent token foundation, connect it to real
-                  products, and let completed work—not unsupported hype—define
-                  the project’s progress.
+                  Start with a transparent token foundation, connect it
+                  to real products, and let completed work—not
+                  unsupported hype—define the project’s progress.
                 </p>
               </div>
             </div>
@@ -182,28 +186,35 @@ export default function AboutUs() {
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/42">
                   What RROTA is
                 </div>
+
                 <h3 className="mt-3 text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
                   One ecosystem with multiple utility layers.
                 </h3>
+
                 <p className="mt-4 text-sm leading-7 text-white/64 sm:text-base">
-                  $RTA is the common token layer. Spin-to-Win is the first live
-                  product. RROTA AI helps users navigate the ecosystem. Future
-                  gaming, holder, community, and practical tools are designed to
-                  expand the same ecosystem rather than create disconnected ideas.
+                  $RTA is the common token layer. Spin-to-Win is the
+                  first live product. RROTA AI helps users navigate the
+                  ecosystem. Future gaming, holder, community, and
+                  practical tools are designed to expand the same
+                  ecosystem rather than create disconnected ideas.
                 </p>
 
                 <div className="mt-6 grid gap-3">
                   {currentStatus.map((item) => (
                     <div
                       key={item.title}
-                      className={`rounded-3xl border p-4 ${toneClasses[item.tone]}`}
+                      className={`rounded-3xl border p-4 ${
+                        toneClasses[item.tone]
+                      }`}
                     >
                       <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-75">
                         {item.label}
                       </div>
+
                       <div className="mt-1.5 text-base font-black text-white">
                         {item.title}
                       </div>
+
                       <p className="mt-2 text-xs leading-5 text-white/62 sm:text-sm sm:leading-6">
                         {item.text}
                       </p>
@@ -243,12 +254,19 @@ export default function AboutUs() {
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/70">
                   Building principle
                 </div>
+
                 <div className="font-mono text-sm font-black text-white/24">
                   {item.step}
                 </div>
               </div>
-              <h3 className="mt-4 text-lg font-black text-white">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-white/58">{item.text}</p>
+
+              <h3 className="mt-4 text-lg font-black text-white">
+                {item.title}
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-white/58">
+                {item.text}
+              </p>
             </article>
           ))}
         </div>
@@ -258,8 +276,10 @@ export default function AboutUs() {
             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-fuchsia-200/70">
               From today to the long-term vision
             </div>
+
             <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl">
-              Clear status matters more than pretending everything is finished.
+              Clear status matters more than pretending everything is
+              finished.
             </h3>
           </div>
 
@@ -267,15 +287,24 @@ export default function AboutUs() {
             {roadmapLayers.map((layer) => (
               <div
                 key={layer.title}
-                className={`rounded-[28px] border p-5 ${toneClasses[layer.tone]}`}
+                className={`rounded-[28px] border p-5 ${
+                  toneClasses[layer.tone]
+                }`}
               >
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-75">
                   {layer.status}
                 </div>
-                <h4 className="mt-2 text-lg font-black text-white">{layer.title}</h4>
+
+                <h4 className="mt-2 text-lg font-black text-white">
+                  {layer.title}
+                </h4>
+
                 <ul className="mt-4 space-y-3">
                   {layer.items.map((item) => (
-                    <li key={item} className="flex gap-2 text-sm leading-6 text-white/62">
+                    <li
+                      key={item}
+                      className="flex gap-2 text-sm leading-6 text-white/62"
+                    >
                       <CheckIcon />
                       <span>{item}</span>
                     </li>
@@ -286,8 +315,9 @@ export default function AboutUs() {
           </div>
 
           <p className="mt-5 text-xs leading-5 text-white/42">
-            Product and roadmap labels should be updated whenever features move
-            from concept to development, beta, or live release.
+            Product and roadmap labels should be updated whenever
+            features move from concept to development, beta, or live
+            release.
           </p>
         </div>
       </div>

@@ -1,0 +1,5 @@
+Contact: mailto:info@rrota.xyz
+Canonical: https://rrota.xyz/.well-known/security.txt
+Policy: https://rrota.xyz/verify
+Preferred-Languages: en
+Expires: 2027-09-13T00:00:00.000Z

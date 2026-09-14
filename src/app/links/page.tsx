@@ -189,6 +189,13 @@ const resourceGroups: ResourceGroup[] = [
         external: true,
       },
       {
+        title: "Proof Vault",
+        description:
+          "Cross-check the official mint, authority status, primary pool, audits, official identities, and reward-verification surfaces from one page.",
+        href: "/proof",
+        label: "Open Proof Vault",
+      },
+      {
         title: "Tokenomics",
         description:
           "Review permanent token facts, live market references, current utility, planned roles, and verification principles.",
@@ -233,6 +240,13 @@ const resourceGroups: ResourceGroup[] = [
           "Understand browser and Telegram access, game features, leaderboards, reward rules, fair-play controls, and safety.",
         href: "/rrota-spin-to-win",
         label: "Read product guide",
+      },
+      {
+        title: "Race Results & Reward Archive",
+        description:
+          "Review published weekly race outcomes, prize allocations, review status, and whether a public payout proof has been attached.",
+        href: "/rewards",
+        label: "View race archive",
       },
       {
         title: "RROTA Blog",
