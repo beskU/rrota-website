@@ -85,7 +85,7 @@ const playerFeatures = [
     number: "05",
     title: "Boost Credits",
     text:
-      "Use available progression and boost systems according to the current game rules and interface.",
+      "Boost Credits power paid Boost Spins. The current game uses 10 RTA for 1 Boost Credit and applies separate deposit and active-value requirements for Boost gameplay.",
   },
   {
     number: "06",
@@ -108,11 +108,11 @@ const leaderboardPeriods = [
   },
   {
     title: "Monthly",
-    status: "Longer-form ranking",
+    status: "Period update in progress",
     text:
-      "Monthly standings reward consistent participation across the month rather than activity during only one short race.",
+      "Monthly is intended to track a separate month-long competition window rather than the full yearly season.",
     note:
-      "Monthly rules and rewards may be updated between competition periods.",
+      "September 2026 clarification: Monthly and Yearly currently share the same historical start reference in the live Spin configuration, so their totals can match. A period fix is being prepared.",
     tone: "border-fuchsia-400/18 bg-fuchsia-400/[0.05]",
     badge: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-200",
   },
@@ -120,9 +120,9 @@ const leaderboardPeriods = [
     title: "Yearly",
     status: "Championship layer",
     text:
-      "The yearly leaderboard provides a long-term competition layer for players who remain active across multiple periods.",
+      "Yearly is intended to track the longer 2026 championship season across multiple shorter competition periods.",
     note:
-      "Yearly eligibility remains subject to the published championship rules and account review.",
+      "Until the Spin period update is deployed, matching Monthly and Yearly totals should be treated as provisional rather than as intentionally identical competitions.",
     tone: "border-amber-400/18 bg-amber-400/[0.045]",
     badge: "border-amber-400/20 bg-amber-400/10 text-amber-100",
   },
@@ -251,39 +251,49 @@ const faqItems = [
       "RROTA Spin-to-Win is the first live RROTA product. It combines wheel activity, bonuses, missions, referrals, player progression, and connected leaderboard competitions.",
   },
   {
-    question: "Where can I play?",
+    question: "How is a leaderboard rank calculated?",
     answer:
-      "Use the official browser game at spin.rrota.xyz or open the official Telegram bot at @RROTASpin_Bot.",
+      "The current period leaderboards rank players primarily by total RTA won from spin records inside the selected period. Tie-breakers are player level, best single win, then total spins.",
   },
   {
-    question: "Which leaderboards are available?",
+    question: "Why can Monthly and Yearly show the same totals?",
     answer:
-      "The game includes weekly, monthly, yearly, and all-time leaderboard views. Each represents a different competition or activity period.",
+      "A September 2026 review found that both live boards currently use the same historical start reference. That can make their totals and rankings match. A Spin update is being prepared to separate the intended periods.",
   },
   {
-    question: "Does every leaderboard position receive a reward?",
+    question: "Does Weekly resetting erase Monthly or Yearly progress?",
     answer:
-      "No. Rewards depend on the active competition rules, published prize structure, qualifying positions, eligibility checks, and available campaign conditions.",
+      "No. Weekly uses its own rolling seven-day window. Longer boards are separate period views, so eligible activity can appear in more than one active board at the same time.",
   },
   {
-    question: "Do I need to buy $RTA before playing?",
+    question: "How are leaderboard winners paid?",
     answer:
-      "Public access and product rules can change by feature or campaign. Review the live game interface before assuming that a token purchase is required.",
+      "The race closes, standings are reviewed, winners are confirmed, and competition rewards are processed after review. The current live game does not contain an automatic SOL payout engine for leaderboard prizes.",
+  },
+  {
+    question: "Where can I see past winners?",
+    answer:
+      "Use the Race Results page on rrota.xyz. It records published race-close standings and keeps payout proof separate from leaderboard results.",
+  },
+  {
+    question: "How do deposits and Boost Credits work?",
+    answer:
+      "The official deposit flow sends on-chain RTA to the configured game treasury and verifies the Solana transaction before Boost Credits are credited. The current conversion is 10 RTA for 1 Boost Credit.",
+  },
+  {
+    question: "What is the difference between RTA Balance and wallet RTA?",
+    answer:
+      "Wallet RTA is on-chain token balance in a Solana wallet. RTA Balance is an in-game balance that can be used for Boost Credit conversion or eligible RTA withdrawal through the official game flow.",
+  },
+  {
+    question: "Where can I read the full player explanation?",
+    answer:
+      "Open the RROTA Player Guide at rrota.xyz/player-guide for leaderboard logic, payouts, deposits, balances, withdrawals, and wallet guidance.",
   },
   {
     question: "Does the game guarantee profit?",
     answer:
       "No. Spin-to-Win is a game and ecosystem product. Rewards, token prices, withdrawals, and future value are not guaranteed.",
-  },
-  {
-    question: "What happens if suspicious activity is detected?",
-    answer:
-      "An account, referral pattern, wallet, leaderboard position, or withdrawal may be reviewed under the current fair-play and eligibility rules.",
-  },
-  {
-    question: "Where are current prizes and deadlines shown?",
-    answer:
-      "Check the live game, official RROTA announcements, and current leaderboard communication. This page avoids hard-coding changing race details.",
   },
 ];
 
@@ -456,6 +466,13 @@ export default function RrotaSpinToWinPage() {
                   Open Telegram bot
                   <ExternalIcon />
                 </a>
+
+                <Link
+                  href="/player-guide"
+                  className="inline-flex h-14 items-center justify-center rounded-2xl border border-amber-300/18 bg-amber-400/[0.06] px-6 text-sm font-black text-amber-100 transition hover:bg-amber-400/[0.10]"
+                >
+                  Player Guide
+                </Link>
 
                 <Link
                   href="/links"

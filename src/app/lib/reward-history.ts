@@ -8,6 +8,7 @@ export type RaceResult = {
 
 export type RaceHistoryEntry = {
   raceId: string;
+  startsAt: string;
   endedAt: string;
   results: RaceResult[];
   reviewStatus: "Final standings published" | "Under review";
@@ -16,11 +17,13 @@ export type RaceHistoryEntry = {
 
 /**
  * Public leaderboard results recorded from official RROTA race-close snapshots.
- * A payout must not be marked verified until a public transaction proof is attached.
+ * A payout must not be labelled publicly verified until a public transaction
+ * proof is attached to that winner record.
  */
 export const RACE_HISTORY: RaceHistoryEntry[] = [
   {
     raceId: "weekly-2026-09-12",
+    startsAt: "2026-09-05T16:00:00Z",
     endedAt: "2026-09-12T16:00:00Z",
     reviewStatus: "Final standings published",
     sourceLabel: "Official race-close leaderboard snapshot",
@@ -32,6 +35,7 @@ export const RACE_HISTORY: RaceHistoryEntry[] = [
   },
   {
     raceId: "weekly-2026-09-05",
+    startsAt: "2026-08-29T16:00:00Z",
     endedAt: "2026-09-05T16:00:00Z",
     reviewStatus: "Final standings published",
     sourceLabel: "Official race-close leaderboard snapshot",

@@ -64,6 +64,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.89,
     },
     {
+      url: `${BASE_URL}/player-guide`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/roadmap`,
       changeFrequency: "monthly",
       priority: 0.86,

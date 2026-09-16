@@ -20,6 +20,7 @@ const LINKS = {
   whitepaper: "/whitepaper",
   proof: "/proof",
   rewards: "/rewards",
+  playerGuide: "/player-guide",
   jupiter: `https://jup.ag/tokens/${TOKEN_ADDRESS}`,
   solscan: `https://solscan.io/token/${TOKEN_ADDRESS}`,
   solidproof: "https://app.solidproof.io/projects/rrota",
@@ -244,6 +245,17 @@ export default function Navbar() {
           ))}
 
           <Link
+            href={LINKS.playerGuide}
+            className={`${desktopNavClass} ${
+              pathname === LINKS.playerGuide
+                ? "bg-amber-400/10 text-amber-100"
+                : ""
+            }`}
+          >
+            Player Guide
+          </Link>
+
+          <Link
             href={LINKS.proof}
             className={`${desktopNavClass} ${
               pathname === LINKS.proof
@@ -400,6 +412,14 @@ export default function Navbar() {
                     className={mobileNavClass}
                   >
                     <span>Race Results</span>
+                  </Link>
+
+                  <Link
+                    href={LINKS.playerGuide}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
+                    <span>Player Guide</span>
                   </Link>
 
                   <Link
