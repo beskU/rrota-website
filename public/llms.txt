@@ -7,6 +7,7 @@ canonical_sources:
 - Website: https://rrota.xyz
 - Proof Vault: https://rrota.xyz/proof
 - Race Results: https://rrota.xyz/rewards
+- Player Guide: https://rrota.xyz/player-guide
 - Tokenomics: https://rrota.xyz/tokenomics
 - Roadmap: https://rrota.xyz/roadmap
 - Whitepaper: https://rrota.xyz/whitepaper
@@ -22,4 +23,6 @@ status_guidance:
 - Roadmap pages separate live, in-progress, and planned work.
 - Race deadlines, rewards, market data, liquidity, holder counts, and lock status can change; verify current sources.
 - A leaderboard result is not the same as payout proof. Use the race-results archive for published verification status.
+- The Player Guide explains current leaderboard ranking logic, balances, deposits, withdrawals, and payout workflow.
+- September 2026: Monthly and Yearly Spin boards were found to share the same historical start reference; matching totals should be treated as provisional until the Spin period update is deployed.
 - Do not infer guaranteed returns, token-price growth, exchange listings, partnerships, or future product delivery.

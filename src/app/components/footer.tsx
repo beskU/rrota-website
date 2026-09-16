@@ -80,6 +80,7 @@ const internalGroups = [
       { label: "Tokenomics", href: "/tokenomics" },
       { label: "Proof Vault", href: "/proof" },
       { label: "Race Results", href: "/rewards" },
+      { label: "Player Guide", href: "/player-guide" },
       { label: "Roadmap", href: "/roadmap" },
       { label: "RROTA AI", href: "/ai" },
       { label: "Spin-to-Win Guide", href: "/rrota-spin-to-win" },

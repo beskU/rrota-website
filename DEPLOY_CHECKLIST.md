@@ -20,6 +20,7 @@ Check at minimum:
 - `/`
 - `/proof`
 - `/rewards`
+- `/player-guide`
 - `/rrota-spin-to-win`
 - `/roadmap`
 - `/verify`
@@ -38,7 +39,9 @@ Check at minimum:
 - Market signal cards gracefully degrade if DexScreener is unavailable.
 - Proof Vault external links open the correct official resources.
 - Rewards page does not display `paid`/`verified` unless a transaction proof URL is configured.
-- Mobile navbar exposes Proof Vault and Race Results.
+- Player Guide explains the current Monthly/Yearly period issue without claiming the Spin fix is already deployed.
+- Player Guide keeps SOL leaderboard payouts separate from RTA Balance withdrawals.
+- Mobile navbar exposes Proof Vault, Race Results, and Player Guide.
 
 
 ## GitHub repository protection
