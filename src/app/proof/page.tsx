@@ -152,6 +152,9 @@ export default function ProofPage() {
             <a href={LINKS.solscanToken} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 text-sm font-black uppercase tracking-[0.1em] text-white transition hover:brightness-110">
               Verify token on Solscan
             </a>
+            <Link href="/transparency" className="inline-flex h-12 items-center justify-center rounded-2xl border border-emerald-300/16 bg-emerald-400/[0.06] px-6 text-sm font-black text-emerald-100 transition hover:bg-emerald-400/[0.1] hover:text-white">
+              Open Transparency Center
+            </Link>
             <Link href="/rewards" className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.05] px-6 text-sm font-black text-white/82 transition hover:bg-white/[0.08] hover:text-white">
               Review race results
             </Link>

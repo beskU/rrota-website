@@ -18,6 +18,7 @@ const LINKS = {
   blog: "/blog",
   officialLinks: "/links",
   whitepaper: "/whitepaper",
+  transparency: "/transparency",
   proof: "/proof",
   rewards: "/rewards",
   playerGuide: "/player-guide",
@@ -256,14 +257,14 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href={LINKS.proof}
+            href={LINKS.transparency}
             className={`${desktopNavClass} ${
-              pathname === LINKS.proof
+              pathname === LINKS.transparency
                 ? "bg-emerald-400/10 text-emerald-100"
                 : ""
             }`}
           >
-            Proof
+            Transparency
           </Link>
 
           <Link
@@ -396,6 +397,14 @@ export default function Navbar() {
                     className={mobileNavClass}
                   >
                     <span>Tokenomics</span>
+                  </Link>
+
+                  <Link
+                    href={LINKS.transparency}
+                    onClick={closeMenu}
+                    className={mobileNavClass}
+                  >
+                    <span>Transparency Center</span>
                   </Link>
 
                   <Link

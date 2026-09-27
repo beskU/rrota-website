@@ -54,6 +54,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.88,
     },
     {
+      url: `${BASE_URL}/transparency`,
+      changeFrequency: "daily",
+      priority: 0.94,
+    },
+    {
       url: `${BASE_URL}/proof`,
       changeFrequency: "weekly",
       priority: 0.9,

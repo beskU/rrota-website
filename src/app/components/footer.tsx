@@ -78,6 +78,7 @@ const internalGroups = [
     links: [
       { label: "Home", href: "/" },
       { label: "Tokenomics", href: "/tokenomics" },
+      { label: "Transparency Center", href: "/transparency" },
       { label: "Proof Vault", href: "/proof" },
       { label: "Race Results", href: "/rewards" },
       { label: "Player Guide", href: "/player-guide" },
