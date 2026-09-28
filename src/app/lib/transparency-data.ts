@@ -32,8 +32,8 @@ const LINKS = {
   x: "https://x.com/rrotacoin",
 } as const;
 
-const DEXSCREENER_API =
-  `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`;
+const GECKO_POOL_ENDPOINT =
+  `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RROTA_POOL}`;
 const SOLANA_TRACKER_ENDPOINT =
   `https://data.solanatracker.io/tokens/${RROTA_MINT}`;
 const DEFAULT_SOLANA_RPC = "https://api.mainnet-beta.solana.com";
@@ -140,23 +140,6 @@ async function fetchJson(
   }
 }
 
-type DexPair = {
-  dexId?: string;
-  pairAddress?: string;
-  url?: string;
-  priceUsd?: string;
-  marketCap?: number;
-  fdv?: number;
-  liquidity?: { usd?: number };
-  volume?: { h24?: number };
-  txns?: {
-    h24?: {
-      buys?: number;
-      sells?: number;
-    };
-  };
-};
-
 type DexMarket = {
   priceUsd: number | null;
   marketCapUsd: number | null;
@@ -166,51 +149,61 @@ type DexMarket = {
   sells24h: number | null;
   transactions24h: number | null;
   updatedAt: string;
+  source: string;
+  href: string;
 };
 
-function pickDexPair(pairs: DexPair[]): DexPair | null {
-  if (!pairs.length) return null;
-
-  const configured = pairs.find((pair) => pair.pairAddress === RROTA_POOL);
-  if (configured) return configured;
-
-  return [...pairs].sort((a, b) => {
-    const aLiquidity = nonNegative(a.liquidity?.usd) ?? 0;
-    const bLiquidity = nonNegative(b.liquidity?.usd) ?? 0;
-    const aVolume = nonNegative(a.volume?.h24) ?? 0;
-    const bVolume = nonNegative(b.volume?.h24) ?? 0;
-    return bLiquidity + bVolume - (aLiquidity + aVolume);
-  })[0];
-}
+type GeckoPoolPayload = {
+  data?: {
+    attributes?: {
+      address?: string;
+      base_token_price_usd?: string | number | null;
+      fdv_usd?: string | number | null;
+      market_cap_usd?: string | number | null;
+      reserve_in_usd?: string | number | null;
+      volume_usd?: { h24?: string | number | null };
+      transactions?: {
+        h24?: {
+          buys?: string | number | null;
+          sells?: string | number | null;
+        };
+      };
+    };
+  };
+};
 
 async function loadDexMarket(): Promise<DexMarket | null> {
   try {
-    const payload = await fetchJson(DEXSCREENER_API, { revalidate: 60 });
-    const pairs = Array.isArray(payload)
-      ? (payload as DexPair[])
-      : payload && typeof payload === "object" && Array.isArray((payload as { pairs?: unknown }).pairs)
-        ? ((payload as { pairs: DexPair[] }).pairs)
-        : [];
+    const payload = (await fetchJson(GECKO_POOL_ENDPOINT, {
+      headers: {
+        Accept: "application/json;version=20230203",
+        "User-Agent": "RROTA/1.0 (+https://rrota.xyz)",
+      },
+      revalidate: 60,
+    })) as GeckoPoolPayload;
 
-    const pair = pickDexPair(pairs);
-    if (!pair) return null;
+    const attributes = payload.data?.attributes;
+    if (!attributes) throw new Error("GeckoTerminal returned no pool data");
 
-    const buys24h = integerOrNull(pair.txns?.h24?.buys);
-    const sells24h = integerOrNull(pair.txns?.h24?.sells);
+    const buys24h = integerOrNull(attributes.transactions?.h24?.buys);
+    const sells24h = integerOrNull(attributes.transactions?.h24?.sells);
 
     return {
-      priceUsd: nonNegative(pair.priceUsd),
-      marketCapUsd: nonNegative(pair.marketCap) ?? nonNegative(pair.fdv),
-      liquidityUsd: nonNegative(pair.liquidity?.usd),
-      volume24hUsd: nonNegative(pair.volume?.h24),
+      priceUsd: nonNegative(attributes.base_token_price_usd),
+      marketCapUsd:
+        nonNegative(attributes.market_cap_usd) ?? nonNegative(attributes.fdv_usd),
+      liquidityUsd: nonNegative(attributes.reserve_in_usd),
+      volume24hUsd: nonNegative(attributes.volume_usd?.h24),
       buys24h,
       sells24h,
       transactions24h:
         buys24h !== null && sells24h !== null ? buys24h + sells24h : null,
       updatedAt: new Date().toISOString(),
+      source: "GeckoTerminal",
+      href: LINKS.geckoPool,
     };
   } catch (error) {
-    console.error("Transparency: DexScreener unavailable", error);
+    console.error("Transparency: GeckoTerminal unavailable", error);
     return null;
   }
 }
@@ -640,25 +633,25 @@ async function buildTransparencyData(): Promise<TransparencyData> {
 
   const market: TransparencyData["market"] = {
     priceUsd: dex
-      ? metric(dex.priceUsd, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.priceUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "Live market price is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "Live market price is temporarily unavailable.", LINKS.geckoPool),
     marketCapUsd: dex
-      ? metric(dex.marketCapUsd, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.marketCapUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "Live market cap is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "Live market cap is temporarily unavailable.", LINKS.geckoPool),
     liquidityUsd: dex
-      ? metric(dex.liquidityUsd, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.geckoPool,
+      ? metric(dex.liquidityUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
       : unavailableMetric("Dex market data", "Live liquidity is temporarily unavailable.", LINKS.geckoPool),
     volume24hUsd: dex
-      ? metric(dex.volume24hUsd, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.volume24hUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "24h volume is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "24h volume is temporarily unavailable.", LINKS.geckoPool),
     volume7dUsd: unavailableMetric("RROTA snapshot history", historicalNote),
     holders:
       holders !== null
@@ -667,20 +660,20 @@ async function buildTransparencyData(): Promise<TransparencyData> {
           })
         : unavailableMetric("Solana holder data", "Holder count is temporarily unavailable.", LINKS.solscanToken),
     transactions24h: dex
-      ? metric(dex.transactions24h, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.transactions24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "24h transaction count is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "24h transaction count is temporarily unavailable.", LINKS.geckoPool),
     buys24h: dex
-      ? metric(dex.buys24h, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.buys24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "24h buy count is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "24h buy count is temporarily unavailable.", LINKS.geckoPool),
     sells24h: dex
-      ? metric(dex.sells24h, "live", "DexScreener", marketUpdatedAt, {
-          href: LINKS.dexscreener,
+      ? metric(dex.sells24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
         })
-      : unavailableMetric("DexScreener", "24h sell count is temporarily unavailable.", LINKS.dexscreener),
+      : unavailableMetric("GeckoTerminal", "24h sell count is temporarily unavailable.", LINKS.geckoPool),
     holderGrowth7d: unavailableMetric("RROTA snapshot history", historicalNote),
     holderGrowth30d: unavailableMetric("RROTA snapshot history", historicalNote),
   };
@@ -808,11 +801,11 @@ async function buildTransparencyData(): Promise<TransparencyData> {
 
   const sources: SourceState[] = [
     {
-      label: "DexScreener market data",
+      label: "GeckoTerminal market data",
       status: dex ? "live" : "unavailable",
       updatedAt: marketUpdatedAt,
-      href: LINKS.dexscreener,
-      note: "Price, market cap, liquidity, 24h volume and transaction counts.",
+      href: LINKS.geckoPool,
+      note: "Price, market cap, liquidity, 24h volume and transaction counts from the exact RTA/SOL pool.",
     },
     {
       label: "SolanaTracker token data",
