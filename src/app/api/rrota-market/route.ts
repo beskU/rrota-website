@@ -4,12 +4,16 @@ export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 const RROTA_MINT = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+const RROTA_POOL = "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
 
-const DEXSCREENER_API =
-  `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`;
+const DEXSCREENER_ENDPOINTS = [
+  `https://api.dexscreener.com/latest/dex/pairs/solana/${RROTA_POOL}`,
+  `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`,
+  `https://api.dexscreener.com/tokens/v1/solana/${RROTA_MINT}`,
+] as const;
 
 const FALLBACK_CHART =
-  `https://dexscreener.com/solana/${RROTA_MINT}`;
+  `https://dexscreener.com/solana/${RROTA_POOL}`;
 
 type DexPair = {
   chainId?: string;
@@ -53,6 +57,9 @@ function safeNumber(value: unknown): number | null {
 function pickBestPair(pairs: DexPair[]): DexPair | null {
   if (!Array.isArray(pairs) || pairs.length === 0) return null;
 
+  const configured = pairs.find((pair) => pair.pairAddress === RROTA_POOL);
+  if (configured) return configured;
+
   return [...pairs].sort((a, b) => {
     const aLiq = safeNumber(a.liquidity?.usd) ?? 0;
     const bLiq = safeNumber(b.liquidity?.usd) ?? 0;
@@ -64,35 +71,48 @@ function pickBestPair(pairs: DexPair[]): DexPair | null {
   })[0];
 }
 
-export async function GET() {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 6500);
+async function fetchPairsFromDexScreener(): Promise<DexPair[]> {
+  let lastError: Error | null = null;
 
-  try {
-    const response = await fetch(DEXSCREENER_API, {
-      headers: {
-        Accept: "application/json",
-      },
-      signal: controller.signal,
-      next: {
-        revalidate: 60,
-      },
-    });
+  for (const endpoint of DEXSCREENER_ENDPOINTS) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6500);
 
-    clearTimeout(timeout);
+    try {
+      const response = await fetch(endpoint, {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+        next: { revalidate: 60 },
+      });
 
-    if (!response.ok) {
-      throw new Error(`DexScreener responded with ${response.status}`);
+      if (!response.ok) {
+        lastError = new Error(`DexScreener responded with ${response.status}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const pairs: DexPair[] = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.pairs)
+          ? data.pairs
+          : [];
+
+      if (pairs.length > 0) return pairs;
+    } catch (error) {
+      lastError =
+        error instanceof Error ? error : new Error("DexScreener request failed");
+    } finally {
+      clearTimeout(timeout);
     }
+  }
 
-    const data = await response.json();
+  if (lastError) throw lastError;
+  return [];
+}
 
-    const pairs: DexPair[] = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.pairs)
-        ? data.pairs
-        : [];
-
+export async function GET() {
+  try {
+    const pairs = await fetchPairsFromDexScreener();
     const pair = pickBestPair(pairs);
 
     if (!pair) {
@@ -135,8 +155,6 @@ export async function GET() {
       },
     );
   } catch (error) {
-    clearTimeout(timeout);
-
     return NextResponse.json(
       {
         ok: false,
