@@ -32,8 +32,11 @@ const LINKS = {
   x: "https://x.com/rrotacoin",
 } as const;
 
-const DEXSCREENER_API =
-  `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`;
+const DEXSCREENER_ENDPOINTS = [
+  `https://api.dexscreener.com/latest/dex/pairs/solana/${RROTA_POOL}`,
+  `https://api.dexscreener.com/token-pairs/v1/solana/${RROTA_MINT}`,
+  `https://api.dexscreener.com/tokens/v1/solana/${RROTA_MINT}`,
+] as const;
 const SOLANA_TRACKER_ENDPOINT =
   `https://data.solanatracker.io/tokens/${RROTA_MINT}`;
 const DEFAULT_SOLANA_RPC = "https://api.mainnet-beta.solana.com";
@@ -184,35 +187,43 @@ function pickDexPair(pairs: DexPair[]): DexPair | null {
 }
 
 async function loadDexMarket(): Promise<DexMarket | null> {
-  try {
-    const payload = await fetchJson(DEXSCREENER_API, { revalidate: 60 });
-    const pairs = Array.isArray(payload)
-      ? (payload as DexPair[])
-      : payload && typeof payload === "object" && Array.isArray((payload as { pairs?: unknown }).pairs)
-        ? ((payload as { pairs: DexPair[] }).pairs)
-        : [];
+  let lastError: unknown = null;
 
-    const pair = pickDexPair(pairs);
-    if (!pair) return null;
+  for (const endpoint of DEXSCREENER_ENDPOINTS) {
+    try {
+      const payload = await fetchJson(endpoint, { revalidate: 60 });
+      const pairs = Array.isArray(payload)
+        ? (payload as DexPair[])
+        : payload &&
+            typeof payload === "object" &&
+            Array.isArray((payload as { pairs?: unknown }).pairs)
+          ? ((payload as { pairs: DexPair[] }).pairs)
+          : [];
 
-    const buys24h = integerOrNull(pair.txns?.h24?.buys);
-    const sells24h = integerOrNull(pair.txns?.h24?.sells);
+      const pair = pickDexPair(pairs);
+      if (!pair) continue;
 
-    return {
-      priceUsd: nonNegative(pair.priceUsd),
-      marketCapUsd: nonNegative(pair.marketCap) ?? nonNegative(pair.fdv),
-      liquidityUsd: nonNegative(pair.liquidity?.usd),
-      volume24hUsd: nonNegative(pair.volume?.h24),
-      buys24h,
-      sells24h,
-      transactions24h:
-        buys24h !== null && sells24h !== null ? buys24h + sells24h : null,
-      updatedAt: new Date().toISOString(),
-    };
-  } catch (error) {
-    console.error("Transparency: DexScreener unavailable", error);
-    return null;
+      const buys24h = integerOrNull(pair.txns?.h24?.buys);
+      const sells24h = integerOrNull(pair.txns?.h24?.sells);
+
+      return {
+        priceUsd: nonNegative(pair.priceUsd),
+        marketCapUsd: nonNegative(pair.marketCap) ?? nonNegative(pair.fdv),
+        liquidityUsd: nonNegative(pair.liquidity?.usd),
+        volume24hUsd: nonNegative(pair.volume?.h24),
+        buys24h,
+        sells24h,
+        transactions24h:
+          buys24h !== null && sells24h !== null ? buys24h + sells24h : null,
+        updatedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      lastError = error;
+    }
   }
+
+  console.error("Transparency: DexScreener unavailable", lastError);
+  return null;
 }
 
 type TrackerPool = {
