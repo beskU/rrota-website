@@ -1,643 +1,939 @@
-"use client";
-
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Buffer } from "node:buffer";
+import { unstable_cache } from "next/cache";
+import { RACE_HISTORY } from "./reward-history";
+import {
+  WEEKLY_REWARDS,
+  getCurrentWeeklyRace,
+} from "./race-schedule";
 import type {
   CompetitionWindow,
   DataStatus,
+  SourceState,
   TransparencyData,
   TransparencyMetric,
-} from "../lib/transparency-types";
+} from "./transparency-types";
 
-const SPIN_URL = "https://spin.rrota.xyz";
+export const RROTA_MINT =
+  "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
+export const RROTA_POOL =
+  "8fXPx6bqCne9Tg7apLBGJ3XJFjwkMU6se5NaFAenBkoF";
 
-function ExternalIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M15 3h6v6" />
-      <path d="M10 14 21 3" />
-      <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-    </svg>
-  );
-}
+const LINKS = {
+  dexscreener: `https://dexscreener.com/solana/${RROTA_POOL}`,
+  solscanToken: `https://solscan.io/token/${RROTA_MINT}`,
+  solscanPool: `https://solscan.io/account/${RROTA_POOL}`,
+  geckoPool: `https://www.geckoterminal.com/solana/pools/${RROTA_POOL}`,
+  proof: "https://rrota.xyz/proof",
+  rewards: "https://rrota.xyz/rewards",
+  spinLeaderboard: "https://spin.rrota.xyz/leaderboard",
+  solidproof: "https://app.solidproof.io/projects/rrota",
+  freshcoins: "https://freshcoins.io/audit/rrota",
+  telegram: "https://t.me/rrotaOfficial",
+  x: "https://x.com/rrotacoin",
+} as const;
 
-function statusLabel(status: DataStatus) {
-  switch (status) {
-    case "live":
-      return "Live";
-    case "verified":
-      return "Verified";
-    case "pending":
-      return "Verify";
-    default:
-      return "Unavailable";
-  }
-}
+const GECKO_POOL_ENDPOINT =
+  `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RROTA_POOL}`;
+const GECKO_OHLCV_7D_ENDPOINT =
+  `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RROTA_POOL}/ohlcv/day?aggregate=1&limit=10&currency=usd&token=base`;
+const SOLANA_TRACKER_ENDPOINT =
+  `https://data.solanatracker.io/tokens/${RROTA_MINT}`;
+const DEFAULT_SOLANA_RPC = "https://api.mainnet-beta.solana.com";
+const DEFAULT_GAME_STATS_URL =
+  "https://spin.rrota.xyz/api/public/ecosystem-stats";
+const DEFAULT_LEADERBOARD_PERIODS_URL =
+  "https://spin.rrota.xyz/api/leaderboard/periods";
 
-function statusTone(status: DataStatus) {
-  switch (status) {
-    case "live":
-      return "border-cyan-300/20 bg-cyan-400/8 text-cyan-100";
-    case "verified":
-      return "border-emerald-300/20 bg-emerald-400/8 text-emerald-100";
-    case "pending":
-      return "border-amber-300/20 bg-amber-400/8 text-amber-100";
-    default:
-      return "border-white/10 bg-white/[0.04] text-white/48";
-  }
-}
+const REQUEST_TIMEOUT_MS = 6_500;
+const GAME_REQUEST_TIMEOUT_MS = 4_500;
+const YEARLY_LAUNCH_FLOOR = new Date("2026-05-30T16:00:00.000Z");
 
-function formatUsd(value: number | null, compact = true) {
-  if (value === null || !Number.isFinite(value)) return null;
+function safeNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
 
-  if (value > 0 && value < 0.000001) {
-    return `$${value.toExponential(2)}`;
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
   }
 
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    notation: compact ? "compact" : "standard",
-    maximumFractionDigits: value < 1 ? 9 : 2,
-  }).format(value);
+  return null;
 }
 
-function formatInteger(value: number | null) {
-  if (value === null || !Number.isFinite(value)) return null;
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+function nonNegative(value: unknown): number | null {
+  const parsed = safeNumber(value);
+  return parsed !== null && parsed >= 0 ? parsed : null;
 }
 
-function formatCompactNumber(value: number | null, suffix = "") {
-  if (value === null || !Number.isFinite(value)) return null;
-
-  const text = new Intl.NumberFormat("en-US", {
-    notation: value >= 10_000 ? "compact" : "standard",
-    maximumFractionDigits: value >= 10_000 ? 2 : 0,
-  }).format(value);
-
-  return suffix ? `${text} ${suffix}` : text;
+function integerOrNull(value: unknown): number | null {
+  const parsed = nonNegative(value);
+  return parsed === null ? null : Math.floor(parsed);
 }
 
-function formatSupply(value: number | null) {
-  if (value === null || !Number.isFinite(value)) return null;
-
-  return `${new Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 3,
-  }).format(value)} RTA`;
-}
-
-function displayValue<T>(
-  metric: TransparencyMetric<T>,
-  formatter?: (value: T | null) => string | null,
-) {
-  if (metric.value === null) {
-    if (metric.status === "pending" && metric.source === "RROTA snapshot history") {
-      return "Collecting history";
-    }
-    if (metric.status === "verified" && metric.source === "Official Telegram") {
-      return "Official channel";
-    }
-    if (metric.status === "verified" && metric.source === "Official X") {
-      return "Official account";
-    }
-    return metric.status === "pending" ? "Verify live" : "Unavailable";
+function normalizeIso(value: unknown): string | null {
+  if (typeof value === "string" && value.trim()) {
+    const date = new Date(value);
+    if (!Number.isNaN(date.getTime())) return date.toISOString();
   }
 
-  if (formatter) return formatter(metric.value) ?? "Unavailable";
-  return String(metric.value);
-}
-
-function formatTimestamp(value: string | null) {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-    timeZoneName: "short",
-  }).format(date);
-}
-
-function MetricCard<T>({
-  label,
-  metric,
-  formatter,
-  emphasis = false,
-}: {
-  label: string;
-  metric: TransparencyMetric<T>;
-  formatter?: (value: T | null) => string | null;
-  emphasis?: boolean;
-}) {
-  const content = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/46">
-          {label}
-        </div>
-        <span
-          className={`shrink-0 rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] ${statusTone(metric.status)}`}
-        >
-          {statusLabel(metric.status)}
-        </span>
-      </div>
-
-      <div
-        className={`mt-3 break-words font-black tracking-[-0.035em] ${
-          emphasis ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"
-        }`}
-      >
-        {displayValue(metric, formatter)}
-      </div>
-
-      <div className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white/38">
-        {metric.source}
-      </div>
-
-      {metric.updatedAt ? (
-        <div className="mt-1 text-[11px] text-white/34">
-          Updated {formatTimestamp(metric.updatedAt)}
-        </div>
-      ) : null}
-
-      {metric.note ? (
-        <p className="mt-3 text-xs leading-5 text-white/48">{metric.note}</p>
-      ) : null}
-    </>
-  );
-
-  const classes = `group relative overflow-hidden rounded-[28px] border p-5 transition ${
-    emphasis
-      ? "border-cyan-300/18 bg-[linear-gradient(145deg,rgba(34,211,238,0.10),rgba(255,255,255,0.025))]"
-      : "border-white/10 bg-white/[0.035]"
-  } ${metric.href ? "hover:border-cyan-300/24 hover:bg-white/[0.055]" : ""}`;
-
-  if (metric.href) {
-    return (
-      <a
-        href={metric.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes}
-      >
-        {content}
-        <ExternalIcon className="absolute bottom-5 right-5 h-4 w-4 text-white/20 transition group-hover:text-cyan-200/70" />
-      </a>
-    );
+  const numeric = safeNumber(value);
+  if (numeric !== null && numeric > 0) {
+    const milliseconds = numeric < 1_000_000_000_000 ? numeric * 1000 : numeric;
+    const date = new Date(milliseconds);
+    if (!Number.isNaN(date.getTime())) return date.toISOString();
   }
 
-  return <div className={classes}>{content}</div>;
+  return null;
 }
 
-function SectionHeader({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
-      <div>
-        <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-200/64">
-          {eyebrow}
-        </div>
-        <h2 className="mt-2 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
-          {title}
-        </h2>
-      </div>
-      <p className="max-w-3xl text-sm leading-7 text-white/54 lg:justify-self-end">
-        {description}
-      </p>
-    </div>
+function metric<T>(
+  value: T | null,
+  status: DataStatus,
+  source: string,
+  updatedAt: string | null,
+  options: Pick<TransparencyMetric<T>, "href" | "note"> = {},
+): TransparencyMetric<T> {
+  return {
+    value,
+    status,
+    source,
+    updatedAt,
+    ...options,
+  };
+}
+
+function unavailableMetric<T = number>(
+  source: string,
+  note: string,
+  href?: string,
+): TransparencyMetric<T> {
+  return metric<T>(null, "unavailable", source, null, { note, href });
+}
+
+async function fetchJson(
+  url: string,
+  options: RequestInit & { timeoutMs?: number; revalidate?: number } = {},
+): Promise<unknown> {
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    options.timeoutMs ?? REQUEST_TIMEOUT_MS,
   );
-}
 
-function RewardsMetric({
-  rta,
-  sol,
-}: {
-  rta: TransparencyMetric<number>;
-  sol: TransparencyMetric<number>;
-}) {
-  const status: DataStatus =
-    rta.status === "verified" || sol.status === "verified"
-      ? "verified"
-      : rta.status === "pending" || sol.status === "pending"
-        ? "pending"
-        : "unavailable";
+  try {
+    const response = await fetch(url, {
+      method: options.method ?? "GET",
+      headers: options.headers,
+      body: options.body,
+      signal: controller.signal,
+      cache: options.cache,
+      next:
+        options.revalidate !== undefined
+          ? { revalidate: options.revalidate }
+          : undefined,
+    });
 
-  return (
-    <a
-      href={rta.href || sol.href || "/rewards"}
-      className="group relative overflow-hidden rounded-[28px] border border-fuchsia-300/14 bg-fuchsia-400/[0.045] p-5 transition hover:border-fuchsia-200/24 hover:bg-fuchsia-400/[0.07]"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/46">
-          Verified Rewards Distributed
-        </div>
-        <span
-          className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] ${statusTone(status)}`}
-        >
-          {statusLabel(status)}
-        </span>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-2xl font-black tracking-[-0.035em] sm:text-3xl">
-        <span>{formatCompactNumber(rta.value, "RTA") ?? "— RTA"}</span>
-        <span className="text-white/30">+</span>
-        <span>{sol.value === null ? "— SOL" : `${sol.value.toLocaleString()} SOL`}</span>
-      </div>
-
-      <p className="mt-3 text-xs leading-5 text-white/48">
-        {sol.note || rta.note || "Only publicly verified payout evidence is counted."}
-      </p>
-      <ExternalIcon className="absolute bottom-5 right-5 h-4 w-4 text-white/20 transition group-hover:text-fuchsia-200/70" />
-    </a>
-  );
-}
-
-function formatCompetitionDate(value: string | null) {
-  if (!value) return "Not published";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Not published";
-
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "UTC",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  })
-    .format(date)
-    .replace(",", " •")
-    .concat(" UTC");
-}
-
-function remainingText(endIso: string | null, nowMs: number) {
-  if (!endIso) return null;
-  const end = new Date(endIso).getTime();
-  if (!Number.isFinite(end)) return null;
-
-  const totalSeconds = Math.max(0, Math.floor((end - nowMs) / 1000));
-  if (totalSeconds <= 0) return "Period closed / rolling forward";
-
-  const days = Math.floor(totalSeconds / 86_400);
-  const hours = Math.floor((totalSeconds % 86_400) / 3_600);
-  const minutes = Math.floor((totalSeconds % 3_600) / 60);
-
-  return `${days}d ${hours}h ${minutes}m remaining`;
-}
-
-function CompetitionCard({ period, nowMs }: { period: CompetitionWindow; nowMs: number }) {
-  const remaining = remainingText(period.endIso, nowMs);
-
-  return (
-    <a
-      href={period.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(7,11,22,0.88))] p-6 transition hover:border-cyan-300/22 hover:bg-white/[0.055]"
-    >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.10),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.07),transparent_42%)]" />
-      <div className="relative">
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/42">
-            {period.label} competition
-          </div>
-          <span className="rounded-full border border-emerald-300/18 bg-emerald-400/[0.07] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-100">
-            {period.status}
-          </span>
-        </div>
-
-        <h3 className="mt-3 text-2xl font-black">{period.label} Leaderboard</h3>
-
-        <div className="mt-5 rounded-2xl border border-white/9 bg-black/20 p-4">
-          <div className="text-[9px] font-black uppercase tracking-[0.15em] text-cyan-200/58">
-            Current period ends
-          </div>
-          <div className="mt-1 text-sm font-black text-white/88">
-            {formatCompetitionDate(period.endIso)}
-          </div>
-          {remaining ? (
-            <div className="mt-2 text-xs font-bold text-cyan-100/68">{remaining}</div>
-          ) : null}
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-white/9 bg-white/[0.035] p-4">
-            <div className="text-[9px] font-black uppercase tracking-[0.15em] text-white/38">
-              Participants
-            </div>
-            <div className="mt-1 text-xl font-black">
-              {period.participants === null
-                ? "Unavailable"
-                : formatInteger(period.participants)}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-white/9 bg-white/[0.035] p-4">
-            <div className="text-[9px] font-black uppercase tracking-[0.15em] text-white/38">
-              Data source
-            </div>
-            <div className="mt-1 text-xs font-black leading-5 text-white/72">
-              {period.participantSource}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 space-y-2">
-          {period.rewards.map((reward) => (
-            <div
-              key={reward}
-              className="rounded-xl border border-amber-300/10 bg-amber-400/[0.045] px-3 py-2 text-xs font-bold text-amber-100/72"
-            >
-              {reward}
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-5 inline-flex items-center gap-2 text-sm font-black text-cyan-100">
-          Open live leaderboard <ExternalIcon className="h-3.5 w-3.5" />
-        </div>
-      </div>
-    </a>
-  );
-}
-
-export default function TransparencyDashboard({ initialData }: { initialData: TransparencyData }) {
-  const [data, setData] = useState(initialData);
-  const [refreshError, setRefreshError] = useState(false);
-  const [nowMs, setNowMs] = useState(() => Date.now());
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNowMs(Date.now()), 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-
-    async function refresh() {
-      try {
-        const response = await fetch("/api/transparency", {
-          cache: "no-store",
-          headers: { Accept: "application/json" },
-        });
-
-        if (!response.ok) throw new Error(`Transparency refresh failed: ${response.status}`);
-        const next = (await response.json()) as TransparencyData;
-
-        if (active) {
-          setData(next);
-          setRefreshError(false);
-        }
-      } catch (error) {
-        console.error("Unable to refresh RROTA transparency data:", error);
-        if (active) setRefreshError(true);
-      }
+    if (!response.ok) {
+      throw new Error(`${url} responded with ${response.status}`);
     }
 
-    const interval = window.setInterval(refresh, 2 * 60 * 1000);
-    return () => {
-      active = false;
-      window.clearInterval(interval);
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+type DexMarket = {
+  priceUsd: number | null;
+  marketCapUsd: number | null;
+  liquidityUsd: number | null;
+  volume24hUsd: number | null;
+  buys24h: number | null;
+  sells24h: number | null;
+  transactions24h: number | null;
+  updatedAt: string;
+  source: string;
+  href: string;
+};
+
+type GeckoPoolPayload = {
+  data?: {
+    attributes?: {
+      address?: string;
+      base_token_price_usd?: string | number | null;
+      fdv_usd?: string | number | null;
+      market_cap_usd?: string | number | null;
+      reserve_in_usd?: string | number | null;
+      volume_usd?: { h24?: string | number | null };
+      transactions?: {
+        h24?: {
+          buys?: string | number | null;
+          sells?: string | number | null;
+        };
+      };
     };
-  }, []);
+  };
+};
 
-  const generatedAt = useMemo(() => formatTimestamp(data.generatedAt), [data.generatedAt]);
+type GeckoOhlcvPayload = {
+  data?: {
+    attributes?: {
+      ohlcv_list?: Array<[number, unknown, unknown, unknown, unknown, unknown]>;
+    };
+  };
+};
+
+async function loadVolume7dUsd(): Promise<{ value: number; updatedAt: string } | null> {
+  try {
+    const payload = (await fetchJson(GECKO_OHLCV_7D_ENDPOINT, {
+      headers: {
+        Accept: "application/json;version=20230203",
+        "User-Agent": "RROTA/1.0 (+https://rrota.xyz)",
+      },
+      revalidate: 300,
+    })) as GeckoOhlcvPayload;
+
+    const candles = payload.data?.attributes?.ohlcv_list;
+    if (!Array.isArray(candles)) {
+      throw new Error("GeckoTerminal returned no OHLCV data");
+    }
+
+    // Sum the current UTC day plus the previous six UTC day buckets.
+    // This is real GeckoTerminal OHLCV volume, never 24h volume multiplied by seven.
+    const now = new Date();
+    const startOfTodayUtc = Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+    );
+    const windowStartSeconds = (startOfTodayUtc - 6 * 86_400_000) / 1000;
+
+    let total = 0;
+    let matched = 0;
+    for (const candle of candles) {
+      if (!Array.isArray(candle) || candle.length < 6) continue;
+      const timestamp = safeNumber(candle[0]);
+      const volume = nonNegative(candle[5]);
+      if (timestamp === null || volume === null || timestamp < windowStartSeconds) continue;
+      total += volume;
+      matched += 1;
+    }
+
+    if (matched === 0) return { value: 0, updatedAt: new Date().toISOString() };
+    return { value: total, updatedAt: new Date().toISOString() };
+  } catch (error) {
+    console.error("Transparency: GeckoTerminal 7d OHLCV unavailable", error);
+    return null;
+  }
+}
+
+async function loadDexMarket(): Promise<DexMarket | null> {
+  try {
+    const payload = (await fetchJson(GECKO_POOL_ENDPOINT, {
+      headers: {
+        Accept: "application/json;version=20230203",
+        "User-Agent": "RROTA/1.0 (+https://rrota.xyz)",
+      },
+      revalidate: 60,
+    })) as GeckoPoolPayload;
+
+    const attributes = payload.data?.attributes;
+    if (!attributes) throw new Error("GeckoTerminal returned no pool data");
+
+    const buys24h = integerOrNull(attributes.transactions?.h24?.buys);
+    const sells24h = integerOrNull(attributes.transactions?.h24?.sells);
+
+    return {
+      priceUsd: nonNegative(attributes.base_token_price_usd),
+      marketCapUsd:
+        nonNegative(attributes.market_cap_usd) ?? nonNegative(attributes.fdv_usd),
+      liquidityUsd: nonNegative(attributes.reserve_in_usd),
+      volume24hUsd: nonNegative(attributes.volume_usd?.h24),
+      buys24h,
+      sells24h,
+      transactions24h:
+        buys24h !== null && sells24h !== null ? buys24h + sells24h : null,
+      updatedAt: new Date().toISOString(),
+      source: "GeckoTerminal",
+      href: LINKS.geckoPool,
+    };
+  } catch (error) {
+    console.error("Transparency: GeckoTerminal unavailable", error);
+    return null;
+  }
+}
+
+type TrackerPool = {
+  poolId?: string;
+  tokenAddress?: string;
+  tokenSupply?: number | string | null;
+  lastUpdated?: number | string;
+  liquidity?: { usd?: number | string | null };
+};
+
+type TrackerPayload = {
+  token?: {
+    mint?: string;
+    decimals?: number | string | null;
+    mintAuthority?: string | null;
+    freezeAuthority?: string | null;
+    lpBurn?: number | string | null;
+  };
+  pools?: TrackerPool[];
+  holders?: number | string | null;
+  lpBurn?: number | string | null;
+  risk?: {
+    mintAuthority?: string | null;
+    freezeAuthority?: string | null;
+    lpBurn?: number | string | null;
+  };
+};
+
+type TrackerData = {
+  holders: number | null;
+  supply: number | null;
+  decimals: number | null;
+  mintAuthority: string | null | undefined;
+  freezeAuthority: string | null | undefined;
+  lpBurnPercent: number | null;
+  updatedAt: string | null;
+};
+
+function selectTrackerPool(pools: TrackerPool[]): TrackerPool | null {
+  const eligible = pools.filter(
+    (pool) => !pool.tokenAddress || pool.tokenAddress === RROTA_MINT,
+  );
+  if (!eligible.length) return null;
 
   return (
-    <>
-      <section className="relative overflow-hidden px-4 pb-16 pt-32 text-white sm:px-6 lg:px-8 lg:pb-20 lg:pt-36">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_8%,rgba(34,211,238,0.18),transparent_30%),radial-gradient(circle_at_84%_6%,rgba(217,70,239,0.13),transparent_30%),radial-gradient(circle_at_50%_80%,rgba(16,185,129,0.08),transparent_35%)]" />
-
-        <div className="mx-auto max-w-7xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-400/[0.07] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-emerald-100">
-            <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,0.85)]" />
-            RROTA Transparency Center
-          </div>
-
-          <div className="mt-6 grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-            <div>
-              <h1 className="max-w-5xl text-5xl font-black leading-[0.98] tracking-[-0.055em] sm:text-7xl lg:text-[82px]">
-                LIVE METRICS.
-                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">
-                  VERIFIABLE SOURCES.
-                </span>
-              </h1>
-              <p className="mt-6 max-w-3xl text-base leading-8 text-white/64 sm:text-lg">
-                One public dashboard for RROTA market health, product activity, community signals,
-                on-chain security, and active competitions. Missing data stays missing—nothing is
-                invented to make the project look stronger.
-              </p>
-            </div>
-
-            <div className="rounded-[30px] border border-white/10 bg-white/[0.035] p-5 backdrop-blur-xl sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">
-                    Dashboard refresh
-                  </div>
-                  <div className="mt-1 text-sm font-black text-white/82">
-                    {generatedAt ? `Generated ${generatedAt}` : "Live source refresh"}
-                  </div>
-                </div>
-                <span className="rounded-full border border-cyan-300/20 bg-cyan-400/[0.08] px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-100">
-                  Auto 2 min
-                </span>
-              </div>
-
-              {refreshError ? (
-                <div className="mt-4 rounded-2xl border border-amber-300/16 bg-amber-400/[0.06] px-4 py-3 text-xs leading-5 text-amber-100/76">
-                  A background refresh failed. The last successful values remain visible instead of being replaced with zero.
-                </div>
-              ) : null}
-
-              <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-                <Link href="/proof" className="rounded-2xl border border-emerald-300/14 bg-emerald-400/[0.055] px-4 py-3 text-center text-xs font-black text-emerald-100 transition hover:bg-emerald-400/[0.09]">
-                  Proof Vault
-                </Link>
-                <Link href="/rewards" className="rounded-2xl border border-fuchsia-300/14 bg-fuchsia-400/[0.055] px-4 py-3 text-center text-xs font-black text-fuchsia-100 transition hover:bg-fuchsia-400/[0.09]">
-                  Race History
-                </Link>
-                <a href={SPIN_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-cyan-300/14 bg-cyan-400/[0.055] px-4 py-3 text-center text-xs font-black text-cyan-100 transition hover:bg-cyan-400/[0.09]">
-                  Live Product ↗
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <main className="px-4 pb-24 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl space-y-20">
-          <section id="market" aria-labelledby="transparency-market-title">
-            <SectionHeader
-              eyebrow="01 • Market"
-              title="Public market signals"
-              description="Current market metrics come from independent market/token providers. The 7-day volume uses real GeckoTerminal OHLCV candles; no 24h value is multiplied to imitate historical activity."
-            />
-
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <MetricCard label="Price" metric={data.market.priceUsd} formatter={(value) => formatUsd(value, false)} emphasis />
-              <MetricCard label="Market Cap" metric={data.market.marketCapUsd} formatter={formatUsd} />
-              <MetricCard label="Liquidity" metric={data.market.liquidityUsd} formatter={formatUsd} />
-              <MetricCard label="24h Volume" metric={data.market.volume24hUsd} formatter={formatUsd} />
-              <MetricCard label="7d Volume" metric={data.market.volume7dUsd} formatter={formatUsd} />
-              <MetricCard label="Holders" metric={data.market.holders} formatter={formatInteger} emphasis />
-            </div>
-
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <MetricCard label="24h Transactions" metric={data.market.transactions24h} formatter={formatInteger} />
-              <MetricCard label="24h Buys" metric={data.market.buys24h} formatter={formatInteger} />
-              <MetricCard label="24h Sells" metric={data.market.sells24h} formatter={formatInteger} />
-            </div>
-          </section>
-
-          <section id="game" aria-labelledby="transparency-game-title">
-            <SectionHeader
-              eyebrow="02 • Product"
-              title="Spin-to-Win activity"
-              description="Privacy-safe production aggregates come directly from the live Spin-to-Win backend. No player names, wallets, emails, session identifiers, or other private player data are exposed here."
-            />
-
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <MetricCard label="Total Players" metric={data.game.totalPlayers} formatter={formatInteger} />
-              <MetricCard label="Active Players • 7D" metric={data.game.activePlayers7d} formatter={formatInteger} />
-              <MetricCard label="Total Spins" metric={data.game.totalSpins} formatter={formatInteger} emphasis />
-              <MetricCard label="Weekly Participants" metric={data.game.weeklyParticipants} formatter={formatInteger} />
-              <RewardsMetric rta={data.game.verifiedRewardsRta} sol={data.game.verifiedRewardsSol} />
-            </div>
-          </section>
-
-          <section id="community" aria-labelledby="transparency-community-title">
-            <SectionHeader
-              eyebrow="03 • Community"
-              title="Community reach and holder growth"
-              description="Official RROTA channels are verified and linked directly. Social counts are not scraped or manually inflated. Holder-growth cards are collecting real history for future 7-day and 30-day comparisons."
-            />
-
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <MetricCard label="Telegram" metric={data.community.telegramMembers} />
-              <MetricCard label="X" metric={data.community.xFollowers} />
-              <MetricCard label="Holder Growth • 7D" metric={data.community.holderGrowth7d} formatter={formatInteger} />
-              <MetricCard label="Holder Growth • 30D" metric={data.community.holderGrowth30d} formatter={formatInteger} />
-            </div>
-          </section>
-
-          <section id="security" aria-labelledby="transparency-security-title">
-            <SectionHeader
-              eyebrow="04 • Security & On-chain"
-              title="Verify the token foundation"
-              description="Authority and supply checks prefer direct Solana mint-account data. RROTA also surfaces the project-reported LP lock and historical 1 billion RTA burn with verification links for deeper proof."
-            />
-
-            <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <MetricCard label="Mint Authority" metric={data.security.mintAuthority} />
-              <MetricCard label="Freeze Authority" metric={data.security.freezeAuthority} />
-              <MetricCard label="Current Supply" metric={data.security.supply} formatter={formatSupply} emphasis />
-              <MetricCard label="Token Decimals" metric={data.security.decimals} formatter={formatInteger} />
-              <MetricCard label="LP Status" metric={data.security.lpStatus} />
-              <MetricCard label="1 Billion RTA Burned" metric={data.security.burnedOrRemovedRta} formatter={formatSupply} />
-
-              <div className="rounded-[28px] border border-emerald-300/14 bg-emerald-400/[0.045] p-5 sm:col-span-2 xl:col-span-2">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/46">Published Reviews</div>
-                  <span className="rounded-full border border-emerald-300/20 bg-emerald-400/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-100">Published</span>
-                </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {data.security.audits.map((audit) => (
-                    <a key={audit.name} href={audit.href} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between rounded-2xl border border-white/9 bg-black/15 px-4 py-4 text-sm font-black text-white/78 transition hover:border-emerald-300/20 hover:text-white">
-                      <span>{audit.name}</span>
-                      <ExternalIcon className="h-4 w-4 text-emerald-200/58 transition group-hover:text-emerald-100" />
-                    </a>
-                  ))}
-                </div>
-                <p className="mt-4 text-xs leading-5 text-white/46">Audit/review publication is evidence about the reviewed scope; it is not a guarantee of future market performance or safety.</p>
-              </div>
-            </div>
-          </section>
-
-          <section id="competition" aria-labelledby="transparency-competition-title">
-            <SectionHeader
-              eyebrow="05 • Competition"
-              title="Weekly, monthly and yearly race windows"
-              description="Period timing is pulled from the Spin leaderboard API when available, and participant counts come from the privacy-safe production aggregate endpoint."
-            />
-
-            <div className="mt-7 grid gap-4 lg:grid-cols-3">
-              <CompetitionCard period={data.competition.weekly} nowMs={nowMs} />
-              <CompetitionCard period={data.competition.monthly} nowMs={nowMs} />
-              <CompetitionCard period={data.competition.yearly} nowMs={nowMs} />
-            </div>
-          </section>
-
-          <section id="sources" aria-labelledby="transparency-sources-title" className="overflow-hidden rounded-[36px] border border-white/10 bg-white/[0.03]">
-            <div className="border-b border-white/9 p-6 sm:p-8">
-              <SectionHeader
-                eyebrow="Data provenance"
-                title="How every metric is sourced"
-                description="A missing provider response never becomes zero. Each source reports its own state so visitors and listing reviewers can distinguish live, verified, pending and unavailable data."
-              />
-            </div>
-
-            <div className="divide-y divide-white/8">
-              {data.sources.map((source) => (
-                <div key={source.label} className="grid gap-3 p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-6">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="text-sm font-black text-white/88">{source.label}</div>
-                      <span className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] ${statusTone(source.status)}`}>
-                        {statusLabel(source.status)}
-                      </span>
-                    </div>
-                    {source.note ? <p className="mt-2 text-xs leading-5 text-white/48">{source.note}</p> : null}
-                    {source.updatedAt ? <div className="mt-1 text-[11px] text-white/32">Updated {formatTimestamp(source.updatedAt)}</div> : null}
-                  </div>
-
-                  {source.href ? (
-                    <a href={source.href} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] px-4 text-xs font-black text-white/68 transition hover:border-cyan-300/20 hover:bg-cyan-400/[0.07] hover:text-white">
-                      Verify source <ExternalIcon className="h-3.5 w-3.5" />
-                    </a>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="rounded-[36px] border border-cyan-300/14 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(217,70,239,0.10),transparent_35%),rgba(255,255,255,0.025)] p-6 sm:p-8 lg:p-10">
-            <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/64">Verification first</div>
-                <h2 className="mt-2 text-3xl font-black tracking-[-0.04em] sm:text-4xl">Need the evidence behind a metric?</h2>
-                <p className="mt-4 max-w-3xl text-sm leading-7 text-white/56">Use the Proof Vault for token/security references and Race History for published standings and payout-proof status. The dashboard summarizes; those pages provide the deeper verification trail.</p>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-                <Link href="/proof" className="inline-flex h-12 items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 text-sm font-black text-white transition hover:brightness-110">Open Proof Vault</Link>
-                <Link href="/rewards" className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.045] px-6 text-sm font-black text-white/78 transition hover:bg-white/[0.075] hover:text-white">Open Race History</Link>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-    </>
+    eligible.find((pool) => pool.poolId === RROTA_POOL) ??
+    [...eligible].sort(
+      (a, b) =>
+        (nonNegative(b.liquidity?.usd) ?? 0) -
+        (nonNegative(a.liquidity?.usd) ?? 0),
+    )[0]
   );
 }
+
+function authorityCandidate(
+  primary: string | null | undefined,
+  secondary: string | null | undefined,
+): string | null | undefined {
+  if (primary === null || typeof primary === "string") return primary;
+  if (secondary === null || typeof secondary === "string") return secondary;
+  return undefined;
+}
+
+async function loadTrackerData(): Promise<TrackerData | null> {
+  const apiKey = process.env.SOLANATRACKER_API_KEY?.trim();
+  if (!apiKey) return null;
+
+  try {
+    const payload = (await fetchJson(SOLANA_TRACKER_ENDPOINT, {
+      headers: {
+        Accept: "application/json",
+        "x-api-key": apiKey,
+      },
+      revalidate: 300,
+    })) as TrackerPayload;
+
+    if (payload.token?.mint && payload.token.mint !== RROTA_MINT) {
+      throw new Error("Unexpected mint returned by SolanaTracker");
+    }
+
+    const pool = selectTrackerPool(Array.isArray(payload.pools) ? payload.pools : []);
+
+    return {
+      holders: integerOrNull(payload.holders),
+      supply: nonNegative(pool?.tokenSupply),
+      decimals: integerOrNull(payload.token?.decimals),
+      mintAuthority: authorityCandidate(
+        payload.token?.mintAuthority,
+        payload.risk?.mintAuthority,
+      ),
+      freezeAuthority: authorityCandidate(
+        payload.token?.freezeAuthority,
+        payload.risk?.freezeAuthority,
+      ),
+      lpBurnPercent:
+        nonNegative(payload.token?.lpBurn) ??
+        nonNegative(payload.risk?.lpBurn) ??
+        nonNegative(payload.lpBurn),
+      updatedAt: normalizeIso(pool?.lastUpdated) ?? new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error("Transparency: SolanaTracker unavailable", error);
+    return null;
+  }
+}
+
+type MintState = {
+  supply: number;
+  decimals: number;
+  mintAuthority: string | null;
+  freezeAuthority: string | null;
+  updatedAt: string;
+};
+
+function readAuthority(data: Buffer, optionOffset: number, keyOffset: number): string | null {
+  const option = data.readUInt32LE(optionOffset);
+  if (option === 0) return null;
+  // Public-key rendering is intentionally omitted here because this dashboard only
+  // needs to distinguish an active authority from a revoked one. The explorer link
+  // remains the source for the actual authority address when one exists.
+  return `active:${data.subarray(keyOffset, keyOffset + 32).toString("hex")}`;
+}
+
+async function loadMintState(): Promise<MintState | null> {
+  const rpcUrl = process.env.SOLANA_RPC_URL?.trim() || DEFAULT_SOLANA_RPC;
+
+  try {
+    const payload = (await fetchJson(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "getAccountInfo",
+        params: [RROTA_MINT, { encoding: "base64", commitment: "confirmed" }],
+      }),
+      cache: "no-store",
+      timeoutMs: REQUEST_TIMEOUT_MS,
+    })) as {
+      result?: {
+        value?: {
+          data?: [string, string];
+        } | null;
+      };
+    };
+
+    const encoded = payload.result?.value?.data?.[0];
+    if (!encoded) return null;
+
+    const data = Buffer.from(encoded, "base64");
+    if (data.length < 82) return null;
+
+    const rawSupply = data.readBigUInt64LE(36);
+    const decimals = data.readUInt8(44);
+    const divisor = 10 ** decimals;
+    const supply = Number(rawSupply) / divisor;
+
+    if (!Number.isFinite(supply) || supply < 0) return null;
+
+    return {
+      supply,
+      decimals,
+      mintAuthority: readAuthority(data, 0, 4),
+      freezeAuthority: readAuthority(data, 46, 50),
+      updatedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error("Transparency: Solana RPC mint state unavailable", error);
+    return null;
+  }
+}
+
+type GameStats = {
+  totalPlayers: number | null;
+  activePlayers7d: number | null;
+  totalSpins: number | null;
+  weeklyParticipants: number | null;
+  monthlyParticipants: number | null;
+  yearlyParticipants: number | null;
+  rewardsDistributedRta: number | null;
+  rewardsDistributedSol: number | null;
+  updatedAt: string | null;
+};
+
+function pickNumber(source: unknown, keys: string[]): number | null {
+  if (!source || typeof source !== "object") return null;
+  const record = source as Record<string, unknown>;
+
+  for (const key of keys) {
+    const value = nonNegative(record[key]);
+    if (value !== null) return value;
+  }
+
+  return null;
+}
+
+function normalizeGameStats(payload: unknown): GameStats | null {
+  if (!payload || typeof payload !== "object") return null;
+
+  const root = payload as Record<string, unknown>;
+  const metrics =
+    root.metrics && typeof root.metrics === "object"
+      ? (root.metrics as Record<string, unknown>)
+      : root;
+  const competition =
+    root.competition && typeof root.competition === "object"
+      ? (root.competition as Record<string, unknown>)
+      : metrics;
+  const rewards =
+    root.rewards && typeof root.rewards === "object"
+      ? (root.rewards as Record<string, unknown>)
+      : metrics;
+
+  const data: GameStats = {
+    totalPlayers: integerOrNull(
+      pickNumber(metrics, ["totalPlayers", "players", "registeredPlayers"]),
+    ),
+    activePlayers7d: integerOrNull(
+      pickNumber(metrics, ["activePlayers7d", "weeklyActivePlayers", "wau"]),
+    ),
+    totalSpins: integerOrNull(
+      pickNumber(metrics, ["totalSpins", "spins"]),
+    ),
+    weeklyParticipants: integerOrNull(
+      pickNumber(competition, ["weeklyParticipants", "weeklyPlayers"]),
+    ),
+    monthlyParticipants: integerOrNull(
+      pickNumber(competition, ["monthlyParticipants", "monthlyPlayers"]),
+    ),
+    yearlyParticipants: integerOrNull(
+      pickNumber(competition, ["yearlyParticipants", "yearlyPlayers"]),
+    ),
+    rewardsDistributedRta: nonNegative(
+      pickNumber(rewards, ["rewardsDistributedRta", "distributedRta", "rta"]),
+    ),
+    rewardsDistributedSol: nonNegative(
+      pickNumber(rewards, ["rewardsDistributedSol", "distributedSol", "sol"]),
+    ),
+    updatedAt:
+      normalizeIso(root.updatedAt) ??
+      normalizeIso(metrics.updatedAt) ??
+      new Date().toISOString(),
+  };
+
+  const hasData = Object.entries(data).some(
+    ([key, value]) => key !== "updatedAt" && value !== null,
+  );
+
+  return hasData ? data : null;
+}
+
+async function loadGameStats(): Promise<GameStats | null> {
+  const url = process.env.RROTA_GAME_STATS_URL?.trim() || DEFAULT_GAME_STATS_URL;
+
+  try {
+    const payload = await fetchJson(url, {
+      revalidate: 120,
+      timeoutMs: GAME_REQUEST_TIMEOUT_MS,
+    });
+    return normalizeGameStats(payload);
+  } catch (error) {
+    console.info("Transparency: public game aggregate endpoint is not available yet", error);
+    return null;
+  }
+}
+
+type PeriodRecord = {
+  period?: string;
+  startIso?: string | null;
+  endIso?: string | null;
+  status?: "active" | "upcoming" | "closed" | "lifetime";
+};
+
+type PeriodPayload = {
+  generatedAt?: string;
+  periods?: {
+    weekly?: PeriodRecord;
+    monthly?: PeriodRecord;
+    yearly?: PeriodRecord;
+  };
+};
+
+async function loadLeaderboardPeriods(): Promise<PeriodPayload | null> {
+  const url =
+    process.env.RROTA_LEADERBOARD_PERIODS_URL?.trim() ||
+    DEFAULT_LEADERBOARD_PERIODS_URL;
+
+  try {
+    const payload = await fetchJson(url, {
+      revalidate: 120,
+      timeoutMs: GAME_REQUEST_TIMEOUT_MS,
+    });
+
+    if (!payload || typeof payload !== "object") return null;
+    return payload as PeriodPayload;
+  } catch (error) {
+    console.info("Transparency: leaderboard period endpoint unavailable, using local schedule", error);
+    return null;
+  }
+}
+
+function getMonthlyFallback(now: Date) {
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+  const actualStart = start.getTime() < YEARLY_LAUNCH_FLOOR.getTime()
+    ? YEARLY_LAUNCH_FLOOR
+    : start;
+
+  return { startIso: actualStart.toISOString(), endIso: end.toISOString() };
+}
+
+function getYearlyFallback(now: Date) {
+  const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+  const start = yearStart.getTime() < YEARLY_LAUNCH_FLOOR.getTime()
+    ? YEARLY_LAUNCH_FLOOR
+    : yearStart;
+  const end = new Date(Date.UTC(now.getUTCFullYear() + 1, 0, 1));
+
+  return { startIso: start.toISOString(), endIso: end.toISOString() };
+}
+
+function normalizeCompetitionStatus(
+  value: PeriodRecord["status"] | undefined,
+): CompetitionWindow["status"] {
+  return value ?? "unknown";
+}
+
+function competitionWindow(
+  label: CompetitionWindow["label"],
+  serverPeriod: PeriodRecord | undefined,
+  fallback: { startIso: string; endIso: string },
+  participants: number | null,
+  participantSource: string,
+  rewards: string[],
+): CompetitionWindow {
+  return {
+    label,
+    status: normalizeCompetitionStatus(serverPeriod?.status) === "unknown"
+      ? "active"
+      : normalizeCompetitionStatus(serverPeriod?.status),
+    startIso: normalizeIso(serverPeriod?.startIso) ?? fallback.startIso,
+    endIso: normalizeIso(serverPeriod?.endIso) ?? fallback.endIso,
+    participants,
+    participantSource,
+    href: LINKS.spinLeaderboard,
+    rewards,
+  };
+}
+
+function authorityMetric(
+  value: string | null | undefined,
+  updatedAt: string | null,
+): TransparencyMetric<string> {
+  if (value === null) {
+    return metric("Revoked", "verified", "Solana mint account", updatedAt, {
+      href: LINKS.solscanToken,
+      note: "Authority option is disabled on the SPL mint account.",
+    });
+  }
+
+  if (typeof value === "string") {
+    return metric("Active", "live", "Solana mint account", updatedAt, {
+      href: LINKS.solscanToken,
+      note: "An authority is currently configured. Verify the address on Solscan.",
+    });
+  }
+
+  return metric("Verify on-chain", "pending", "Solana", null, {
+    href: LINKS.solscanToken,
+    note: "The live authority check could not be completed in this refresh.",
+  });
+}
+
+function countVerifiedPayouts() {
+  return RACE_HISTORY.flatMap((race) => race.results).filter(
+    (result) => Boolean(result.payoutProofUrl),
+  ).length;
+}
+
+async function buildTransparencyData(): Promise<TransparencyData> {
+  const generatedAt = new Date().toISOString();
+
+  const [dex, volume7d, tracker, mintState, game, periods] = await Promise.all([
+    loadDexMarket(),
+    loadVolume7dUsd(),
+    loadTrackerData(),
+    loadMintState(),
+    loadGameStats(),
+    loadLeaderboardPeriods(),
+  ]);
+
+  const marketUpdatedAt = dex?.updatedAt ?? null;
+  const trackerUpdatedAt = tracker?.updatedAt ?? null;
+  const mintUpdatedAt = mintState?.updatedAt ?? trackerUpdatedAt;
+  const holders = tracker?.holders ?? null;
+
+  const mintAuthority =
+    mintState?.mintAuthority !== undefined
+      ? mintState.mintAuthority
+      : tracker?.mintAuthority;
+  const freezeAuthority =
+    mintState?.freezeAuthority !== undefined
+      ? mintState.freezeAuthority
+      : tracker?.freezeAuthority;
+  const supply = mintState?.supply ?? tracker?.supply ?? null;
+  const decimals = mintState?.decimals ?? tracker?.decimals ?? null;
+
+  const historicalNote =
+    "Rolling history is not yet persisted. This metric will activate after the snapshot store is connected.";
+  const gameNote =
+    "Awaiting the privacy-safe aggregate endpoint from the production Spin-to-Win server.";
+
+  const verifiedPayoutCount = countVerifiedPayouts();
+  const gameSource = "Spin-to-Win aggregate API";
+  const gameUpdatedAt = game?.updatedAt ?? null;
+
+  const now = new Date();
+  const weeklyFallback = getCurrentWeeklyRace(now);
+  const monthlyFallback = getMonthlyFallback(now);
+  const yearlyFallback = getYearlyFallback(now);
+  const periodSource = periods ? "Spin leaderboard API" : "RROTA schedule fallback";
+
+  const weeklyParticipants = game?.weeklyParticipants ?? null;
+
+  const market: TransparencyData["market"] = {
+    priceUsd: dex
+      ? metric(dex.priceUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "Live market price is temporarily unavailable.", LINKS.geckoPool),
+    marketCapUsd: dex
+      ? metric(dex.marketCapUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "Live market cap is temporarily unavailable.", LINKS.geckoPool),
+    liquidityUsd: dex
+      ? metric(dex.liquidityUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("Dex market data", "Live liquidity is temporarily unavailable.", LINKS.geckoPool),
+    volume24hUsd: dex
+      ? metric(dex.volume24hUsd, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "24h volume is temporarily unavailable.", LINKS.geckoPool),
+    volume7dUsd:
+      volume7d !== null
+        ? metric(volume7d.value, "live", "GeckoTerminal OHLCV", volume7d.updatedAt, {
+            href: LINKS.geckoPool,
+            note: "Sum of real daily OHLCV volume for the current UTC day plus the previous six UTC days.",
+          })
+        : unavailableMetric(
+            "GeckoTerminal OHLCV",
+            "7d DEX volume is temporarily unavailable.",
+            LINKS.geckoPool,
+          ),
+    holders:
+      holders !== null
+        ? metric(holders, "live", "SolanaTracker", trackerUpdatedAt, {
+            href: LINKS.solscanToken,
+          })
+        : unavailableMetric("Solana holder data", "Holder count is temporarily unavailable.", LINKS.solscanToken),
+    transactions24h: dex
+      ? metric(dex.transactions24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "24h transaction count is temporarily unavailable.", LINKS.geckoPool),
+    buys24h: dex
+      ? metric(dex.buys24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "24h buy count is temporarily unavailable.", LINKS.geckoPool),
+    sells24h: dex
+      ? metric(dex.sells24h, "live", dex.source, marketUpdatedAt, {
+          href: dex.href,
+        })
+      : unavailableMetric("GeckoTerminal", "24h sell count is temporarily unavailable.", LINKS.geckoPool),
+    holderGrowth7d: unavailableMetric("RROTA snapshot history", historicalNote),
+    holderGrowth30d: unavailableMetric("RROTA snapshot history", historicalNote),
+  };
+
+  const gameMetrics: TransparencyData["game"] = {
+    totalPlayers:
+      game?.totalPlayers !== null && game?.totalPlayers !== undefined
+        ? metric(game.totalPlayers, "live", gameSource, gameUpdatedAt)
+        : unavailableMetric(gameSource, gameNote, LINKS.spinLeaderboard),
+    activePlayers7d:
+      game?.activePlayers7d !== null && game?.activePlayers7d !== undefined
+        ? metric(game.activePlayers7d, "live", gameSource, gameUpdatedAt)
+        : unavailableMetric(gameSource, gameNote, LINKS.spinLeaderboard),
+    totalSpins:
+      game?.totalSpins !== null && game?.totalSpins !== undefined
+        ? metric(game.totalSpins, "live", gameSource, gameUpdatedAt)
+        : unavailableMetric(gameSource, gameNote, LINKS.spinLeaderboard),
+    weeklyParticipants:
+      weeklyParticipants !== null
+        ? metric(weeklyParticipants, "live", gameSource, gameUpdatedAt, {
+            href: LINKS.spinLeaderboard,
+          })
+        : unavailableMetric(gameSource, gameNote, LINKS.spinLeaderboard),
+    verifiedRewardsRta:
+      game?.rewardsDistributedRta !== null && game?.rewardsDistributedRta !== undefined
+        ? metric(game.rewardsDistributedRta, "verified", gameSource, gameUpdatedAt, {
+            href: LINKS.rewards,
+          })
+        : metric<number>(null, verifiedPayoutCount > 0 ? "pending" : "unavailable", "RROTA reward archive", null, {
+            href: LINKS.rewards,
+            note:
+              verifiedPayoutCount > 0
+                ? "Verified payout records exist, but the aggregate RTA amount is not yet published by the game API."
+                : "No aggregate verified RTA payout figure is published yet. Individual proofs must be attached before this value is asserted.",
+          }),
+    verifiedRewardsSol:
+      game?.rewardsDistributedSol !== null && game?.rewardsDistributedSol !== undefined
+        ? metric(game.rewardsDistributedSol, "verified", gameSource, gameUpdatedAt, {
+            href: LINKS.rewards,
+          })
+        : metric<number>(null, verifiedPayoutCount > 0 ? "pending" : "unavailable", "RROTA reward archive", null, {
+            href: LINKS.rewards,
+            note:
+              verifiedPayoutCount > 0
+                ? "Verified payout records exist, but the aggregate SOL amount is not yet published by the game API."
+                : "No aggregate verified SOL payout figure is published yet. Prize allocation is not treated as paid without transaction proof.",
+          }),
+  };
+
+  const security: TransparencyData["security"] = {
+    mintAuthority: authorityMetric(mintAuthority, mintUpdatedAt),
+    freezeAuthority: authorityMetric(freezeAuthority, mintUpdatedAt),
+    supply:
+      supply !== null
+        ? metric(supply, "verified", mintState ? "Solana mint account" : "SolanaTracker", mintUpdatedAt, {
+            href: LINKS.solscanToken,
+          })
+        : unavailableMetric("Solana mint data", "Current supply could not be verified in this refresh.", LINKS.solscanToken),
+    decimals:
+      decimals !== null
+        ? metric(decimals, "verified", mintState ? "Solana mint account" : "SolanaTracker", mintUpdatedAt, {
+            href: LINKS.solscanToken,
+          })
+        : unavailableMetric("Solana mint data", "Token decimals are temporarily unavailable.", LINKS.solscanToken),
+    lpStatus: metric<string>("LP LOCKED", "pending", "RROTA liquidity status", null, {
+      href: LINKS.solscanPool,
+      note: "Project-reported LP lock status. Use the verification link for the current on-chain pool/locker state.",
+    }),
+    lpBurnPercent:
+      tracker?.lpBurnPercent !== null && tracker?.lpBurnPercent !== undefined
+        ? metric(tracker.lpBurnPercent, "live", "SolanaTracker", trackerUpdatedAt, {
+            href: LINKS.geckoPool,
+            note: "LP burn data is provider-reported and is separate from time-lock status.",
+          })
+        : unavailableMetric(
+            "SolanaTracker",
+            "LP burn percentage is not available in the current provider response. Verify pool ownership/lock state live.",
+            LINKS.geckoPool,
+          ),
+    burnedOrRemovedRta: metric<number>(1_000_000_000, "pending", "RROTA project record", null, {
+      href: LINKS.proof,
+      note: "Project-reported historical burn. Public transaction proof can be attached in the Proof Vault for direct verification.",
+    }),
+    audits: [
+      { name: "SolidProof", status: "published", href: LINKS.solidproof },
+      { name: "FreshCoins", status: "published", href: LINKS.freshcoins },
+    ],
+  };
+
+  const weekly = competitionWindow(
+    "Weekly",
+    periods?.periods?.weekly,
+    {
+      startIso: weeklyFallback.startsAt.toISOString(),
+      endIso: weeklyFallback.endsAt.toISOString(),
+    },
+    weeklyParticipants,
+    weeklyParticipants !== null ? gameSource : periodSource,
+    WEEKLY_REWARDS.map((item) => `${item.place}: ${item.reward}`),
+  );
+
+  const monthly = competitionWindow(
+    "Monthly",
+    periods?.periods?.monthly,
+    monthlyFallback,
+    game?.monthlyParticipants ?? null,
+    game?.monthlyParticipants !== null && game?.monthlyParticipants !== undefined
+      ? gameSource
+      : periodSource,
+    ["Current rules and rewards: see live leaderboard"],
+  );
+
+  const yearly = competitionWindow(
+    "Yearly",
+    periods?.periods?.yearly,
+    yearlyFallback,
+    game?.yearlyParticipants ?? null,
+    game?.yearlyParticipants !== null && game?.yearlyParticipants !== undefined
+      ? gameSource
+      : periodSource,
+    ["Current rules and rewards: see live leaderboard"],
+  );
+
+  const sources: SourceState[] = [
+    {
+      label: "GeckoTerminal market data",
+      status: dex ? "live" : "unavailable",
+      updatedAt: marketUpdatedAt,
+      href: LINKS.geckoPool,
+      note: "Price, market cap, liquidity, 24h volume and transaction counts from the exact RTA/SOL pool.",
+    },
+    {
+      label: "GeckoTerminal 7d OHLCV",
+      status: volume7d ? "live" : "unavailable",
+      updatedAt: volume7d?.updatedAt ?? null,
+      href: LINKS.geckoPool,
+      note: "Seven UTC day buckets of real pool OHLCV volume; no 24h multiplication or synthetic estimate.",
+    },
+    {
+      label: "SolanaTracker token data",
+      status: tracker ? "live" : "unavailable",
+      updatedAt: trackerUpdatedAt,
+      href: LINKS.solscanToken,
+      note: "Holder count and provider-side token/pool metadata. API key remains server-only.",
+    },
+    {
+      label: "Solana mint account",
+      status: mintState ? "verified" : "pending",
+      updatedAt: mintState?.updatedAt ?? null,
+      href: LINKS.solscanToken,
+      note: "Supply, decimals and mint/freeze authority state when the RPC check succeeds.",
+    },
+    {
+      label: "Spin-to-Win aggregate data",
+      status: game ? "live" : "pending",
+      updatedAt: gameUpdatedAt,
+      href: LINKS.spinLeaderboard,
+      note: game
+        ? "Privacy-safe aggregate game activity."
+        : "Website integration is ready; the production game still needs the public aggregate endpoint.",
+    },
+    {
+      label: "RROTA historical snapshots",
+      status: "pending",
+      updatedAt: null,
+      note: "Required for real 7d/30d holder-growth calculations. No historical holder values are fabricated.",
+    },
+  ];
+
+  return {
+    generatedAt,
+    market,
+    game: gameMetrics,
+    community: {
+      telegramMembers: metric<number>(null, "verified", "Official Telegram", null, {
+        href: LINKS.telegram,
+        note: "Official RROTA Telegram channel. Live member count is not connected yet.",
+      }),
+      xFollowers: metric<number>(null, "verified", "Official X", null, {
+        href: LINKS.x,
+        note: "Official RROTA X account. Live follower count is not connected yet.",
+      }),
+      holderGrowth7d: metric<number>(null, "pending", "RROTA snapshot history", null, {
+        note: "Collecting history. A verified 7-day holder change will appear after enough daily snapshots exist.",
+      }),
+      holderGrowth30d: metric<number>(null, "pending", "RROTA snapshot history", null, {
+        note: "Collecting history. A verified 30-day holder change will appear after enough daily snapshots exist.",
+      }),
+    },
+    security,
+    competition: { weekly, monthly, yearly },
+    sources,
+  };
+}
+
+export const getTransparencyData = unstable_cache(
+  buildTransparencyData,
+  ["rrota-transparency-v1"],
+  { revalidate: 120 },
+);
