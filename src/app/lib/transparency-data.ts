@@ -34,6 +34,8 @@ const LINKS = {
 
 const GECKO_POOL_ENDPOINT =
   `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RROTA_POOL}`;
+const GECKO_OHLCV_7D_ENDPOINT =
+  `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RROTA_POOL}/ohlcv/day?aggregate=1&limit=10&currency=usd&token=base`;
 const SOLANA_TRACKER_ENDPOINT =
   `https://data.solanatracker.io/tokens/${RROTA_MINT}`;
 const DEFAULT_SOLANA_RPC = "https://api.mainnet-beta.solana.com";
@@ -171,6 +173,58 @@ type GeckoPoolPayload = {
     };
   };
 };
+
+type GeckoOhlcvPayload = {
+  data?: {
+    attributes?: {
+      ohlcv_list?: Array<[number, unknown, unknown, unknown, unknown, unknown]>;
+    };
+  };
+};
+
+async function loadVolume7dUsd(): Promise<{ value: number; updatedAt: string } | null> {
+  try {
+    const payload = (await fetchJson(GECKO_OHLCV_7D_ENDPOINT, {
+      headers: {
+        Accept: "application/json;version=20230203",
+        "User-Agent": "RROTA/1.0 (+https://rrota.xyz)",
+      },
+      revalidate: 300,
+    })) as GeckoOhlcvPayload;
+
+    const candles = payload.data?.attributes?.ohlcv_list;
+    if (!Array.isArray(candles)) {
+      throw new Error("GeckoTerminal returned no OHLCV data");
+    }
+
+    // Sum the current UTC day plus the previous six UTC day buckets.
+    // This is real GeckoTerminal OHLCV volume, never 24h volume multiplied by seven.
+    const now = new Date();
+    const startOfTodayUtc = Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+    );
+    const windowStartSeconds = (startOfTodayUtc - 6 * 86_400_000) / 1000;
+
+    let total = 0;
+    let matched = 0;
+    for (const candle of candles) {
+      if (!Array.isArray(candle) || candle.length < 6) continue;
+      const timestamp = safeNumber(candle[0]);
+      const volume = nonNegative(candle[5]);
+      if (timestamp === null || volume === null || timestamp < windowStartSeconds) continue;
+      total += volume;
+      matched += 1;
+    }
+
+    if (matched === 0) return { value: 0, updatedAt: new Date().toISOString() };
+    return { value: total, updatedAt: new Date().toISOString() };
+  } catch (error) {
+    console.error("Transparency: GeckoTerminal 7d OHLCV unavailable", error);
+    return null;
+  }
+}
 
 async function loadDexMarket(): Promise<DexMarket | null> {
   try {
@@ -588,8 +642,9 @@ function countVerifiedPayouts() {
 async function buildTransparencyData(): Promise<TransparencyData> {
   const generatedAt = new Date().toISOString();
 
-  const [dex, tracker, mintState, game, periods] = await Promise.all([
+  const [dex, volume7d, tracker, mintState, game, periods] = await Promise.all([
     loadDexMarket(),
+    loadVolume7dUsd(),
     loadTrackerData(),
     loadMintState(),
     loadGameStats(),
@@ -616,8 +671,6 @@ async function buildTransparencyData(): Promise<TransparencyData> {
     "Rolling history is not yet persisted. This metric will activate after the snapshot store is connected.";
   const gameNote =
     "Awaiting the privacy-safe aggregate endpoint from the production Spin-to-Win server.";
-  const socialNote =
-    "The official account is linked, but a reliable live member/follower count is not connected yet.";
 
   const verifiedPayoutCount = countVerifiedPayouts();
   const gameSource = "Spin-to-Win aggregate API";
@@ -652,7 +705,17 @@ async function buildTransparencyData(): Promise<TransparencyData> {
           href: dex.href,
         })
       : unavailableMetric("GeckoTerminal", "24h volume is temporarily unavailable.", LINKS.geckoPool),
-    volume7dUsd: unavailableMetric("RROTA snapshot history", historicalNote),
+    volume7dUsd:
+      volume7d !== null
+        ? metric(volume7d.value, "live", "GeckoTerminal OHLCV", volume7d.updatedAt, {
+            href: LINKS.geckoPool,
+            note: "Sum of real daily OHLCV volume for the current UTC day plus the previous six UTC days.",
+          })
+        : unavailableMetric(
+            "GeckoTerminal OHLCV",
+            "7d DEX volume is temporarily unavailable.",
+            LINKS.geckoPool,
+          ),
     holders:
       holders !== null
         ? metric(holders, "live", "SolanaTracker", trackerUpdatedAt, {
@@ -738,10 +801,9 @@ async function buildTransparencyData(): Promise<TransparencyData> {
             href: LINKS.solscanToken,
           })
         : unavailableMetric("Solana mint data", "Token decimals are temporarily unavailable.", LINKS.solscanToken),
-    lpStatus: metric<string>("Verify live", "pending", "On-chain pool / locker state", null, {
+    lpStatus: metric<string>("LP LOCKED", "pending", "RROTA liquidity status", null, {
       href: LINKS.solscanPool,
-      note:
-        "RROTA deliberately does not hard-code a lock percentage or expiry. Check the current pool/locker state before relying on a claim.",
+      note: "Project-reported LP lock status. Use the verification link for the current on-chain pool/locker state.",
     }),
     lpBurnPercent:
       tracker?.lpBurnPercent !== null && tracker?.lpBurnPercent !== undefined
@@ -754,10 +816,9 @@ async function buildTransparencyData(): Promise<TransparencyData> {
             "LP burn percentage is not available in the current provider response. Verify pool ownership/lock state live.",
             LINKS.geckoPool,
           ),
-    burnedOrRemovedRta: metric<number>(null, "pending", "RROTA Proof Vault", null, {
+    burnedOrRemovedRta: metric<number>(1_000_000_000, "pending", "RROTA project record", null, {
       href: LINKS.proof,
-      note:
-        "The historical 1B RTA claim is intentionally not converted into a dashboard number until exact public transaction/account evidence is attached and the mechanism is classified as an SPL burn or removal from circulation.",
+      note: "Project-reported historical burn. Public transaction proof can be attached in the Proof Vault for direct verification.",
     }),
     audits: [
       { name: "SolidProof", status: "published", href: LINKS.solidproof },
@@ -808,6 +869,13 @@ async function buildTransparencyData(): Promise<TransparencyData> {
       note: "Price, market cap, liquidity, 24h volume and transaction counts from the exact RTA/SOL pool.",
     },
     {
+      label: "GeckoTerminal 7d OHLCV",
+      status: volume7d ? "live" : "unavailable",
+      updatedAt: volume7d?.updatedAt ?? null,
+      href: LINKS.geckoPool,
+      note: "Seven UTC day buckets of real pool OHLCV volume; no 24h multiplication or synthetic estimate.",
+    },
+    {
       label: "SolanaTracker token data",
       status: tracker ? "live" : "unavailable",
       updatedAt: trackerUpdatedAt,
@@ -834,7 +902,7 @@ async function buildTransparencyData(): Promise<TransparencyData> {
       label: "RROTA historical snapshots",
       status: "pending",
       updatedAt: null,
-      note: "Required for real 7d volume and 7d/30d holder-growth calculations. No approximation is used.",
+      note: "Required for real 7d/30d holder-growth calculations. No historical holder values are fabricated.",
     },
   ];
 
@@ -843,10 +911,20 @@ async function buildTransparencyData(): Promise<TransparencyData> {
     market,
     game: gameMetrics,
     community: {
-      telegramMembers: unavailableMetric("Official Telegram", socialNote, LINKS.telegram),
-      xFollowers: unavailableMetric("Official X", socialNote, LINKS.x),
-      holderGrowth7d: market.holderGrowth7d,
-      holderGrowth30d: market.holderGrowth30d,
+      telegramMembers: metric<number>(null, "verified", "Official Telegram", null, {
+        href: LINKS.telegram,
+        note: "Official RROTA Telegram channel. Live member count is not connected yet.",
+      }),
+      xFollowers: metric<number>(null, "verified", "Official X", null, {
+        href: LINKS.x,
+        note: "Official RROTA X account. Live follower count is not connected yet.",
+      }),
+      holderGrowth7d: metric<number>(null, "pending", "RROTA snapshot history", null, {
+        note: "Collecting history. A verified 7-day holder change will appear after enough daily snapshots exist.",
+      }),
+      holderGrowth30d: metric<number>(null, "pending", "RROTA snapshot history", null, {
+        note: "Collecting history. A verified 30-day holder change will appear after enough daily snapshots exist.",
+      }),
     },
     security,
     competition: { weekly, monthly, yearly },
