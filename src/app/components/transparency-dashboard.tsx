@@ -96,16 +96,20 @@ function formatSupply(value: number | null) {
   }).format(value)} RTA`;
 }
 
-function formatPercent(value: number | null) {
-  if (value === null || !Number.isFinite(value)) return null;
-  return `${value.toFixed(2)}%`;
-}
-
 function displayValue<T>(
   metric: TransparencyMetric<T>,
   formatter?: (value: T | null) => string | null,
 ) {
   if (metric.value === null) {
+    if (metric.status === "pending" && metric.source === "RROTA snapshot history") {
+      return "Collecting history";
+    }
+    if (metric.status === "verified" && metric.source === "Official Telegram") {
+      return "Official channel";
+    }
+    if (metric.status === "verified" && metric.source === "Official X") {
+      return "Official account";
+    }
     return metric.status === "pending" ? "Verify live" : "Unavailable";
   }
 
@@ -489,7 +493,7 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
             <SectionHeader
               eyebrow="01 • Market"
               title="Public market signals"
-              description="Current market metrics come from independent market/token providers. Historical values stay unavailable until real snapshots exist; 24h volume is never multiplied to imitate a 7-day number."
+              description="Current market metrics come from independent market/token providers. The 7-day volume uses real GeckoTerminal OHLCV candles; no 24h value is multiplied to imitate historical activity."
             />
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -512,7 +516,7 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
             <SectionHeader
               eyebrow="02 • Product"
               title="Spin-to-Win activity"
-              description="The website is ready for privacy-safe aggregate production statistics. Until the Spin server exposes that public aggregate endpoint, game metrics are deliberately shown as unavailable instead of being inferred from individual player screens."
+              description="Privacy-safe production aggregates come directly from the live Spin-to-Win backend. No player names, wallets, emails, session identifiers, or other private player data are exposed here."
             />
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -528,12 +532,12 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
             <SectionHeader
               eyebrow="03 • Community"
               title="Community reach and holder growth"
-              description="Official channels are linked directly. Social counts are not scraped or manually inflated; they activate only when a reliable source is connected. Holder growth requires stored historical snapshots."
+              description="Official RROTA channels are verified and linked directly. Social counts are not scraped or manually inflated. Holder-growth cards are collecting real history for future 7-day and 30-day comparisons."
             />
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <MetricCard label="Telegram Members" metric={data.community.telegramMembers} formatter={formatInteger} />
-              <MetricCard label="X Followers" metric={data.community.xFollowers} formatter={formatInteger} />
+              <MetricCard label="Telegram" metric={data.community.telegramMembers} />
+              <MetricCard label="X" metric={data.community.xFollowers} />
               <MetricCard label="Holder Growth • 7D" metric={data.community.holderGrowth7d} formatter={formatInteger} />
               <MetricCard label="Holder Growth • 30D" metric={data.community.holderGrowth30d} formatter={formatInteger} />
             </div>
@@ -543,7 +547,7 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
             <SectionHeader
               eyebrow="04 • Security & On-chain"
               title="Verify the token foundation"
-              description="Authority and supply checks prefer direct Solana mint-account data. Liquidity-lock state is intentionally not hard-coded because ownership, lock percentages, and expiry can change over time."
+              description="Authority and supply checks prefer direct Solana mint-account data. RROTA also surfaces the project-reported LP lock and historical 1 billion RTA burn with verification links for deeper proof."
             />
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -551,9 +555,8 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
               <MetricCard label="Freeze Authority" metric={data.security.freezeAuthority} />
               <MetricCard label="Current Supply" metric={data.security.supply} formatter={formatSupply} emphasis />
               <MetricCard label="Token Decimals" metric={data.security.decimals} formatter={formatInteger} />
-              <MetricCard label="LP / Lock Status" metric={data.security.lpStatus} />
-              <MetricCard label="LP Burn" metric={data.security.lpBurnPercent} formatter={formatPercent} />
-              <MetricCard label="Burned / Removed RTA" metric={data.security.burnedOrRemovedRta} formatter={formatSupply} />
+              <MetricCard label="LP Status" metric={data.security.lpStatus} />
+              <MetricCard label="1 Billion RTA Burned" metric={data.security.burnedOrRemovedRta} formatter={formatSupply} />
 
               <div className="rounded-[28px] border border-emerald-300/14 bg-emerald-400/[0.045] p-5 sm:col-span-2 xl:col-span-2">
                 <div className="flex items-center justify-between gap-3">
@@ -577,7 +580,7 @@ export default function TransparencyDashboard({ initialData }: { initialData: Tr
             <SectionHeader
               eyebrow="05 • Competition"
               title="Weekly, monthly and yearly race windows"
-              description="Period timing is pulled from the Spin leaderboard API when available and falls back to the public RROTA schedule when that endpoint is unavailable. Participant counts require the aggregate game endpoint."
+              description="Period timing is pulled from the Spin leaderboard API when available, and participant counts come from the privacy-safe production aggregate endpoint."
             />
 
             <div className="mt-7 grid gap-4 lg:grid-cols-3">
