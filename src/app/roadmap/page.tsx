@@ -65,6 +65,7 @@ const roadmapGroups: RoadmapGroup[] = [
     accent: "border-emerald-400/18 bg-emerald-400/[0.055]",
     badge: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
     items: [
+      { title: "CoinGecko listing", description: "RROTA ($RTA) is now listed on CoinGecko.", notes: ["Public RROTA token page", "Market data and portfolio tracking"], href: "https://www.coingecko.com/en/coins/rrota", linkLabel: "View on CoinGecko", external: true },
       {
         title: "$RTA token foundation",
         description:
@@ -142,6 +143,7 @@ const roadmapGroups: RoadmapGroup[] = [
     accent: "border-cyan-400/18 bg-cyan-400/[0.055]",
     badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     items: [
+      { title: "JETZOO arcade runner", description: "JETZOO is now live as a browser arcade game in the RROTA ecosystem.", notes: ["Publicly playable at jetzoo.fun", "Standalone arcade gameplay"], href: "https://jetzoo.fun", linkLabel: "Play JETZOO", external: true },
       {
         title: "RROTA Spin-to-Win",
         description:

@@ -220,6 +220,12 @@ function TrustBadge({
 
 const ECOSYSTEM_NODES = [
   {
+    title: "JETZOO",
+    status: "Live",
+    description: "A standalone browser arcade runner from RROTA.",
+    tone: "emerald",
+  },
+  {
     title: "$RTA Token",
     status: "Core",
     description:
@@ -441,10 +447,9 @@ export default function Hero() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/68 sm:text-lg">
-              RROTA connects its Solana token with live gaming,
-              digital rewards, community tools, AI support, products
-              in development and a long-term direction toward
-              practical real-world utility.
+              Explore the RROTA ecosystem: play Spin-to-Win and JETZOO,
+              follow $RTA on CoinGecko, and discover community rewards,
+              AI support, and products in development.
             </p>
           </motion.div>
 
@@ -463,6 +468,15 @@ export default function Hero() {
             </a>
 
             <a
+              href="https://jetzoo.fun"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-emerald-300/25 bg-emerald-400/10 px-7 text-sm font-black uppercase tracking-[0.12em] text-emerald-100 transition-colors hover:bg-emerald-400/20"
+            >
+              Play JETZOO
+              <ExternalIcon />
+            </a>
+            <a
               href={LINKS.universe}
               className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-400/[0.07] px-7 text-sm font-black uppercase tracking-[0.12em] text-cyan-100 transition-all hover:border-cyan-200/35 hover:bg-cyan-400/[0.12] hover:text-white"
             >
@@ -475,6 +489,15 @@ export default function Hero() {
             variants={itemVariants}
             className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-xs font-black uppercase tracking-[0.1em]"
           >
+            <a
+              href="https://www.coingecko.com/en/coins/rrota"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-emerald-200 transition-colors hover:text-white"
+            >
+              Listed on CoinGecko
+              <ExternalIcon className="h-3.5 w-3.5" />
+            </a>
             <a
               href={LINKS.jupiter}
               target="_blank"

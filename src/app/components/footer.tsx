@@ -109,6 +109,8 @@ const internalGroups = [
 ];
 
 const externalResources = [
+  { label: "Play JETZOO", href: "https://jetzoo.fun" },
+  { label: "CoinGecko", href: "https://www.coingecko.com/en/coins/rrota" },
   { label: "Play Spin-to-Win", href: LINKS.spin },
   { label: "Buy on Jupiter", href: LINKS.jupiter },
   { label: "Verify on Solscan", href: LINKS.solscan },

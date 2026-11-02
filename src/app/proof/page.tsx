@@ -44,6 +44,24 @@ export const metadata: Metadata = {
 
 const proofCards = [
   {
+    eyebrow: "Market listing",
+    title: "CoinGecko",
+    value: "RROTA ($RTA) listed",
+    description: "View the RROTA listing and market data directly on CoinGecko.",
+    href: "https://www.coingecko.com/en/coins/rrota",
+    action: "View on CoinGecko",
+    tone: "border-emerald-300/18 bg-emerald-400/[0.05]",
+  },
+  {
+    eyebrow: "Live product",
+    title: "JETZOO",
+    value: "Browser arcade runner",
+    description: "Play the standalone JETZOO game at its official public destination.",
+    href: "https://jetzoo.fun",
+    action: "Play JETZOO",
+    tone: "border-cyan-300/18 bg-cyan-400/[0.05]",
+  },
+  {
     eyebrow: "Token identity",
     title: "Official $RTA mint",
     value: TOKEN_ADDRESS,

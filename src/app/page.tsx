@@ -19,6 +19,9 @@ const PUBLISHER_LOGO = `${SITE_URL}/rrota-logo2.png`;
 
 const TOKEN_ADDRESS = "3yeWYPG3BvGBFrwjar9e28GBYZgYmHT79d7FBVS6xL1a";
 
+const JETZOO_URL = "https://jetzoo.fun";
+const COINGECKO_URL = "https://www.coingecko.com/en/coins/rrota";
+
 const SPIN_TO_WIN_URL = "https://spin.rrota.xyz";
 const TELEGRAM_MINI_APP_URL = "https://t.me/RROTASpin_Bot";
 const TELEGRAM_URL = "https://t.me/rrotaOfficial";
@@ -39,7 +42,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "RROTA ($RTA) — Solana Utility Ecosystem",
   description:
-    "RROTA ($RTA) is a Solana utility ecosystem connecting gaming, digital rewards, community products, and long-term real-world utility development.",
+    "Explore RROTA ($RTA) on Solana: play Spin-to-Win and JETZOO, follow RROTA on CoinGecko, and discover community rewards and ecosystem development.",
   keywords: [
     "RROTA",
     "RROTA coin",
@@ -60,7 +63,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "RROTA ($RTA) — Solana Utility Ecosystem",
     description:
-      "Explore the official RROTA ecosystem: $RTA on Solana, live Spin-to-Win utility, gaming development, community rewards, tokenomics, roadmap, and verification links.",
+      "Explore the official RROTA ecosystem: $RTA on Solana, live Spin-to-Win and JETZOO games, the CoinGecko listing, community rewards, tokenomics, roadmap, and verification links.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
@@ -134,6 +137,16 @@ function ArrowIcon() {
 function EcosystemOverviewSection() {
   const ecosystemCards = [
     {
+      title: "JETZOO",
+      status: "Live",
+      statusClass: "border-emerald-300/25 bg-emerald-400/10 text-emerald-200",
+      text: "The RROTA arcade runner is now live. Play JETZOO in your browser at jetzoo.fun.",
+      href: JETZOO_URL,
+      action: "Play JETZOO",
+      external: true,
+      accent: "from-violet-400/20 to-cyan-500/5",
+    },
+    {
       title: "RROTA Coin",
       status: "Live",
       statusClass: "border-emerald-300/25 bg-emerald-400/10 text-emerald-200",
@@ -157,8 +170,8 @@ function EcosystemOverviewSection() {
       status: "Beta",
       statusClass: "border-violet-300/25 bg-violet-400/10 text-violet-200",
       text: "An ecosystem information layer designed to help users explore RROTA products, official resources, and project information more easily.",
-      href: "/roadmap",
-      action: "See ecosystem plan",
+      href: "/ai",
+      action: "Open RROTA AI",
       accent: "from-violet-400/20 to-cyan-500/5",
     },
     {
@@ -439,6 +452,8 @@ function SpinToWinSpotlightSection() {
 
 function OfficialLinksSection() {
   const links = [
+    { label: "JETZOO", detail: "Live RROTA arcade runner", href: JETZOO_URL },
+    { label: "CoinGecko", detail: "RROTA ($RTA) listing", href: COINGECKO_URL },
     {
       label: "Buy on Jupiter",
       detail: "Official $RTA token page",
@@ -584,7 +599,7 @@ export default function Home() {
         url: SITE_URL,
         name: "RROTA ($RTA) — Solana Utility Ecosystem",
         description:
-          "The official RROTA ecosystem website for $RTA on Solana, live Spin-to-Win utility, gaming development, community rewards, tokenomics, roadmap, and verification resources.",
+          "The official RROTA ecosystem website for $RTA on Solana, live Spin-to-Win and JETZOO games, the CoinGecko listing, community rewards, tokenomics, roadmap, and verification resources.",
         isPartOf: {
           "@id": `${SITE_URL}#website`,
         },
@@ -601,6 +616,14 @@ export default function Home() {
             operatingSystem: "Web, Telegram",
             url: SPIN_TO_WIN_URL,
             description: "The first live product inside the RROTA ecosystem.",
+          },
+          {
+            "@type": "SoftwareApplication",
+            name: "JETZOO",
+            applicationCategory: "GameApplication",
+            operatingSystem: "Web",
+            url: JETZOO_URL,
+            description: "A live standalone browser arcade runner in the RROTA ecosystem.",
           },
           {
             "@type": "WebPage",
@@ -643,7 +666,7 @@ export default function Home() {
             name: "Is RROTA only a Spin-to-Win game?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "No. Spin-to-Win is the first live RROTA product, while the wider ecosystem roadmap includes additional gaming, community, information, and long-term real-world utility layers.",
+              text: "No. Spin-to-Win and JETZOO are live games in the RROTA ecosystem. JETZOO is a standalone arcade runner; further token integrations and additional products remain development work.",
             },
           },
           {
@@ -676,6 +699,21 @@ export default function Home() {
 
         <main className="relative w-full">
           <Hero />
+
+          <section aria-label="Latest RROTA milestones" className="mx-auto grid max-w-7xl gap-4 px-4 py-8 sm:px-6 md:grid-cols-2 lg:px-8">
+            <article className="rounded-3xl border border-cyan-300/25 bg-cyan-400/[0.07] p-6">
+              <p className="text-xs font-bold uppercase tracking-widest text-cyan-200">Now live</p>
+              <h2 className="mt-3 text-3xl font-black">JETZOO is ready to play.</h2>
+              <p className="mt-3 text-sm leading-6 text-white/70">Discover the latest RROTA game: an arcade runner you can play in your browser.</p>
+              <a href={JETZOO_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-cyan-300 px-5 py-3 font-bold text-slate-950 hover:bg-cyan-200">Play JETZOO <ExternalIcon /></a>
+            </article>
+            <article className="rounded-3xl border border-emerald-300/25 bg-emerald-400/[0.07] p-6">
+              <p className="text-xs font-bold uppercase tracking-widest text-emerald-200">Listing milestone</p>
+              <h2 className="mt-3 text-3xl font-black">RROTA is on CoinGecko.</h2>
+              <p className="mt-3 text-sm leading-6 text-white/70">Explore the RROTA ($RTA) listing, follow market data, and add RROTA to your CoinGecko portfolio.</p>
+              <a href={COINGECKO_URL} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 font-bold text-slate-950 hover:bg-emerald-200">View on CoinGecko <ExternalIcon /></a>
+            </article>
+          </section>
 
           <RrotaUniverse />
 
