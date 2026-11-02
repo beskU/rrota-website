@@ -54,6 +54,18 @@ type Pillar = {
 
 const ecosystemPillars: Pillar[] = [
   {
+    status: "Live",
+    title: "JETZOO arcade runner",
+    description: "JETZOO is a standalone browser game in the RROTA ecosystem, now publicly playable at jetzoo.fun.",
+    points: [
+      "Browser arcade gameplay",
+      "A separate game alongside Spin-to-Win",
+      "RTA payments and token rewards are not part of this release",
+    ],
+    tone: "border-cyan-400/16 bg-cyan-400/[0.05]",
+    badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
+  },
+  {
     status: "Shipped",
     title: "$RTA token foundation",
     description:
@@ -61,6 +73,7 @@ const ecosystemPillars: Pillar[] = [
     points: [
       "Official mint publicly documented",
       "Solscan and Jupiter verification paths",
+      "RROTA listed on CoinGecko",
       "Mint and freeze authorities revoked",
       "Token facts separated from dynamic market data",
     ],

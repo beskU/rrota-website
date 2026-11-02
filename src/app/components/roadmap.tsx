@@ -30,6 +30,8 @@ const LINKS = {
 };
 
 const roadmapItems: RoadmapItem[] = [
+  { phase: "Product", title: "JETZOO arcade runner", description: "JETZOO is live at jetzoo.fun, adding a browser arcade runner to the RROTA gaming ecosystem.", status: "Live", proof: { label: "Play JETZOO", href: "https://jetzoo.fun" } },
+  { phase: "Visibility", title: "CoinGecko listing", description: "RROTA ($RTA) is listed on CoinGecko with a public token page and market data.", status: "Shipped", proof: { label: "View on CoinGecko", href: "https://www.coingecko.com/en/coins/rrota" } },
   {
     phase: "Foundation",
     title: "$RTA Token on Solana",

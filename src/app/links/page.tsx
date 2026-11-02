@@ -69,6 +69,7 @@ type ResourceGroup = {
 };
 
 const primaryAccess: ResourceItem[] = [
+  { title: "JETZOO", description: "The live RROTA arcade runner, available in your browser.", href: "https://jetzoo.fun", label: "Play JETZOO", external: true, status: "Live" },
   {
     title: "RROTA Home",
     description:
@@ -114,6 +115,7 @@ const resourceGroups: ResourceGroup[] = [
     tone: "border-cyan-400/16 bg-cyan-400/[0.045]",
     badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     items: [
+      { title: "CoinGecko", description: "View the RROTA ($RTA) listing and follow market data.", href: "https://www.coingecko.com/en/coins/rrota", label: "View on CoinGecko", external: true, status: "Listed" },
       {
         title: "Solscan",
         description:

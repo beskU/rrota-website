@@ -18,7 +18,7 @@ const SOLSCAN_URL = `https://solscan.io/token/${TOKEN_ADDRESS}`;
 export const metadata: Metadata = {
   title: "About RROTA",
   description:
-    "Learn what RROTA is building: a Solana-based utility ecosystem with the $RTA token, live Spin-to-Win game, RROTA AI, leaderboard competition, community tools, and future product development.",
+    "Learn what RROTA is building: a Solana-based utility ecosystem with the $RTA token, live Spin-to-Win and JETZOO games, RROTA AI, leaderboard competition, community tools, and future product development.",
   alternates: {
     canonical: PAGE_URL,
   },
@@ -54,6 +54,21 @@ type EcosystemLayer = {
 
 const ecosystemLayers: EcosystemLayer[] = [
   {
+    status: "Live",
+    title: "JETZOO arcade runner",
+    description: "JETZOO is a standalone browser game in the RROTA ecosystem, now publicly playable at jetzoo.fun.",
+    points: [
+      "Browser arcade gameplay",
+      "A separate game alongside Spin-to-Win",
+      "RTA payments and token rewards are not part of this release",
+    ],
+    href: "https://jetzoo.fun",
+    label: "Play JETZOO",
+    external: true,
+    tone: "border-cyan-400/16 bg-cyan-400/[0.05]",
+    badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
+  },
+  {
     status: "Shipped",
     title: "$RTA token foundation",
     description:
@@ -61,6 +76,7 @@ const ecosystemLayers: EcosystemLayer[] = [
     points: [
       "Official mint published",
       "Solscan and Jupiter verification routes",
+      "RROTA listed on CoinGecko",
       "Mint and freeze authorities revoked",
       "Public tokenomics and risk documentation",
     ],
