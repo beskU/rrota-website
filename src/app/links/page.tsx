@@ -21,6 +21,7 @@ const EXTERNAL_LINKS = {
   birdeye: `https://birdeye.so/token/${TOKEN_ADDRESS}?chain=solana`,
   geckoterminal:
     `https://www.geckoterminal.com/solana/tokens/${TOKEN_ADDRESS}`,
+  blockspot: "https://blockspot.io/coin/rrota-rta/",
   solidproof: "https://app.solidproof.io/projects/rrota",
   freshcoins: "https://freshcoins.io/audit/rrota",
   email: "mailto:info@rrota.xyz",
@@ -57,6 +58,7 @@ type ResourceItem = {
   external?: boolean;
   email?: boolean;
   status?: string;
+  sponsored?: boolean;
 };
 
 type ResourceGroup = {
@@ -69,7 +71,15 @@ type ResourceGroup = {
 };
 
 const primaryAccess: ResourceItem[] = [
-  { title: "JETZOO", description: "The live RROTA arcade runner, available in your browser.", href: "https://jetzoo.fun", label: "Play JETZOO", external: true, status: "Live" },
+  {
+    title: "JETZOO",
+    description:
+      "The live RROTA arcade runner, available in your browser.",
+    href: "https://jetzoo.fun",
+    label: "Play JETZOO",
+    external: true,
+    status: "Live",
+  },
   {
     title: "RROTA Home",
     description:
@@ -115,7 +125,25 @@ const resourceGroups: ResourceGroup[] = [
     tone: "border-cyan-400/16 bg-cyan-400/[0.045]",
     badge: "border-cyan-400/20 bg-cyan-400/10 text-cyan-200",
     items: [
-      { title: "CoinGecko", description: "View the RROTA ($RTA) listing and follow market data.", href: "https://www.coingecko.com/en/coins/rrota", label: "View on CoinGecko", external: true, status: "Listed" },
+      {
+        title: "CoinGecko",
+        description:
+          "View the RROTA ($RTA) listing and follow market data.",
+        href: "https://www.coingecko.com/en/coins/rrota",
+        label: "View on CoinGecko",
+        external: true,
+        status: "Listed",
+      },
+      {
+        title: "Blockspot",
+        description:
+          "Explore the RROTA listing, project information, and market references on Blockspot.",
+        href: EXTERNAL_LINKS.blockspot,
+        label: "View on Blockspot",
+        external: true,
+        status: "Listed",
+        sponsored: true,
+      },
       {
         title: "Solscan",
         description:
@@ -502,7 +530,11 @@ function ResourceCard({ item }: { item: ResourceItem }) {
       <a
         href={item.href}
         target="_blank"
-        rel="noopener noreferrer"
+        rel={
+          item.sponsored
+            ? "noopener noreferrer sponsored"
+            : "noopener noreferrer"
+        }
         className={cardClass}
       >
         {content}
@@ -682,7 +714,7 @@ export default function LinksPage() {
           <div className="rounded-[38px] border border-cyan-400/16 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(217,70,239,0.08))] p-7 sm:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
               <div>
-                <h2 className="text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+                <h2 className="text-3xl font-black tracking-[-0.04em] text-white sm:text-4xl">
                   Unsure about a link?
                 </h2>
 
